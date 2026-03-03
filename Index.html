@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Minimal Vittascience Clone</title>
+  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <script src="https://unpkg.com/blockly/python_compressed.js"></script>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/mode/python/python.min.js"></script>
+
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+    header { background: #2c3e50; color: white; padding: 10px; }
+    #editor-container { display: flex; flex: 1; border-top: 1px solid #ccc; }
+    #blocklyDiv { flex: 2; height: 100%; }
+    #codeDiv { flex: 1; height: 100%; border-left: 2px solid #ddd; }
+    .CodeMirror { height: 100% !important; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<header>Basic Blockly-to-Python IDE</header>
+
+<div id="editor-container">
+  <div id="blocklyDiv"></div>
+  
+  <div id="codeDiv">
+    <textarea id="codeTextArea"></textarea>
+  </div>
+</div>
+
+<xml id="toolbox" style="display: none">
+  <category name="Logic" colour="#5b80a5">
+    <block type="controls_if"></block>
+    <block type="logic_compare"></block>
+  </category>
+  <category name="Loops" colour="#5ba55b">
+    <block type="controls_repeat_ext"></block>
+  </category>
+  <category name="Text" colour="#5ba5a5">
+    <block type="text"></block>
+    <block type="text_print"></block>
+  </category>
+</xml>
+
+<script>
+  // 1. Initialize CodeMirror
+  const editor = CodeMirror.fromTextArea(document.getElementById('codeTextArea'), {
+    mode: 'python',
+    lineNumbers: true,
+    readOnly: true,
+    theme: 'default'
+  });
+
+  // 2. Initialize Blockly
+  const workspace = Blockly.inject('blocklyDiv', {
+    toolbox: document.getElementById('toolbox'),
+    scrollbars: true
+  });
+
+  // 3. The "Sync Engine"
+  function updateCode(event) {
+    // Convert blocks to Python code
+    const code = Blockly.Python.workspaceToCode(workspace);
+    // Update the text editor
+    editor.setValue(code);
+  }
+
+  // Listen for any changes in the workspace
+  workspace.addChangeListener(updateCode);
+</script>
+
+</body>
+</html>
