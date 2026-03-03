@@ -44,8 +44,25 @@
   </category>
 </xml>
 
+<div id="editor-container">
+  <div id="blocklyDiv"></div>
+  <div id="codeDiv">
+    <textarea id="codeTextArea"></textarea>
+  </div>
+</div>
+
+<xml id="toolbox" style="display: none">
+  <category name="Hardware" colour="#e67e22">
+    <block type="esp32_led"></block>
+  </category>
+  <category name="Logic" colour="#5b80a5">
+    <block type="controls_if"></block>
+  </category>
+</xml>
+
 <script>
-  // 1. Initialize CodeMirror
+
+   // 1. Initialize CodeMirror
   const editor = CodeMirror.fromTextArea(document.getElementById('codeTextArea'), {
     mode: 'python',
     lineNumbers: true,
@@ -67,24 +84,7 @@
     editor.setValue(code);
   }
 
-<div id="editor-container">
-  <div id="blocklyDiv"></div>
-  <div id="codeDiv">
-    <textarea id="codeTextArea"></textarea>
-  </div>
-</div>
-
-<xml id="toolbox" style="display: none">
-  <category name="Hardware" colour="#e67e22">
-    <block type="esp32_led"></block>
-  </category>
-  <category name="Logic" colour="#5b80a5">
-    <block type="controls_if"></block>
-  </category>
-</xml>
-
-<script>
-  // 2. DEFINE THE BLOCK (Visual)
+  // 4. DEFINE THE BLOCK (Visual)
   Blockly.Blocks['esp32_led'] = {
     init: function() {
       this.appendDummyInput()
@@ -97,7 +97,7 @@
     }
   };
 
-  // 3. DEFINE THE GENERATOR (Translation to MicroPython)
+  // 5. DEFINE THE GENERATOR (Translation to MicroPython)
   Blockly.Python['esp32_led'] = function(block) {
     var dropdown_state = block.getFieldValue('STATE');
     // This ensures 'import machine' only appears ONCE at the very top of the file
@@ -107,7 +107,7 @@
     return code;
   };
 
-  // 4. INITIALIZE EVERYTHING ELSE
+  // 6. INITIALIZE EVERYTHING ELSE
   const editor = CodeMirror.fromTextArea(document.getElementById('codeTextArea'), {
     mode: 'python',
     lineNumbers: true,
