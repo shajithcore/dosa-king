@@ -67,6 +67,62 @@
     editor.setValue(code);
   }
 
+<div id="editor-container">
+  <div id="blocklyDiv"></div>
+  <div id="codeDiv">
+    <textarea id="codeTextArea"></textarea>
+  </div>
+</div>
+
+<xml id="toolbox" style="display: none">
+  <category name="Hardware" colour="#e67e22">
+    <block type="esp32_led"></block>
+  </category>
+  <category name="Logic" colour="#5b80a5">
+    <block type="controls_if"></block>
+  </category>
+</xml>
+
+<script>
+  // 2. DEFINE THE BLOCK (Visual)
+  Blockly.Blocks['esp32_led'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField("Set Built-in LED")
+          .appendField(new Blockly.FieldDropdown([["ON","1"], ["OFF","0"]]), "STATE");
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(30); // Orange for hardware
+      this.setTooltip("Turn the internal ESP32 LED (GPIO 2) on or off");
+    }
+  };
+
+  // 3. DEFINE THE GENERATOR (Translation to MicroPython)
+  Blockly.Python['esp32_led'] = function(block) {
+    var dropdown_state = block.getFieldValue('STATE');
+    // This ensures 'import machine' only appears ONCE at the very top of the file
+  Blockly.Python.definitions_['import_machine'] = 'import machine';
+  
+    var code = 'machine.Pin(2, machine.Pin.OUT).value(' + dropdown_state + ')\n';
+    return code;
+  };
+
+  // 4. INITIALIZE EVERYTHING ELSE
+  const editor = CodeMirror.fromTextArea(document.getElementById('codeTextArea'), {
+    mode: 'python',
+    lineNumbers: true,
+    readOnly: true
+  });
+
+  const workspace = Blockly.inject('blocklyDiv', {
+    toolbox: document.getElementById('toolbox')
+  });
+
+  function updateCode() {
+    const code = Blockly.Python.workspaceToCode(workspace);
+    editor.setValue(code);
+  }
+  
   // Listen for any changes in the workspace
   workspace.addChangeListener(updateCode);
 </script>
