@@ -1,131 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Minimal Vittascience Clone</title>
+  <title>ESP32 Blockly IDE</title>
+
   <script src="https://unpkg.com/blockly/blockly.min.js"></script>
   <script src="https://unpkg.com/blockly/python_compressed.js"></script>
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/theme/material.min.css">
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/mode/python/python.min.js"></script>
-
-  <style>
-    body { font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; }
-    header { background: #2c3e50; color: white; padding: 10px; }
-    #editor-container { display: flex; flex: 1; border-top: 1px solid #ccc; }
-    #blocklyDiv { flex: 2; height: 100%; }
-    #codeDiv { flex: 1; height: 100%; border-left: 2px solid #ddd; }
-    .CodeMirror { height: 100% !important; font-size: 14px; }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
+  
 </head>
 <body>
+  <header class="ide-toolbar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Company Logo" class="header-logo">
+    </div>
+    
+    <div class="actions-center">
 
-<header>Basic Blockly-to-Python IDE</header>
+      <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">
+        Connect ESP32
+      </button>
 
-<div id="editor-container">
-  <div id="blocklyDiv"></div>
-  
-  <div id="codeDiv">
-    <textarea id="codeTextArea"></textarea>
+      <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>
+        Upload to ESP32
+      </button>
+
+      <button id="stopBtn" class="btn btn-stop" onclick="stopESP32()" disabled>
+        Stop
+      </button>
+
+      <button id="fullscreenBtn" class="btn">
+        <span id="fs-icon">⛶</span> Fullscreen
+      </button>
+
+      <button class="btn btn-sim" onclick="toggleSimulation()">
+        Run Simulation
+      </button>
+
+    </div>
+
+    <div class="actions-right">
+      <button class="btn btn-download" onclick="downloadCode()">
+        Download .py
+      </button>
+    </div>
+  </header>
+
+  <main class="ide-container">
+
+    <div id="blocklyDiv"></div>
+    <div id="rightPanel">
+          <div id="editorContainer">
+              <textarea id="codeTextArea"></textarea>
+          </div>
+
+          <div id="terminalContainer">
+              <div class="terminal-header">
+                  <span>Terminal Output</span>                  
+                  <div class="header-controls">
+                      <button id="clearTerminalBtn">🗑️</button>
+                      <span id="expandIcon">▲</span>
+                  </div>
+              </div>
+                <div id="terminalOutput"></div>
+          </div>
+    </div>
+              
+  </main>
+
+  <div id="loadingOverlay" class="overlay-hidden">
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <p>Uploading to ESP32...</p>
+    </div>
   </div>
-</div>
-
-<xml id="toolbox" style="display: none">
-  <category name="Logic" colour="#5b80a5">
-    <block type="controls_if"></block>
-    <block type="logic_compare"></block>
-  </category>
-  <category name="Loops" colour="#5ba55b">
-    <block type="controls_repeat_ext"></block>
-  </category>
-  <category name="Text" colour="#5ba5a5">
-    <block type="text"></block>
-    <block type="text_print"></block>
-  </category>
-</xml>
-
-<div id="editor-container">
-  <div id="blocklyDiv"></div>
-  <div id="codeDiv">
-    <textarea id="codeTextArea"></textarea>
-  </div>
-</div>
-
-<xml id="toolbox" style="display: none">
-  <category name="Hardware" colour="#e67e22">
-    <block type="esp32_led"></block>
-  </category>
-  <category name="Logic" colour="#5b80a5">
-    <block type="controls_if"></block>
-  </category>
-</xml>
-
-<script>
-
-   // 1. Initialize CodeMirror
-  const editor = CodeMirror.fromTextArea(document.getElementById('codeTextArea'), {
-    mode: 'python',
-    lineNumbers: true,
-    readOnly: true,
-    theme: 'default'
-  });
-
-  // 2. Initialize Blockly
-  const workspace = Blockly.inject('blocklyDiv', {
-    toolbox: document.getElementById('toolbox'),
-    scrollbars: true
-  });
-
-  // 3. The "Sync Engine"
-  function updateCode(event) {
-    // Convert blocks to Python code
-    const code = Blockly.Python.workspaceToCode(workspace);
-    // Update the text editor
-    editor.setValue(code);
-  }
-
-  // 4. DEFINE THE BLOCK (Visual)
-  Blockly.Blocks['esp32_led'] = {
-    init: function() {
-      this.appendDummyInput()
-          .appendField("Set Built-in LED")
-          .appendField(new Blockly.FieldDropdown([["ON","1"], ["OFF","0"]]), "STATE");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
-      this.setColour(30); // Orange for hardware
-      this.setTooltip("Turn the internal ESP32 LED (GPIO 2) on or off");
-    }
-  };
-
-  // 5. DEFINE THE GENERATOR (Translation to MicroPython)
-  Blockly.Python['esp32_led'] = function(block) {
-    var dropdown_state = block.getFieldValue('STATE');
-    // This ensures 'import machine' only appears ONCE at the very top of the file
-  Blockly.Python.definitions_['import_machine'] = 'import machine';
   
-    var code = 'machine.Pin(2, machine.Pin.OUT).value(' + dropdown_state + ')\n';
-    return code;
-  };
-
-  // 6. INITIALIZE EVERYTHING ELSE
-  const editor = CodeMirror.fromTextArea(document.getElementById('codeTextArea'), {
-    mode: 'python',
-    lineNumbers: true,
-    readOnly: true
-  });
-
-  const workspace = Blockly.inject('blocklyDiv', {
-    toolbox: document.getElementById('toolbox')
-  });
-
-  function updateCode() {
-    const code = Blockly.Python.workspaceToCode(workspace);
-    editor.setValue(code);
-  }
-  
-  // Listen for any changes in the workspace
-  workspace.addChangeListener(updateCode);
-</script>
+  <script src="blocks.js"></script>
+  <script src="generators.js"></script>  
+  <script src="app.js"></script>
 
 </body>
 </html>

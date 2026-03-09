@@ -1,0 +1,322 @@
+
+
+
+/* 1. Layout & Containers */
+    body { 
+        font-family:'Courier New', Courier, monospace;
+        display: flex; 
+        flex-direction: column; 
+        height: 100vh; 
+        margin: 0; 
+        overflow: hidden; 
+        
+    }
+    
+    /* 2. The Highlight: This is likely where the 'Top' gap is coming from */
+    .blocklyTreeSelected {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-left: 6px solid #cdc71a !important;
+    }
+
+    /* 3. Adjust the Icon and Text spacing for the new height */
+    .blocklyTreeIcon {
+        margin: 0!important;
+        padding: 0 !important;
+        vertical-align: middle !important;
+    }
+
+      /* This will change the background of ANY row to your specific color on hover */
+    .blocklyToolboxDiv .blocklyTreeRow:hover.blocklyTreeLabel {
+        color: #ffffff !important; /* Ensures text is readable on the hover color */
+    }
+
+    .header-logo {
+      height: 48px; /* Standard size for toolbar icons */
+      width: auto;  /* Maintains aspect ratio */
+      display: block;
+      padding-left: 15px;
+      filter: drop-shadow(0px 0px 2px rgba(255,255,255,0.2)); /* Optional: makes it pop on dark themes */
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      padding-right: 20px;
+    }
+
+    .btn-stop {
+      background-color: #dc3545; /* Professional Red */
+      color: white;
+    }
+
+    .btn-stop:hover:not(:disabled) {
+      background-color: #c82333;
+    }
+
+
+    #rightPanel {
+  
+        display: flex;
+        flex-direction: column; /* Stack editor on top of terminal */
+        height: 100%;
+        min-width: 300px;
+        border-left: 2px solid #333;
+        overflow: hidden; /* Prevents the whole panel from scrolling */
+    }
+
+    #editorContainer { 
+        flex: 1; 
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        border-left: 2px solid rgb(1, 0, 0);
+        border-top: 1px solid #000000; 
+        background:#0a0001;
+        overflow: hidden;         
+    }
+
+    #terminalContainer {
+        display: flex;
+        flex-direction: column;
+        background: #000;
+        min-height: 40px; /* Height of the header when collapsed */
+        transition: height 0.2s ease; /* Smooth transition for clicks */
+    }
+
+    .terminal-header {
+        height: 40px;
+        background: #e9e7d9; /* Matching your header */
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        cursor: ns-resize; /* North-South resize cursor */
+        user-select: none;
+        font-weight: bold;
+        border-top: 2px solid rgb(228, 128, 128);
+    }
+
+    #editorContainer.CodeMirror {
+        flex: 1 1 auto !important;
+        height: 100% !important;
+        width: 100% !important;
+        position: absolute !important; /* Sometimes needed if flex fails */
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    } 
+
+  
+    #terminalOutput {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        color: rgb(208, 239, 208); /* Classic Terminal Green */
+        font-family: monospace;
+    }
+
+    #blocklyDiv { flex: 2; height: 100%; }
+
+    
+    .ide-container {
+      display: flex;
+      flex: 1; /* Takes up remaining height after header */
+      width: 100vw;
+    }
+
+    /* 1. Ensure the injected wrapper takes up the full 100% of its parent */
+    .CodeMirror { 
+      height: 100% !important; 
+      width: 100% !important;
+      flex: 1; /* This forces it to fill the flex container */
+      font-size: 14px;
+      background: #263238!important; /* Matches your editorContainer background */ 
+    } 
+
+    /* 2. This targets the scrollable area inside the editor */
+      .CodeMirror-scroll {
+          height: 100% !important;
+          min-height: 100% !important;
+      }
+
+
+    /* 3. This ensures the line numbers and text actually render */
+    .CodeMirror-sizer {
+        min-height: 100% !important;
+    }
+      
+    .CodeMirror-code {
+    color: #caf4cf !important; 
+    font-family: 'Courier New', monospace !important;
+    /* Force text to white for a moment to check */
+    }
+
+    /* Full-screen background */
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent */
+    backdrop-filter: blur(4px);    /* Modern blur effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;                 /* Ensure it's on top of everything */
+    transition: opacity 0.3s ease;
+}
+
+
+/* Code upload layout that appears when code is getting uploaded */
+    /* Hidden state */
+.overlay-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader-container {
+    text-align: center;
+    color: white;
+    font-family: sans-serif;
+}
+
+/* The Spinner Ring */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-top: 5px solid #cdc71a; /* Your brand yellow */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+ 
+    /* 5. Custom Icon Definitions (White icons for dark background) */
+
+    .customIconControls 
+    { background-image: url('https://img.icons8.com/?size=100&id=1938&format=png&color=FFFFFF');
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 18px;
+      height: 18px;
+    }
+
+    .customIconHardware 
+    { background-image: url('https://img.icons8.com/?size=100&id=1938&format=png&color=FFFFFF');
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 18px;
+      height: 18px;
+    }
+
+    .customIconLogic { background-image: url('https://img.icons8.com/?size=100&id=50986&format=png&color=FFFFFF'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 18px;
+      height: 18px;
+
+    }
+    .customIconLoops { background-image: url('https://img.icons8.com/?size=100&id=413&format=png&color=FFFFFF'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 18px;
+      height: 18px;
+
+    }
+    .customIconSensors { background-image: url('https://img.icons8.com/?size=100&id=P3wQLLlOhVgs&format=png&color=000000'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+    }
+
+    .customIconMath { background-image: url('https://img.icons8.com/?size=100&id=6tqSs4tVXxOJ&format=png&color=000000'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+    }
+
+    .customIconVariables { background-image: url('https://img.icons8.com/?size=100&id=RjvDCsrwHvJE&format=png&color=000000'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Typo Fixes & Global Class application */
+    .customIconControls, .customIconHardware, .customIconLogic, .customIconLoops, .customIconMath, .customIconSensors, .customIconVariables {
+      display: inline-block;
+      vertical-align: middle;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+
+    .ide-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #e9e7d9; /* Matches your dark theme */
+      color: rgb(228, 128, 128);
+      padding: 10px 20px;
+      height: 50px;
+    }
+
+    .actions-center {
+      display: flex;
+      gap: 10px;
+    }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+    }
+
+  .btn-connect { background-color: #007bff; color: white; }
+  .btn-upload { background-color: #28a745; color: white; }
+  .btn-sim { background-color: #6f42c1; color: white; }
+  .btn-download { background-color: #555; color: white; }
+
+
+  #fullscreenBtn {
+    background: transparent;
+    border: 1px solid rgb(228, 128, 128);
+    color: rgb(228, 128, 128);
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;    
+    }
+
+  #fullscreenBtn:hover {
+    background: rgb(228, 128, 128);
+    color: #e9e7d9; /* Inverts colors on hover */
+  }
+
+/* Visual feedback for the disabled upload button */
+  .btn:disabled {
+    background-color: #444;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  .btn:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+
