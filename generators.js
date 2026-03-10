@@ -20,7 +20,7 @@
 // 3. HARDWARE BLOCKS
 Blockly.Python.forBlock['esp32_led'] = function(block) {
     console.log("Generating: esp32_led");
-    var dropdown_state = block.getFieldValue('STATE');
+    var dropdown_state = block.getFieldValue('ESP32_LED');
     Blockly.Python.definitions_['import_machine'] = 'import machine';
     return 'machine.Pin(2, machine.Pin.OUT).value(' + dropdown_state + ')\n';
 };
@@ -50,4 +50,13 @@ Blockly.Python['sensor_ldr'] = function(block) {
     var pin = block.getFieldValue('PIN');
     var code = 'machine.ADC(machine.Pin(' + pin + ')).read()';
     return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+Blockly.Python['base_delay'] = function(block) {
+    const ms = block.getFieldValue('MS') || '0';
+    
+    // Ensures 'import time' is at the top of your MicroPython script
+    Blockly.Python.definitions_['import_time'] = 'import time';
+    
+    return "time.sleep_ms(" + ms + ")\n";
 };

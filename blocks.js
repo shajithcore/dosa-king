@@ -2,41 +2,72 @@
   // THIS FILE HELPS CREATES THE VISUAL CODING BLOCKS IN THE IDE // 
   
   // Start Block
-    Blockly.Blocks['base_start'] = {
-      init: function() {
-        this.appendDummyInput()
-            .appendField("On Start");
-        this.appendStatementInput("STACK")
-            .setCheck(null);
-        this.setColour("#2ECC71");
-        this.setTooltip("Run code once when the ESP32 starts.");
+    Blockly.defineBlocksWithJsonArray([
+      {
+        "type": "base_start",
+        "message0": "On Start %1 %2",
+        "args0": [
+          { "type": "input_dummy" },
+          { "type": "input_statement", "name": "STACK" }
+        ],    
+     //   "nextStatement": null, // Allows blocks to follow AFTER the start block */
+        "colour": "#0bc5dd",
+        "tooltip": "Initialization code for ESP32",        
       }
-    }; 
+    ]);
 
     // Forever Block
-    Blockly.Blocks['base_forever'] = {
-      init: function() {
-        this.appendDummyInput()
-            .appendField("Forever");
-        this.appendStatementInput("STACK")
-            .setCheck(null);
-        this.setColour("#FF5733");
-        this.setTooltip("Repeat this code in a loop.");
+    Blockly.defineBlocksWithJsonArray([
+      {
+        "type": "base_forever",
+        "message0": "Forever %1 %2",
+        "args0": [
+          { "type": "input_dummy" },
+          { "type": "input_statement", "name": "STACK" }
+        ],
+     /*  "style": "hat_blocks",
+     /*   "previousStatement": null, // Allows it to be placed after 'On Start' */
+     /*   "nextStatement": null, */
+        "colour": "#0bc5dd",
+        "tooltip": "Continuous loop for your ESP32",        
       }
-    };  
+    ]);
+
 
   // 1. DEFINE CUSTOM ESP32 BLOCKS (Must happen BEFORE workspace injection)
-  Blockly.Blocks['esp32_led'] = {
-    init: function() {
-      this.appendDummyInput()
-          .appendField("Set Built-in LED")
-          .appendField(new Blockly.FieldDropdown([["ON","1"], ["OFF","0"]]), "STATE");
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
-      this.setColour(30); 
-      this.setTooltip("Turn the internal ESP32 LED (GPIO 2) on or off");
-    }
-  };
+
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "esp32_led",
+    "message0": "Set Built-in LED %1",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "ESP32_LED",
+        "options": [
+          ["ON", "1"],
+          ["OFF", "0"]
+        ]
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "#00D1FF", // Cyber Blue for high contrast
+    "tooltip": "Turn the internal ESP32 LED (GPIO 2) on or off"
+  }
+]);
+
+  // Blockly.Blocks['esp32_led'] = {
+  //   init: function() {
+  //     this.appendDummyInput()
+  //         .appendField("Set Built-in LED")
+  //         .appendField(new Blockly.FieldDropdown([["ON","1"], ["OFF","0"]]), "STATE");
+  //     this.setPreviousStatement(true, null);
+  //     this.setNextStatement(true, null);
+  //     this.setColour(30); 
+  //     this.setTooltip("Turn the internal ESP32 LED (GPIO 2) on or off");
+  //   }
+  // };
 
 
 
@@ -81,15 +112,37 @@
     }
   };
 
-  Blockly.Blocks['base_delay'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Wait")
-        .appendField(new Blockly.FieldNumber(1000, 0), "MS")
-        .appendField("ms");
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(200);
-    this.setTooltip("Pause execution for a specific number of milliseconds.");
+//   Blockly.Blocks['base_delay'] = {
+//   init: function() {
+//     this.appendDummyInput()
+//         .appendField("Wait")
+//         .appendField(new Blockly.FieldNumber(1000, 0), "MS")
+//         .appendField("ms");
+//     this.setPreviousStatement(true, null);
+//     this.setNextStatement(true, null);
+//     this.setColour(200);
+//     this.setTooltip("Pause execution for a specific number of milliseconds.");
+//   }
+// };
+
+
+//TIME DELAY BLOCK (MILLI SECONDS)
+
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "base_delay",
+    "message0": "Wait %1 ms",
+    "args0": [
+      {
+        "type": "field_number",
+        "name": "MS",
+        "value": 1000,
+        "min": 0
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "#A65C81", // High-contrast hardware/control purple
+    "tooltip": "Pause execution for a specific number of milliseconds."
   }
-};
+]);

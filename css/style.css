@@ -20,7 +20,7 @@
 
     /* 3. Adjust the Icon and Text spacing for the new height */
     .blocklyTreeIcon {
-        margin: 0!important;
+        margin-top: 12px !important;
         padding: 0 !important;
         vertical-align: middle !important;
     }
@@ -319,4 +319,5 @@
   .btn:hover:not(:disabled) {
     opacity: 0.8;
   }
+
 

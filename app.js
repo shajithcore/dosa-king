@@ -3,9 +3,21 @@
 
   let port;
   let espWriter; // Declare it here at the top!
+  
 
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
-  'base': Blockly.Themes.Zelos,
+  'base': Blockly.Themes.Classic,
+  'categoryStyles':{
+    'controls_category': { 'colour': '#223fe6' },
+    'logic_category': { 'colour': '#43bf57' },
+    'loop_category': { 'colour': '#892d86' },
+    'math_category': { 'colour': '#5b67a5' },
+    'variables_category': { 'colour': '#a55b80' },
+    'sensors_category': { 'colour': '160' },
+    'hardware_category': { 'colour': '#0e434e' },
+
+  },
+
   'componentStyles': {
     'workspaceBackgroundColour': '#000511f9',
     'toolboxBackgroundColour': '#060606',
@@ -16,130 +28,27 @@
     'insertionMarkerOpacity': 0.3,
     'scrollbarColour': '#797979',
     'scrollbarOpacity': 0.9,
-    'cursorColour': '#d0d0d0'
-  }
+    'cursorColour': '#d0d0d0',  
+  },
+    'blockStyles':{
+        'base_start': {
+            'hat': 'cap',
+        },
+        'base_forever': {
+            'hat': 'cap',
+        },
+        'loop_blocks': {
+            'colourPrimary': "#892d86",
+            'colourSecondary':"#ff0000",
+            'colourTertiary':"#C5EAFF"
+        },
+        
+    },
+    'fontStyle': {},
+    'startHats': true
 });
   
-  const toolboxJson = {
-    "kind": "categoryToolbox",
-    "contents": [
-
-      {
-      "kind": "category",
-      "name": "Blocks Drawer", // This is your label
-      "cssConfig": {
-        "row": "toolbox-label-row" // Custom class for styling
-      }
-    },
-
-     // { "kind": "sep" }, // Visual separator
-
-      {
-        "kind": "category",
-        "name": "Controls",
-        "colour": "#e67e22",
-        "cssConfig": {
-          "icon": "customIconControls"},// This links to your CSS
-        "contents": [
-          { "kind": "block", "type": "base_start" },
-          { "kind": "block", "type": "base_forever"},
-          { "kind": "block", "type": "base_delay" } ]
-      },
-
-    //  { "kind": "sep" }, // Visual separator
-
-      {
-        "kind": "category",
-        "name": "ESP32 Hardware",
-        "colour": "#e67e22",
-        "cssConfig": {
-          "icon": "customIconHardware"},// This links to your CSS
-        "contents": [
-          { "kind": "block", "type": "esp32_led" } ]
-      },
-
-    //  { "kind": "sep" }, // Visual separator
-
-      {
-        "kind": "category",
-        "name": "Logic",
-        "colour": "#43bf57",
-        "cssConfig": {
-          "icon": "customIconLogic"},// This links to your CSS
-        "contents": [
-          { "kind": "block", "type": "controls_if" },
-          { "kind": "block", "type": "logic_compare" }
-        ]
-      },
-
-    //  { "kind": "sep" }, // Visual separator
-
-      {
-        "kind": "category",
-        "name": "Loops",
-        "colour": "#5ba55b",
-        "cssConfig": {
-          "icon": "customIconLoops"},// This links to your CSS
-        "contents": [ 
-
-        { "kind": "block", "type": "controls_repeat_ext" }
-        ]
-      },
-
-    //  { "kind": "sep" }, // Visual separator
-
-      {
-      "kind": "category", 
-      "name": "Math", 
-      "colour": "#5b67a5", 
-      "cssConfig": {
-        "icon": "customIconMath"},// This links to your CSS
-      "contents": [
-          { "kind": "block", "type": "math_number" },
-          { "kind": "block", "type": "math_arithmetic" },
-          { "kind": "block", "type": "math_single" },
-          { "kind": "block", "type": "math_trig" },   // Sin, Cos, Tan
-          { "kind": "block", "type": "math_constant" }, // Pi, E, Golden Ratio
-          { "kind": "block", "type": "math_number_property" }, // Is even, is odd, is prime
-          { "kind": "block", "type": "math_round" },
-          { "kind": "block", "type": "math_on_list" }, // Sum of list, min, max
-          { "kind": "block", "type": "math_modulo" },
-          { "kind": "block", "type": "math_constrain" }, // Keep number between X and Y
-          { "kind": "block", "type": "math_random_int" } // Useful for LED effects!
-      ]
-    },
-
-  //  { "kind": "sep" }, // Visual separator
-
-    {
-      "kind": "category", 
-      "name": "Variables", 
-      "custom": "VARIABLE", 
-      "colour": "#a55b80", 
-      "cssConfig": {
-          "icon": "customIconVariables"}
-      
-    },
-
-    //  { "kind": "sep" }, // Visual separator
-
-      {
-        "kind": "category",
-        "name": "Sensors",
-        "colour": "160",
-        "cssConfig": {
-          "icon": "customIconSensors"},// This links to your CSS
-        "contents": [
-          { "kind": "block", "type": "sensor_ultrasonic" },
-          { "kind": "block", "type": "sensor_dht11" },
-          { "kind": "block", "type": "sensor_ldr" }
-        ]
-      }
-    ]
-  };
-
-
-
+ 
  // 5. INITIALIZE CODEMIRROR
 
 var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
@@ -153,13 +62,32 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
 
   // 6. INJECT BLOCKLY (With Resizable/Zoom Settings)
   const workspace = Blockly.inject('blocklyDiv', {
-    toolbox: toolboxJson,
+    toolbox: toolboxCategories,
     theme: DarkTheme, // This changes the "Thanos" / Dark look
     renderer: 'zelos',          // This makes blocks look like Scratch (rounded)
-    move: { scrollbars: true, drag: true, wheel: true },
-    zoom: { controls: true, wheel: true, startScale: 0.9 },
-    grid: { spacing: 20, length: 3, colour: '#ccc', snap: true }    
+    move: { 
+        scrollbars: {
+            horizontal: true,
+            vertical: true 
+        },       
+        drag: true, 
+        wheel: true 
+    },
+    zoom: { 
+        controls: true, 
+        wheel: true,
+        startScale: 0.9          
+    },
+    trashcan: true,
+    disable: true,
+    grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },    
+    horizontalLayout: false,
+    toolboxPosition: 'start',
+    comments: true,
+    collapse: true,
+    disable: true,
   });
+
 
   forceToolboxStyles();
 
@@ -175,37 +103,42 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
     style.innerHTML = `
 
       /* Hide the icon for the label category if one appears */
-      .toolbox-label-row .blocklyTreeIcon {
-          display: none !important;
+      .toolbox-label-row .blocklyTreeIcon, 
+      .blocklyTreeIcon {
+            display: none !important;
       }
         /* 1. The Row: Full height and alignment */
         .blocklyTreeRow {
-            height: 50px !important;
+            position: relative !important;
+            top: auto !important;
+            height: 60px !important;    
             display: flex !important;
             align-items: center !important;
-            margin-bottom: 30px !important;
-            padding: 0 15px !important;
-            box-sizing: border-box !important;
-            border: none !important;
+            justify-content: center !important;
+            margin: 0 !important;
             background-color: transparent !important;
-            cursor: pointer;
+            width: 100% !important;
+            cursor: pointer !important;
         }
 
         /* 2. The Text: Inherits the category's theme color */
         .blocklyTreeLabel {
-            font-weight: bold !important;
-            font-size: 14px !important;
-            color: inherit !important; 
+            font-size: 18px !important;
+            font-family: 'Segoe UI', Tahoma, sans-serif !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            text-align: center !important; 
+            
         }
 
         /* Ensure the label row specifically stays transparent */
         .toolbox-label-row {
             background-color: #299b84 !important;
-            height: 50px !important;
-            font-family: 'Segoe UI', Tahoma, sans-serif !important;
-            justify-content: center !important; /* Horizontal centering */
-            align-items: center !important;     /* Vertical centering */
-            margin-top: 0px !important;
+            height: 30px !important;
+            display: flex !important;   
+            align-items: center !important;     /* Vertical centering */            
+            justify-content: center !important; /* Horizontal centering */            
+            margin-top: 10px !important;
             margin-bottom: 10px !important;
             border-radius: 4px; /* Optional: gives it a "pill" or "tab" look */
             cursor: default !important; /* Change pointer to standard arrow */
@@ -214,15 +147,21 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
 
         /* 2. The Text: Remove default padding/margins that might shift it */
         .toolbox-label-row .blocklyTreeLabel {
-            color: #cdc71a !important;
-            font-size: 11px !important;
-            font-weight: 800 !important;
-            text-transform: uppercase !important;
+            color: #f93d03 !important;
+            font-size: 25px !important;
+            font-weight: 800 !important;        
             letter-spacing: 2px !important;
             
             /* Reset Blockly's default side-padding to ensure true center */
             padding: 0 !important; 
             margin: 0 !important;
+}
+
+        .blocklyToolboxContents {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 20px !important;  /* THIS is what creates the space between buttons */
+            padding: 15px 0 !important;
 }
 
         /* 3. The Hover: Unified color for all categories */
@@ -299,6 +238,8 @@ termHeader.addEventListener('mousedown', (e) => {
     document.body.style.cursor = 'ns-resize'; // Keep cursor consistent while dragging
 });
 
+
+// 3. Listen for mouse movement on the entire document to allow dragging outside the header
 document.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
 
@@ -317,7 +258,7 @@ document.addEventListener('mousemove', (e) => {
 document.getElementById('terminalOutput').innerHTML = '';
 
 
-
+// Stop dragging on mouse up anywhere on the document
 document.addEventListener('mouseup', () => {
     isDragging = false;
     document.body.style.cursor = 'default';
@@ -330,6 +271,24 @@ document.addEventListener('fullscreenchange', () => {
     }
 });
 
+// Add this to your workspace setup
+workspace.setResizesEnabled(false); // Disables auto-calculation during heavy edits
+
+// Re-enable it only when the window actually resizes
+window.addEventListener('resize', () => {
+    workspace.setResizesEnabled(true);
+    Blockly.svgResize(workspace);
+    workspace.setResizesEnabled(false);
+});
+
+
+// This listener checks if blocks are placed outside of "base_start" or "base_forever" and disables them if so
+
+workspace.addChangeListener(Blockly.Events.disableOrphans);
+
+// 3. Initialize the disable Orphan plugin to clean up the Right-Click menu
+const disableTopBlocksPlugin = new DisableTopBlocks();
+disableTopBlocksPlugin.init();
 
 // 7. SYNC ENGINE
 
@@ -342,6 +301,7 @@ function updateCode(event) {
     try {
         // 2. Generate Python from the workspace
         const code = Blockly.Python.workspaceToCode(workspace);
+        document.getElementById('codeTextArea').value = code;
         
         // 3. LOGGING: Open your console (F12) to see this!
         console.log("Blockly generated:", code);
@@ -351,23 +311,26 @@ function updateCode(event) {
             editor.setValue(code);
             editor.refresh(); 
         }
+        else {
+            console.error("CodeMirror Editor not initialized yet!");
+        }
     } catch (e) {
         console.error("Sync Error:", e);
     }
 }
 
+
 // Ensure the listener is attached ONLY once
 workspace.removeChangeListener(updateCode); // Clear old ones
 workspace.addChangeListener(updateCode);    // Add fresh one
-
-
-// // Attach this to your workspace
-// workspace.addChangeListener(updateCode);
 
 // 8. GENERATOR DEFINITIONS (Must be defined before the listener)
 Blockly.Python.scrub_ = function(block, code, opt_thisOnly) {
     const nextBlock = block.getNextBlock();
     const nextCode = opt_thisOnly ? '' : Blockly.Python.blockToCode(nextBlock);
+    if (block.disabled) {
+      return '' + nextCode; 
+  }
     return code + nextCode;
 };
 
@@ -516,5 +479,4 @@ setTimeout(() => {
     updateCode();    
     if(editor) editor.refresh();
 }, 1000);
-
 
