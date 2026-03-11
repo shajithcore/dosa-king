@@ -6,6 +6,7 @@
   <script src="https://unpkg.com/blockly/blockly.min.js"></script>
   <script src="https://unpkg.com/blockly/python_compressed.js"></script>
   <script src="https://unpkg.com/@blockly/disable-top-blocks"></script>
+  <script src="https://unpkg.com/@blockly/workspace-backpack"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/theme/material.min.css">
@@ -15,63 +16,132 @@
   
 </head>
 <body>
-  <header class="ide-toolbar">
-    <div class="logo">
-      <img src="assets/logo.png" alt="Company Logo" class="header-logo">
+
+
+  <header class="ide-toolbar"> <!--The header section is a complete narrow row that holds the logo, navigation, and action buttons--> 
+    
+    <div class="logo"> <!--The container for the IDE logo -->
+      <img src="assets/logo.png" alt="Company Logo" class="header-logo">  
     </div>
+
+
+    <nav class="top-nav"> <!--The navigation section that contains the view toggle and dropdown menu-->
+            
+        <div class="mode-toggle-container"> <!--The container for the view toggle switches-->
+            <span class="toggle-label">Build</span> <!--The label for the block view toggle-->
+            <label class="switch"> <!--The switch for toggling between block and code views-->
+                <input type="checkbox" id="toggleCode" onchange="toggleEditorView()"> <!--The checkbox input for the code view toggle-->
+                <span class="slider round"></span> <!--The slider for the switch-->
+            </label>
+            <span class="toggle-label">Test</span> <!--The label for the code view toggle-->
+        </div>      
+
+    </nav>
+
     
     <div class="actions-center">
 
-      <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">
-        Connect ESP32
-      </button>
+      <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">Connect ESP32</button>
 
-      <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>
-        Upload to ESP32
-      </button>
+      <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>Upload to ESP32</button>
 
-      <button id="stopBtn" class="btn btn-stop" onclick="stopESP32()" disabled>
-        Stop
-      </button>
+      <button id="stopBtn" class="btn btn-stop" onclick="stopESP32()" disabled>Stop</button>
 
       <button id="fullscreenBtn" class="btn">
-        <span id="fs-icon">⛶</span> Fullscreen
-      </button>
-
-      <button class="btn btn-sim" onclick="toggleSimulation()">
-        Run Simulation
+        <span id="fs-icon">⛶</span> 
       </button>
 
     </div>
 
+    
     <div class="actions-right">
-      <button class="btn btn-download" onclick="downloadCode()">
-        Download .py
-      </button>
+
+        <div class="nav-buttons">
+            <button class="icon-btn" onclick="toggleCodeOverlay()">📜 View Code</button>
+        </div>
+
     </div>
+
   </header>
 
-  <main class="ide-container">
+  
+  <div class="ide-container">
 
-    <div id="blocklyDiv"></div>
-    <div id="rightPanel">
-          <div id="editorContainer">
-              <textarea id="codeTextArea"></textarea>
-          </div>
+    <div id="simulation-container">
+        <div class="panel-header">
+            <!-- <span>Simulation</span> -->
+        </div>
+        <div id="sim-canvas">
+            <svg id="esp32-svg" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="180" height="330" rx="10" fill="#2c2c2c" stroke="#444" stroke-width="2"/>
+                
+                <rect x="40" y="180" width="120" height="120" rx="4" fill="#c0c0c0" />
+                <text x="100" y="240" font-family="Arial" font-size="10" text-anchor="middle" fill="#555">ESP32-WROOM</text>
+                
+                <rect x="75" y="0" width="50" height="25" rx="3" fill="#333" />
+                
+                <rect x="30" y="30" width="25" height="25" rx="3" fill="#444" stroke="#666"/>
+                <rect x="145" y="30" width="25" height="25" rx="3" fill="#444" stroke="#666"/>
+                
+                <circle id="led-power" cx="65" cy="42" r="4" fill="#400" />
+                
+                <circle id="led-d2" cx="135" cy="42" r="4" fill="#004" />
 
-          <div id="terminalContainer">
-              <div class="terminal-header">
-                  <span>Terminal Output</span>                  
-                  <div class="header-controls">
-                      <button id="clearTerminalBtn">🗑️</button>
-                      <span id="expandIcon">▲</span>
-                  </div>
-              </div>
-                <div id="terminalOutput"></div>
-          </div>
+                <g id="pins">
+                    <rect x="15" y="70" width="15" height="250" fill="#1a1a1a" />
+                    <rect x="170" y="70" width="15" height="250" fill="#1a1a1a" />
+                    
+                    <circle cx="22" cy="85" r="4" fill="#cd7f32" /> <circle cx="178" cy="85" r="4" fill="#cd7f32" /> </g>
+                </svg>
+        </div>
+
+        <div id="sim-toggle-tab" onclick="toggleSimPanel()">
+            <span id="tab-icon">◂</span>
+        </div>
     </div>
+
+    <div id="sim-resizer" class="resizer-v"></div>
+
+    <div class="main-layout">
               
-  </main>
+        <div id="resizer-v" class="resizer-v hidden"></div>
+        
+        <div id="editor-container" class="editor-hidden">
+            <textarea id="codeTextArea"></textarea>
+        </div>
+
+        <div id="code-overlay" class="overlay-hidden">
+          <div class="overlay-header">
+              <span>Python Reference</span>
+              <div class="overlay-actions">
+                  <button onclick="downloadCode()">💾 .py</button>
+                  <button onclick="toggleCodeOverlay()">✕</button>
+              </div>
+        </div>
+
+        <div id="overlay-editor-container">
+            <textarea id="codeTextArea"></textarea>
+        </div>
+    
+      </div>  <!--End of main-layout-->
+      
+      <div id="blocklyDiv"></div>  
+
+    <div id="terminal-container" class="terminal-minimized">
+        <div id="terminal-resizer-h" class="resizer-h"></div>
+        <div class="terminal-header">
+            <span>Terminal</span>
+            <div class="terminal-controls">
+                <button onclick="clearTerminal()">Clear</button>
+                <button id="terminalToggleBtn">⌃</button>
+            </div>
+        </div>
+        <div id="terminalOutput"></div>
+    </div>  
+</div>
+
+
+
 
   <div id="loadingOverlay" class="overlay-hidden">
     <div class="loader-container">

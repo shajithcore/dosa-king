@@ -88,6 +88,20 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
     disable: true,
   });
 
+  // 2. Initialize the Backpack
+// In the script-tag version, the class is usually found under the plugin name
+const backpack = new Backpack(workspace, {
+    useFilledBackpackImage: true,
+    allowEmptyBackpackOpen: true,
+    contextMenu: {
+        emptyBackpack: true,
+        removeFromBackpack: true,
+        copyToBackpack: true,
+        copyAllToBackpack: true,
+        pasteAllToBackpack: true,
+    }
+});
+    backpack.init();
 
   forceToolboxStyles();
 
@@ -213,10 +227,48 @@ fullscreenBtn.addEventListener('click', () => {
 
 
 
+function toggleTerminalView() {
+    const termCont = document.getElementById('terminal-container');
+    const isChecked = document.getElementById('toggleTerminal').checked;
+
+    if (isChecked) {
+        termCont.style.display = 'flex';
+    } else {
+        termCont.style.display = 'none';
+    }
+
+    Blockly.svgResize(workspace);
+}
+
+// This function toggles the simulation view, which is currently just a placeholder div. You can expand this to include an actual simulation canvas or iframe in the future.
+function toggleSimView() {
+    const simCont = document.getElementById('simulation-container');
+    const isChecked = document.getElementById('toggleSim').checked;
+
+    if (isChecked) {
+        simCont.classList.remove('sim-hidden');
+    } else {
+        simCont.classList.add('sim-hidden');
+    }
+
+    // Force Blockly to recalculate its width since the left margin changed
+    setTimeout(() => {
+        Blockly.svgResize(workspace);
+    }, 300);
+}
+
+
 /* Make the terminal output area and code editor area re-sizable */
 
 const termContainer = document.getElementById('terminalContainer');
 const termHeader = document.querySelector('.terminal-header');
+const hResizer = document.getElementById('terminal-resizer-h');
+
+hResizer.addEventListener('mousedown', (e) => {
+    document.addEventListener('mousemove', resizeTerminal);
+    document.addEventListener('mouseup', stopResizeTerminal);
+    document.body.style.cursor = 'ns-resize';
+});
 
 let isDragging = false;
 
@@ -238,6 +290,20 @@ termHeader.addEventListener('mousedown', (e) => {
     document.body.style.cursor = 'ns-resize'; // Keep cursor consistent while dragging
 });
 
+// Setting the height of the terminal to 25% of the screen when the toggle button is clicked, and minimizing it when clicked again. This allows for quick access to the terminal without taking up too much space when not needed.
+document.getElementById('terminalToggleBtn').addEventListener('click', () => {
+    const container = document.getElementById('terminal-container');
+    const targetHeight = window.innerHeight * 0.25; // 25% of screen
+
+    if (container.offsetHeight < 100) {
+        container.style.height = targetHeight + "px";
+        container.classList.remove('terminal-minimized');
+    } else {
+        container.classList.add('terminal-minimized');
+    }
+    
+    Blockly.svgResize(workspace);
+});
 
 // 3. Listen for mouse movement on the entire document to allow dragging outside the header
 document.addEventListener('mousemove', (e) => {
@@ -282,6 +348,52 @@ window.addEventListener('resize', () => {
 });
 
 
+function toggleEditorView() {
+    const blocklyView = document.getElementById('blocklyDiv');
+    const editorView = document.getElementById('editor-container');
+    const isChecked = document.getElementById('toggleCode').checked;
+
+    if (isChecked) {
+        // Switch to CODE VIEW
+        blocklyView.classList.add('hidden-view');
+        editorView.classList.remove('hidden-view');
+        
+        // Ensure CodeMirror is updated and visible
+        if (editor) {
+            // Update the code one last time before showing
+            const code = Blockly.Python.workspaceToCode(workspace);
+            editor.setValue(code);
+            editor.refresh(); 
+        }
+    } else {
+        // Switch to BLOCK VIEW
+        editorView.classList.add('hidden-view');
+        blocklyView.classList.remove('hidden-view');
+        
+        // Force Blockly to recalculate its size so blocks aren't "frozen"
+        Blockly.svgResize(workspace);
+    }
+}
+
+
+// A code to run simmulation
+function runSimulation() {
+    const allBlocks = workspace.getAllBlocks(false);
+    const ledBlock = allBlocks.find(b => b.type === 'esp32_led');
+    const ledElement = document.getElementById('sim-led');
+
+    if (ledBlock && ledElement) {
+        const state = ledBlock.getFieldValue('STATE');
+        if (state === '1') {
+            ledElement.className = 'led-on';
+        } else {
+            ledElement.className = 'led-off';
+        }
+    }
+}
+
+// Hook it into the workspace change event
+workspace.addChangeListener(runSimulation);
 // This listener checks if blocks are placed outside of "base_start" or "base_forever" and disables them if so
 
 workspace.addChangeListener(Blockly.Events.disableOrphans);
@@ -319,6 +431,24 @@ function updateCode(event) {
     }
 }
 
+
+
+
+function resizeTerminal(e) {
+    const newHeight = window.innerHeight - e.clientY;
+    // Minimum 40px, Maximum 70% of screen
+    if (newHeight > 40 && newHeight < window.innerHeight * 0.7) {
+        termContainer.style.height = `${newHeight}px`;
+        termContainer.classList.remove('terminal-minimized');
+        if (editor) editor.refresh();
+        Blockly.svgResize(workspace);
+    }
+}
+
+function stopResizeTerminal() {
+    document.removeEventListener('mousemove', resizeTerminal);
+    document.body.style.cursor = 'default';
+}
 
 // Ensure the listener is attached ONLY once
 workspace.removeChangeListener(updateCode); // Clear old ones
@@ -421,6 +551,149 @@ async function readFromESP32() {
         }
     }
 }
+
+
+// Swith between blockly and code editor view
+function toggleEditorView() {
+    const blocklyView = document.getElementById('blocklyDiv');
+    const editorView = document.getElementById('editor-container');
+    const isChecked = document.getElementById('toggleCode').checked;
+
+    if (isChecked) {
+        // --- PYTHON MODE ---
+        blocklyView.classList.add('hidden-view');
+        editorView.classList.remove('hidden-view');
+        
+        if (editor) {
+            const code = Blockly.Python.workspaceToCode(workspace);
+            editor.setValue(code);
+            editor.refresh(); 
+        }
+    } else {
+        // --- BLOCK MODE ---
+        editorView.classList.add('hidden-view');
+        blocklyView.classList.remove('hidden-view');
+        
+        // Ensure blocks fill the space left by the editor
+        setTimeout(() => {
+            Blockly.svgResize(workspace);
+        }, 50);
+    }
+}
+
+// Set initial state on window load
+window.addEventListener('load', () => {
+    document.getElementById('toggleCode').checked = false; // Default to Block
+    toggleEditorView(); // Run once to set initial visibility
+});
+
+// function toggleSimDrawer() {
+//     const simPanel = document.getElementById('simulation-container');
+//     const isCollapsed = simPanel.classList.toggle('collapsed');
+    
+//     // Crucial: Update Blockly after the CSS transition (300ms)
+//     setTimeout(() => {
+//         Blockly.svgResize(workspace);
+//     }, 310);
+// }
+
+// // Ensure the resizer doesn't interfere with the click
+// // We stop the resize if the panel is collapsed
+// simResizer.addEventListener('mousedown', (e) => {
+//     if (document.getElementById('simulation-container').classList.contains('collapsed')) return;
+    
+//     document.addEventListener('mousemove', resizeSim);
+//     document.addEventListener('mouseup', stopResizeSim);
+// });
+
+function toggleMode() {
+    const isDebug = document.getElementById('modeToggle').checked;
+    
+    if (isDebug) {
+        // --- DEBUG MODE ---
+        // Hide the toolbox flyout and the category menu
+        workspace.getToolbox().setVisible(false);
+        // Focus the simulation panel if it was collapsed
+        if (simPanel.classList.contains('collapsed')) {
+            collapseSimulation(); 
+        }
+    } else {
+        // --- ACTION MODE ---
+        workspace.getToolbox().setVisible(true);
+    }
+    
+    Blockly.svgResize(workspace);
+}
+
+
+function toggleSimPanel() {
+    const sim = document.getElementById('simulation-container');
+    const icon = document.getElementById('tab-icon');
+    
+    const isCollapsed = sim.classList.toggle('collapsed');
+    
+    // Update the arrow direction
+    icon.innerText = isCollapsed ? "▸" : "◂";
+
+    // We must wait for the 0.3s CSS transition to finish 
+    // before telling Blockly to resize, otherwise it only resizes halfway.
+    let resizeRepeat = setInterval(() => {
+        Blockly.svgResize(workspace);
+    }, 10);
+
+    setTimeout(() => {
+        clearInterval(resizeRepeat);
+        Blockly.svgResize(workspace); // Final crisp resize
+    }, 350);
+}
+
+function updateSimulation() {
+    const powerLed = document.getElementById('led-power');
+    const d2Led = document.getElementById('led-d2');
+    
+    // Simulate Power ON
+    powerLed.classList.add('led-on-red');
+
+    // Logic to check if the 'LED ON' block is in the workspace
+    const allBlocks = workspace.getAllBlocks(false);
+    const ledBlock = allBlocks.find(b => b.type === 'esp32_led');
+    
+    if (ledBlock) {
+        const state = ledBlock.getFieldValue('STATE');
+        if (state === '1') {
+            d2Led.classList.add('led-on-blue');
+        } else {
+            d2Led.classList.remove('led-on-blue');
+        }
+    }
+}
+
+// Attach to Blockly change event
+workspace.addChangeListener(updateSimulation);
+
+
+
+function toggleCodeOverlay() {
+    const overlay = document.getElementById('code-overlay');
+    const workspaceElement = document.querySelector('.blocklyWidgetDiv'); // Blockly's main layer
+    
+    overlay.classList.toggle('overlay-hidden');
+    
+    if (!overlay.classList.contains('overlay-hidden')) {
+
+        // When open, the workspace background
+        document.getElementById('blocklyDiv').style.opacity = "1";
+        // Force update and refresh when opened
+        const code = Blockly.Python.workspaceToCode(workspace);
+        editor.setValue(code);
+        editor.refresh();
+    } else {
+        // When closed, the workspace background
+        document.getElementById('blocklyDiv').style.opacity = "1";
+    }
+
+}
+
 
 // The function for uploading code onto ESP32
 

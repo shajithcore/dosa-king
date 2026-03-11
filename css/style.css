@@ -8,7 +8,7 @@
         flex-direction: column; 
         height: 100vh; 
         margin: 0; 
-        overflow: hidden; 
+        overflow: hidden;       
         
     }
     
@@ -30,13 +30,13 @@
         color: #ffffff !important; /* Ensures text is readable on the hover color */
     }
 
-    .header-logo {
+     .header-logo {
       height: 48px; /* Standard size for toolbar icons */
-      width: auto;  /* Maintains aspect ratio */
+      width: auto; /* Maintains aspect ratio */
       display: block;
       padding-left: 15px;
-      filter: drop-shadow(0px 0px 2px rgba(255,255,255,0.2)); /* Optional: makes it pop on dark themes */
-    }
+      filter: drop-shadow(0px 0px 2px rgba(255,255,255,0.2)); /*Optional: makes it pop on dark themes */
+    } 
 
     .logo {
       display: flex;
@@ -54,36 +54,41 @@
     }
 
 
-    #rightPanel {
-  
-        display: flex;
-        flex-direction: column; /* Stack editor on top of terminal */
-        height: 100%;
-        min-width: 300px;
-        border-left: 2px solid #333;
-        overflow: hidden; /* Prevents the whole panel from scrolling */
+    #editorContainer { 
+        width: 400px; /* Default width when open */
+        transition: width 0.3s ease;
+        color: #000;    
     }
 
-    #editorContainer { 
-        flex: 1; 
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100%;
-        height: 100%;
-        min-height: 0;
-        border-left: 2px solid rgb(1, 0, 0);
-        border-top: 1px solid #000000; 
-        background:#0a0001;
-        overflow: hidden;         
+    #editor-container.editor-hidden {
+        width: 0 !important;
+        display: none;
+        color:#000 !important;
     }
 
     #terminalContainer {
+        position: relative;
+        background: #060606;
+        border-top: 2px solid #333;
         display: flex;
         flex-direction: column;
-        background: #000;
-        min-height: 40px; /* Height of the header when collapsed */
-        transition: height 0.2s ease; /* Smooth transition for clicks */
-    }
+      }
+
+    .terminal-minimized {
+        height: 40px !important;
+      }
+
+  .resizer-h {
+        height: 5px;
+        cursor: ns-resize;
+        background: transparent;
+        position: absolute;
+        top: -2px;
+        width: 100%;
+        z-index: 100;
+      }
+
+  .resizer-h:hover { background: #cdc71a; }
 
     .terminal-header {
         height: 40px;
@@ -100,10 +105,11 @@
     }
 
     #editorContainer.CodeMirror {
-        flex: 1 1 auto !important;
+    /*    flex: 1 1 auto !important;
         height: 100% !important;
         width: 100% !important;
         position: absolute !important; /* Sometimes needed if flex fails */
+        color: #000;
         top: 0;
         bottom: 0;
         left: 0;
@@ -119,22 +125,97 @@
         font-family: monospace;
     }
 
-    #blocklyDiv { flex: 2; height: 100%; }
+   /* #blocklyDiv { flex: 1; height: 100%; } */
+
+   /* Ensure the parent can hold both */
+    .main-layout {
+        flex: 1;
+        color:#000;
+        height: 100%;
+    }
+
+    #blocklyDiv, #editor-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: black !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Hide the editor by default */
+    .hidden-view {
+        display: none !important;
+    }
+
+    /* Force CodeMirror to fill the screen */
+    /* .CodeMirror {
+        height: 100% !important;
+        font-size: 16px; /* Larger font looks better in full-screen mode */
+  /*  }, */
 
     
     .ide-container {
-      display: flex;
-      flex: 1; /* Takes up remaining height after header */
+      display: flex;      
       width: 100vw;
+      overflow: hidden;
     }
 
+   .main-layout {
+        display: flex; 
+        flex: 1; /* Takes up remaining space above terminal */
+        overflow: hidden;
+        background: #111;
+        position: relative;
+        width:100%;
+        height:100%;
+    } 
+
+    #simulation-container {
+        position: relative;
+        width: 25%; /* Your requested default */
+        height: calc(100vh - 50px); /* Full height minus nav */
+        min-width: 0; /* Important for collapsing */
+        background: #1e1e1e;
+        border-right: 1px solid #333;        
+        transition: width 0.3s ease; /* Smooth slide */
+        flex-direction: column;
+        flex-shrink: 0;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: visible !important;/* Allows the handle to stick out */
+}
+
+/* The Toggle Tab CSS */
+    #sim-toggle-tab {
+        position: absolute;
+        right: -20px;
+        top: 50%;
+        width: 20px;
+        height: 60px;
+        color: white;
+        background: #333;
+        cursor: pointer;
+        z-index: 100;
+        border-radius: 0 8px 8px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #444;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+    #sim-toggle-tab:hover {
+        background: #223fe6; /* Edusharks Blue highlight */
+    }
+
+
     /* 1. Ensure the injected wrapper takes up the full 100% of its parent */
-    .CodeMirror { 
-      height: 100% !important; 
-      width: 100% !important;
-      flex: 1; /* This forces it to fill the flex container */
-      font-size: 14px;
-      background: #263238!important; /* Matches your editorContainer background */ 
+.CodeMirror { 
+    height: 100% !important; 
+    width: 100% !important;
+    flex: 1; /* This forces it to fill the flex container */
+    font-size: 16px;
+    background: #2632385e!important; /* Matches your editorContainer background */ 
     } 
 
     /* 2. This targets the scrollable area inside the editor */
@@ -150,7 +231,7 @@
     }
       
     .CodeMirror-code {
-    color: #caf4cf !important; 
+    color: #ef0a0a !important; 
     font-family: 'Courier New', monospace !important;
     /* Force text to white for a moment to check */
     }
@@ -267,7 +348,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #e9e7d9; /* Matches your dark theme */
+      background-color: #c4d447; /* Matches your dark theme */
       color: rgb(228, 128, 128);
       padding: 10px 20px;
       height: 50px;
@@ -320,4 +401,253 @@
     opacity: 0.8;
   }
 
+/* Move the backpack slightly so it doesn't overlap your Zoom controls */
+.blocklyBackpack {
+    margin-bottom: 50px !important; /* Push it up from the bottom right */
+    opacity: 0.8;
+}
 
+.blocklyBackpack:hover {
+    opacity: 1;
+}
+
+.top-nav {
+    display: flex;
+    background: #0a546d0f;
+    padding: 0 20px;
+    height: 50px;
+    align-items: center;
+  /*  border-bottom: 1px solid #333; */
+}
+
+.menu-item {
+    position: relative;
+    margin-left: 20px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background: #252525;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+    z-index: 1000;
+    padding: 10px;
+    border: 1px solid #444;
+}
+
+.menu-item:hover .dropdown-content { display: block; }
+
+.dropdown-content label {
+    display: block;
+    padding: 8px;
+    color: #eee;
+    font-size: 14px;
+}
+
+.dropdown-content hr { border: 0.5px solid #444; margin: 10px 0; }
+
+/* Container to align labels and switch */
+.mode-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto; /* Pushes toggle to the right side of the nav */
+    margin-right: 20px;
+}
+
+.toggle-label {
+    color: #1a17b9;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 20px;
+    font-style:normal;
+    font-weight: 00;
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #0b870b; /* Default: Block Mode (Darker) */
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* When checked (Python Mode) */
+input:checked + .slider {
+    background-color: #223fe6; /* Edusharks Blue / Python Mode */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #223fe6;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Code Overlay Styles */
+#code-overlay {
+    position: fixed;
+    top: 50px; /* Below Nav */
+    right: 0;
+    width: 40%;
+    height: calc(100vh - 70px);
+    /* High transparency: 0.15 gives a ghost-like tint */
+    background: rgba(10, 10, 10, 0.15);     
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.overlay-hidden {
+    transform: translateX(100%); /* Slide out to the right */
+}
+
+.overlay-header {
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.4); /* Slightly darker to keep buttons visible */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#overlay-editor-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.CodeMirror-line {
+    color: #ffffff !important; /* Sharp white text */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Slight shadow to keep it readable over colorful blocks */
+    font-weight: 500;
+    font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+/* Neon Python Syntax for High Visibility */
+.cm-s-material .cm-keyword { color: #ff79c6 !important; font-weight: bold; } /* Keywords */
+.cm-s-material .cm-def { color: #50fa7b !important; }     /* Function names */
+.cm-s-material .cm-string { color: #f1fa8c !important; }  /* Strings */
+.cm-s-material .cm-comment { color: #6272a4 !important; font-style: italic; } /* Comments */
+.cm-s-material .cm-number { color: #bd93f9 !important; }  /* Numbers */
+
+
+
+
+/* The Clickable Toggle Tab */
+#sim-handle {
+    position: absolute;
+    right: -15px; /* Halfway over the border */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 60px;
+    background: #333;
+    border: 1px solid #444;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: background 0.2s;
+}
+
+#sim-handle:hover {
+    background: #223fe6; /* Edusharks Blue highlight */
+}
+
+#handle-icon {
+    color: white;
+    font-size: 10px;
+    user-select: none;
+}
+
+/* Hidden/Collapsed State */
+#simulation-container.collapsed {
+    width: 0 !important;
+    border-right: none;
+}
+
+#simulation-container.collapsed #handle-icon {
+    transform: rotate(180deg); /* Flip arrow to point right */
+}
+
+
+
+#sim-toggle-tab:hover {
+    background: #223fe6; /* Edusharks Blue highlight */
+}
+
+/* Hide internal content when collapsed so it doesn't "peek" out */
+#simulation-container.collapsed > *:not(#sim-toggle-tab) {
+    display: none;
+}
+
+#sim-toggle-tab {
+    box-shadow: 0 0 10px rgba(34, 63, 230, 0.5);
+    border-left: none; /* Look seamless against the panel */
+}
+
+#sim-canvas {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #111; /* Dark background to make the board pop */
+    overflow: hidden;
+}
+
+#esp32-svg {
+    max-width: 100%;
+    max-height: 90%;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+
+/* Classes to trigger the LED "Glow" */
+.led-on-red {
+    fill: #ff0000 !important;
+    filter: drop-shadow(0 0 5px #ff0000);
+}
+
+.led-on-blue {
+    fill: #0077ff !important;
+    filter: drop-shadow(0 0 5px #0077ff);
+}
