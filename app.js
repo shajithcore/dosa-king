@@ -48,12 +48,31 @@
     'startHats': true
 });
   
- 
+
+    const starterState = {
+    "blocks": {
+        "languageVersion": 0,
+        "blocks": [
+        {
+            "type": "base_start",
+            "x": 100,
+            "y": 50
+        },
+        {
+            "type": "base_forever",
+            "x": 400,
+            "y": 50
+        }
+        ]
+    }
+    };
+
+    
  // 5. INITIALIZE CODEMIRROR
 
 var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
     mode: "python",
-    theme: "dracula", // This must match the CSS link in your head
+    theme: "material", // This must match the CSS link in your head
     lineNumbers: true,
     indentUnit: 4,
     matchBrackets: true
@@ -80,13 +99,16 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
     },
     trashcan: true,
     disable: true,
-    grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },    
+    grid: { spacing: 20, length: 0.5, colour: '#ccc', snap: true },    
     horizontalLayout: false,
     toolboxPosition: 'start',
     comments: true,
     collapse: true,
     disable: true,
   });
+
+  Blockly.serialization.workspaces.load(starterState, workspace);
+
 
   // 2. Initialize the Backpack
 // In the script-tag version, the class is usually found under the plugin name
@@ -227,6 +249,18 @@ fullscreenBtn.addEventListener('click', () => {
 
 
 
+function toggleTerminalView() {
+    const termCont = document.getElementById('terminal-container');
+    const isChecked = document.getElementById('toggleTerminal').checked;
+
+    if (isChecked) {
+        termCont.style.display = 'flex';
+    } else {
+        termCont.style.display = 'none';
+    }
+
+    Blockly.svgResize(workspace);
+}
 
 // This function toggles the simulation view, which is currently just a placeholder div. You can expand this to include an actual simulation canvas or iframe in the future.
 function toggleSimView() {
@@ -246,7 +280,52 @@ function toggleSimView() {
 }
 
 
+/* Make the terminal output area and code editor area re-sizable */
 
+const termContainer = document.getElementById('terminalContainer');
+const termHeader = document.querySelector('.terminal-header');
+const hResizer = document.getElementById('terminal-resizer-h');
+
+hResizer.addEventListener('mousedown', (e) => {
+    document.addEventListener('mousemove', resizeTerminal);
+    document.addEventListener('mouseup', stopResizeTerminal);
+    document.body.style.cursor = 'ns-resize';
+});
+
+let isDragging = false;
+
+// 1. Double-Click or Single-Click to Toggle
+termHeader.addEventListener('click', (e) => {
+    if (e.target.closest('button')) return; // Ignore if clicking clear button
+    
+    if (termContainer.offsetHeight < 100) {
+        termContainer.style.height = "200px";
+    } else {
+        termContainer.style.height = "40px";
+    }
+    editor.refresh(); // Keep CodeMirror aligned
+});
+
+// 2. Drag to Resize
+termHeader.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    document.body.style.cursor = 'ns-resize'; // Keep cursor consistent while dragging
+});
+
+// Setting the height of the terminal to 25% of the screen when the toggle button is clicked, and minimizing it when clicked again. This allows for quick access to the terminal without taking up too much space when not needed.
+document.getElementById('terminalToggleBtn').addEventListener('click', () => {
+    const container = document.getElementById('terminal-container');
+    const targetHeight = window.innerHeight * 0.25; // 25% of screen
+
+    if (container.offsetHeight < 100) {
+        container.style.height = targetHeight + "px";
+        container.classList.remove('terminal-minimized');
+    } else {
+        container.classList.add('terminal-minimized');
+    }
+    
+    Blockly.svgResize(workspace);
+});
 
 // 3. Listen for mouse movement on the entire document to allow dragging outside the header
 document.addEventListener('mousemove', (e) => {
@@ -376,11 +455,26 @@ function updateCode(event) {
 
 
 
+
+function resizeTerminal(e) {
+    const newHeight = window.innerHeight - e.clientY;
+    // Minimum 40px, Maximum 70% of screen
+    if (newHeight > 40 && newHeight < window.innerHeight * 0.7) {
+        termContainer.style.height = `${newHeight}px`;
+        termContainer.classList.remove('terminal-minimized');
+        if (editor) editor.refresh();
+        Blockly.svgResize(workspace);
+    }
+}
+
+function stopResizeTerminal() {
+    document.removeEventListener('mousemove', resizeTerminal);
+    document.body.style.cursor = 'default';
+}
+
 // Ensure the listener is attached ONLY once
 workspace.removeChangeListener(updateCode); // Clear old ones
 workspace.addChangeListener(updateCode);    // Add fresh one
-
-
 
 // 8. GENERATOR DEFINITIONS (Must be defined before the listener)
 Blockly.Python.scrub_ = function(block, code, opt_thisOnly) {
@@ -556,23 +650,40 @@ function toggleMode() {
 
 function toggleSimPanel() {
     const sim = document.getElementById('simulation-container');
-    const icon = document.getElementById('tab-icon');
-    
+    const resizer = document.getElementById('sim-resizer'); // Ensure this ID exists!
     const isCollapsed = sim.classList.toggle('collapsed');
+
+
+    if (isCollapsed) {
+        resizer.style.display = 'none';
+    } else {
+        setTimeout(() => {
+            resizer.style.display = 'block';
+        }, 100);
+    }
     
-    // Update the arrow direction
-    icon.innerText = isCollapsed ? "▸" : "◂";
+    // Set the target width
+    sim.style.width = isCollapsed ? "0px" : "30%";
 
-    // We must wait for the 0.3s CSS transition to finish 
-    // before telling Blockly to resize, otherwise it only resizes halfway.
-    let resizeRepeat = setInterval(() => {
+    // SMOOTH RESIZE ENGINE
+    let startTime = null;
+    const duration = 300; // Must match your CSS transition time
+
+    function smoothResize(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = timestamp - startTime;
+
         Blockly.svgResize(workspace);
-    }, 10);
 
-    setTimeout(() => {
-        clearInterval(resizeRepeat);
-        Blockly.svgResize(workspace); // Final crisp resize
-    }, 350);
+        if (progress < duration) {
+            requestAnimationFrame(smoothResize);
+        } else {
+            // Final snap for precision
+            Blockly.svgResize(workspace); 
+        }
+    }
+
+    requestAnimationFrame(smoothResize);
 }
 
 function updateSimulation() {
@@ -604,15 +715,13 @@ workspace.addChangeListener(updateSimulation);
 function toggleCodeOverlay() {
     const overlay = document.getElementById('code-overlay');
     const workspaceElement = document.querySelector('.blocklyWidgetDiv'); // Blockly's main layer
-    const btn = document.querySelector('.code-toggle-btn');
-
+    
     overlay.classList.toggle('overlay-hidden');
     
     if (!overlay.classList.contains('overlay-hidden')) {
 
         // When open, the workspace background
         document.getElementById('blocklyDiv').style.opacity = "1";
-        btn.classList.add('active-btn');
         // Force update and refresh when opened
         const code = Blockly.Python.workspaceToCode(workspace);
         editor.setValue(code);
@@ -620,56 +729,8 @@ function toggleCodeOverlay() {
     } else {
         // When closed, the workspace background
         document.getElementById('blocklyDiv').style.opacity = "1";
-        btn.classList.remove('active-btn');
     }
 
-}
-
-
-const themePresets = {
-    "dracula": { rgb: "10, 10, 10", opacity: 0.1 },
-    "monokai": { rgb: "39, 40, 34", opacity: 0.25 },
-    "material-palenight": { rgb: "41, 45, 62", opacity: 0.15 },
-    "cobalt": { rgb: "0, 34, 64", opacity: 0.3 }
-};
-
-function changeEditorTheme() {
-    const selectedTheme = document.getElementById('themeSelect').value;
-    const preset = themePresets[selectedTheme];
-    
-    if (editor) {
-        editor.setOption("theme", selectedTheme);
-        
-        // Update the CSS variables based on the preset
-        document.documentElement.style.setProperty('--theme-base-rgb', preset.rgb);
-
-
-        // Reset slider to the theme's preset value
-        document.getElementById('opacitySlider').value = preset.opacity;
-        updateTransparency();
-        
-        // Ensure the CodeMirror container stays transparent 
-        // regardless of the theme's internal background settings
-       // const cmElement = editor.getWrapperElement();
-       // cmElement.style.backgroundColor = "transparent";
-        
-        // Save preference to browser storage
-        localStorage.setItem('edusharks-theme', selectedTheme);
-    }
-}
-
-function updateTransparency() {
-    const val = document.getElementById('opacitySlider').value;
-    document.documentElement.style.setProperty('--overlay-opacity', val);
-}
-
-// Call this inside your window.onload to restore preference
-function restoreUserTheme() {
-    const savedTheme = localStorage.getItem('edusharks-theme');
-    if (savedTheme) {
-        document.getElementById('themeSelect').value = savedTheme;
-        changeEditorTheme();
-    }
 }
 
 
@@ -730,4 +791,3 @@ setTimeout(() => {
     updateCode();    
     if(editor) editor.refresh();
 }, 1000);
-

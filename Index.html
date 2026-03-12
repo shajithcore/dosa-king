@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,16 +10,9 @@
   <script src="https://unpkg.com/@blockly/workspace-backpack"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/lib/codemirror.min.css">
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/dracula.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/monokai.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/material-palenight.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/cobalt.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/theme/material.min.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/mode/python/python.min.js"></script>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=JetBrains+Mono:wght@300;500&family=IBM+Plex+Mono:wght@300;500&family=Space+Mono&family=Roboto+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   
 </head>
@@ -32,7 +26,7 @@
     </div>
 
 
-    <nav class="top-nav"> <!--The navigation section that contains the view toggle switches and other navigation buttons-->
+    <nav class="top-nav"> <!--The navigation section that contains the view toggle and dropdown menu-->
             
         <div class="mode-toggle-container"> <!--The container for the view toggle switches-->
             <span class="toggle-label">Build</span> <!--The label for the block view toggle-->
@@ -64,13 +58,7 @@
     <div class="actions-right">
 
         <div class="nav-buttons">
-            <button class="icon-btn code-toggle-btn" onclick="toggleCodeOverlay()">
-                <div class="python-icon-wrapper">
-                    <img src="assets/brand-python.svg" alt="Python Icon" class="python-icon">
-                </div>
-                <span class="btn-text">Python</span>
-            </button>
-
+            <button class="icon-btn" onclick="toggleCodeOverlay()">📜 View Code</button>
         </div>
 
     </div>
@@ -81,8 +69,9 @@
   <div class="ide-container">
 
     <div id="simulation-container">
-
-
+        <div class="panel-header">
+            <!-- <span>Simulation</span> -->
+        </div>
         <div id="sim-canvas">
             <svg id="esp32-svg" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg">
                 <rect x="10" y="10" width="180" height="330" rx="10" fill="#2c2c2c" stroke="#444" stroke-width="2"/>
@@ -114,65 +103,80 @@
 
     <div id="sim-resizer" class="resizer-v"></div>
 
-    <div class="main-layout">  <!--The main content area that holds the Blockly workspace and the code editor-->
-
-        <div id="blocklyDiv"></div>  
+    <div class="main-layout">
               
         <div id="resizer-v" class="resizer-v hidden"></div>
         
-        <div id="editor-container" class="editor-hidden"></div>
+        <!-- <div id="editor-container" class="editor-hidden"> -->
 
-            <div id="code-overlay" class="overlay-hidden"> <!--The overlay container for the code editor, initially hidden-->
+        <!-- </div> -->
 
-                <div class="overlay-header"> <!--The header section of the code overlay that contains the title, theme selector, transparency slider, and action buttons-->
+        <div id="code-overlay" class="overlay-hidden">
+          <div class="overlay-header">
+              <span>Python Reference</span>
+              <div class="overlay-actions">
+                  <button onclick="downloadCode()">💾 .py</button>
+                  <button onclick="toggleCodeOverlay()">✕</button>
+              </div>
+        </div>
 
-                    <div class="header-left"> <!--The left side of the header that contains the title, theme selector, and transparency slider-->
-
-                        <span class="header-title">Python Reference</span> <!--The title of the code overlay-->
-                        
-                        <select id="themeSelect" class="glass-select" onchange="changeEditorTheme()"> <!--The dropdown for selecting the code editor theme-->
-                            <option value="dracula">Cyberpunk (Dracula)</option>
-                            <option value="monokai">Classic (Monokai)</option>
-                            <option value="material-palenight">Modern (Material)</option>
-                            <option value="cobalt">Deep Blue (Cobalt)</option>
-                        </select>
-
-                        <div class="slider-container" title="Adjust Transparency"> <!--The container for the transparency slider with a tooltip-->
-                            <span style="font-size: 10px; color: #aaa;">🫥</span>
-                            <input type="range" id="opacitySlider" class="transparency-slider" 
-                                min="0.05" max="0.9" step="0.05" value="0.15" 
-                                oninput="updateTransparency()">
-                            <span style="font-size: 10px; color: #aaa;">⬛</span>
-                        </div>
-
-                    </div>   <!-- end of header-left -->
-
-                    <div class="overlay-actions"> <!--The right side of the header that contains the action buttons-->
-                        <button class="header-btn" onclick="downloadCode()" title="Download .py">💾</button>
-                        <button class="header-btn" onclick="toggleCodeOverlay()">✕</button>
-                    </div>
-
-                    <div id="loadingOverlay" class="overlay-hidden"> <!--The overlay that appears during code upload, initially hidden-->
-                        <div class="loader-container">
-                            <div class="spinner"></div>  <!-- The spinner element for the loading animation -->
-                                <p>Uploading to ESP32...</p>
-                        </div>
-                    </div>   
-
-
-                </div>   <!-- end of overlay-header -->
-
-                <div id="overlay-editor-container"> <!--The container for the code editor within the overlay-->
-                    <textarea id="codeTextArea"></textarea> <!--The textarea that will be transformed into a CodeMirror editor-->
-                </div>
-
-            </div> <!-- end of code-overlay -->
+        <div id="overlay-editor-container">
+            <textarea id="codeTextArea"></textarea>
+        </div>
     
-     
-                    
-    </div>  <!--End of main-layout-->
-            
+      </div>  <!--End of main-layout-->
+      
+      <div id="blocklyDiv"></div>  
 
+    <div id="terminal-container" class="terminal-minimized">
+        <div id="terminal-resizer-h" class="resizer-h"></div>
+        <div class="terminal-header">
+            <span>Terminal</span>
+            <div class="terminal-controls">
+                <button onclick="clearTerminal()">Clear</button>
+                <button id="terminalToggleBtn">⌃</button>
+            </div>
+        </div>
+        <div id="terminalOutput"></div>
+    </div>  
+</div>
+
+
+
+
+  <div id="loadingOverlay" class="overlay-hidden">
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <p>Uploading to ESP32...</p>
+    </div>
+  </div>
+  
+  <script src="blocks.js"></script>
+  <script src="generators.js"></script>
+  <script src="toolbox.js"></script> 
+  <script src="app.js"></script>
+
+</body>
+</html>
+
+
+
+
+    
+    </div>     
+      
+</div>
+
+  </div>
+
+
+  <div id="loadingOverlay" class="overlay-hidden">
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <p>Uploading to ESP32...</p>
+    </div>
+  </div>
+  
   <script src="blocks.js"></script>
   <script src="generators.js"></script>
   <script src="toolbox.js"></script> 
