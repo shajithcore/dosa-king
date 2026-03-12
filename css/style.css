@@ -178,8 +178,7 @@
         height: calc(100vh - 50px); /* Full height minus nav */
         min-width: 0; /* Important for collapsing */
         background: #1e1e1e;
-        border-right: 1px solid #333;        
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-right: 1px solid #333;  
         flex-direction: column;
         flex-shrink: 0;
         transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -632,8 +631,8 @@ input:checked + .slider:before {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 100px;
-    background: #111; /* Dark background to make the board pop */
+    padding: 30%;
+    background: #0c815f; /* Dark background to make the board pop */
     overflow: hidden;
 }
 

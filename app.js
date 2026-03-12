@@ -663,7 +663,7 @@ function toggleSimPanel() {
     }
     
     // Set the target width
-    sim.style.width = isCollapsed ? "0px" : "30%";
+    sim.style.width = isCollapsed ? "0px" : "25%";
 
     // SMOOTH RESIZE ENGINE
     let startTime = null;
