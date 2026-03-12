@@ -66,18 +66,6 @@
         color:#000 !important;
     }
 
-    #terminalContainer {
-        position: relative;
-        background: #060606;
-        border-top: 2px solid #333;
-        display: flex;
-        flex-direction: column;
-      }
-
-    .terminal-minimized {
-        height: 40px !important;
-      }
-
   .resizer-h {
         height: 5px;
         cursor: ns-resize;
@@ -90,19 +78,7 @@
 
   .resizer-h:hover { background: #cdc71a; }
 
-    .terminal-header {
-        height: 40px;
-        background: #e9e7d9; /* Matching your header */
-        color: #333;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 15px;
-        cursor: ns-resize; /* North-South resize cursor */
-        user-select: none;
-        font-weight: bold;
-        border-top: 2px solid rgb(228, 128, 128);
-    }
+
 
     #editorContainer.CodeMirror {
     /*    flex: 1 1 auto !important;
@@ -117,13 +93,6 @@
     } 
 
   
-    #terminalOutput {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-        color: rgb(208, 239, 208); /* Classic Terminal Green */
-        font-family: monospace;
-    }
 
    /* #blocklyDiv { flex: 1; height: 100%; } */
 
@@ -156,9 +125,21 @@
 
     
     .ide-container {
-      display: flex;      
-      width: 100vw;
-      overflow: hidden;
+        display: flex;      
+        width: 100vw;
+        flex-direction: row;
+        overflow: hidden;
+    }
+
+    .action-bar {
+        height: 65px;
+        background: #2c2c2c;
+        border-top: 1px solid #444;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 3000;
     }
 
    .main-layout {
@@ -214,9 +195,16 @@
     height: 100% !important; 
     width: 100% !important;
     flex: 1; /* This forces it to fill the flex container */
-    font-size: 16px;
+    line-height: 2.5;     
+    letter-spacing: 0.5px;
+    font-size: 15px;
     background: #2632385e!important; /* Matches your editorContainer background */ 
     } 
+
+    /* 4. If you still want a tiny bit of separation, use a subtle border */
+.CodeMirror-gutters {
+    background-color: transparent !important;
+    }
 
     /* 2. This targets the scrollable area inside the editor */
       .CodeMirror-scroll {
@@ -231,9 +219,31 @@
     }
       
     .CodeMirror-code {
-    color: #ef0a0a !important; 
-    font-family: 'Courier New', monospace !important;
+    /* color: #ef0a0a !important;  */
+    font-family: 'Fira Code', monospace !important;
+    font-variant-ligatures: contextual;
+    font-weight: 100 !important;
     /* Force text to white for a moment to check */
+    }
+
+    /* 1. Remove background highlighting/borders from keywords */
+    .cm-keyword, .cm-builtin, .cm-def {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+/* 2. Remove "Selection" or "Match" highlights that look like markers */
+
+    .CodeMirror-selected, 
+    .CodeMirror-focused .CodeMirror-selected, 
+    .CodeMirror-matchhighlight {
+        background-color: rgba(255, 255, 255, 0.1) !important; /* Make it very subtle or transparent */
+    }
+
+/* 3. Specifically target "Active Line" backgrounds if they look like markers */
+    .CodeMirror-activeline-background {
+        background-color: transparent !important;
     }
 
     /* Full-screen background */
@@ -519,15 +529,33 @@ input:checked + .slider:before {
     transform: translateX(24px);
 }
 
+
+:root {
+    /* Default starting point */
+    --overlay-opacity: 0.15; 
+    --theme-base-rgb: 10, 10, 10; /* Dark neutral */
+}
+
+/* Style the Slider */
+.transparency-slider {
+    width: 80px;
+    height: 4px;
+    cursor: pointer;
+    accent-color: #223fe6; /* Edusharks Blue */
+    vertical-align: middle;
+}
+
+
 /* Code Overlay Styles */
 #code-overlay {
     position: fixed;
-    top: 50px; /* Below Nav */
+    top: 70px; /* Below Nav */
     right: 0;
     width: 40%;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 50px);
     /* High transparency: 0.15 gives a ghost-like tint */
-    background: rgba(10, 10, 10, 0.15);     
+    background: rgba(var(--theme-base-rgb), var(--overlay-opacity)) !important;
+    backdrop-filter: blur(2px); /* Adds a "Frosted Glass" effect for better readability */
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 2000;
     display: flex;
@@ -561,11 +589,11 @@ input:checked + .slider:before {
 }
 
 /* Neon Python Syntax for High Visibility */
-.cm-s-material .cm-keyword { color: #ff79c6 !important; font-weight: bold; } /* Keywords */
-.cm-s-material .cm-def { color: #50fa7b !important; }     /* Function names */
-.cm-s-material .cm-string { color: #f1fa8c !important; }  /* Strings */
-.cm-s-material .cm-comment { color: #6272a4 !important; font-style: italic; } /* Comments */
-.cm-s-material .cm-number { color: #bd93f9 !important; }  /* Numbers */
+/*.cm-s-material .cm-keyword { color: #9ea60a !important; font-weight: normal; } /* Keywords */
+/*.cm-s-material .cm-def { color: #50fa7b !important; }     /* Function names */
+/*.cm-s-material .cm-string { color: #f1fa8c !important; }  /* Strings */
+/*.cm-s-material .cm-comment { color: #6272a4 !important; font-style: italic; } /* Comments */
+/*.cm-s-material .cm-number { color: `#bd93f9 !important; } 
 
 
 
@@ -650,4 +678,167 @@ input:checked + .slider:before {
 .led-on-blue {
     fill: #0077ff !important;
     filter: drop-shadow(0 0 5px #0077ff);
+}
+
+/* Code Toggle Button Styles */
+
+.code-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.338);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.code-toggle-btn:hover {
+    background: rgba(34, 63, 230, 0.15); /* Edusharks Blue */
+    border-color: #000000;
+}
+
+.python-icon-wrapper {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.python-icon {
+    width: 24px;  /* Set your desired size */
+    height: 24px;
+    display: block;
+}
+
+#python-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.btn-text {
+    color: #000000;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.active-btn {
+    background: #d5d8e7 !important;
+    box-shadow: 0 0 10px rgba(242, 242, 244, 0.5);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-title {
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Minimalist Glass Dropdown */
+.glass-select {
+    background: rgba(255, 255, 255, 0.05);
+    color: #eee;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.glass-select:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Style the options inside (Browser dependent, but helps) */
+.glass-select option {
+    background: #1e1e1e;
+    color: white;
+}
+
+.header-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.header-btn:hover {
+    opacity: 1;
+}
+
+/* Remove shadows from ALL code text tokens */
+.CodeMirror-code span, 
+.cm-keyword, 
+.cm-string, 
+.cm-comment, 
+.cm-def, 
+.cm-variable, 
+.cm-operator {
+    text-shadow: none !important;
+    -webkit-font-smoothing: antialiased; /* Makes text sharper on glass */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure the cursor doesn't have a shadow/glow either */
+.CodeMirror-cursor {
+    border-left: 2px solid #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* Primary Blue Button (The "Big One") */
+.makecode-primary-btn {
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.makecode-primary-btn:hover {
+    background: #005fa3;
+}
+
+/* Secondary Actions (Connect, Terminal) */
+.makecode-secondary-btn, .toggle-btn {
+    background: #444;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 8px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.makecode-secondary-btn:hover {
+    background: #555;
+}
+
+/* Terminal Active State */
+.toggle-btn.active {
+    background: #223fe6; /* Edusharks Blue highlight */
+    color: white;
 }
