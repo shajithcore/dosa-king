@@ -8,22 +8,22 @@
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
   'base': Blockly.Themes.Classic,
   'categoryStyles':{
-    'controls_category': { 'colour': '#223fe6' },
-    'logic_category': { 'colour': '#43bf57' },
-    'loop_category': { 'colour': '#892d86' },
-    'math_category': { 'colour': '#5b67a5' },
-    'variables_category': { 'colour': '#a55b80' },
-    'sensors_category': { 'colour': '160' },
-    'hardware_category': { 'colour': '#0e434e' },
+    // 'controls_category': { 'colour': '#223fe6' },
+    // 'logic_category': { 'colour': '#43bf57' },
+    // 'loop_category': { 'colour': '#892d86' },
+    // 'math_category': { 'colour': '#5b67a5' },
+    // 'variables_category': { 'colour': '#a55b80' },
+    // 'sensors_category': { 'colour': '160' },
+    // 'hardware_category': { 'colour': '#0e434e' },
 
   },
 
   'componentStyles': {
     'workspaceBackgroundColour': '#000511f9',
-    'toolboxBackgroundColour': '#060606',
-    'toolboxForegroundColour': '#f9f9f9',
-    'flyoutBackgroundColour': '#3d447b8c',
-    'flyoutForegroundColour': '#ccc',
+     'toolboxBackgroundColour': '#060606',
+     'toolboxForegroundColour': '#090000',
+     'flyoutBackgroundColour': '#3d447b8c',
+     'flyoutForegroundColour': '#ccc',
     'insertionMarkerColour': '#803838',
     'insertionMarkerOpacity': 0.3,
     'scrollbarColour': '#797979',
@@ -125,109 +125,109 @@ const backpack = new Backpack(workspace, {
 });
     backpack.init();
 
-  forceToolboxStyles();
+//   forceToolboxStyles();
 
 
   /* A function to create custom styles for block categories */
   
-  function forceToolboxStyles() {
+//   function forceToolboxStyles() {
     // Check if we already added this to avoid duplicates
-    if (document.getElementById('blockly-toolbox-overrides')) return;
+    // if (document.getElementById('blockly-toolbox-overrides')) return;
 
-    const style = document.createElement('style');
-    style.id = 'blockly-toolbox-overrides';
-    style.innerHTML = `
+    // const style = document.createElement('style');
+    // style.id = 'blockly-toolbox-overrides';
+    // style.innerHTML = `
 
       /* Hide the icon for the label category if one appears */
-      .toolbox-label-row .blocklyTreeIcon, 
-      .blocklyTreeIcon {
-            display: none !important;
-      }
+    //   .toolbox-label-row .blocklyTreeIcon, 
+    //   .blocklyTreeIcon {
+    //         display: none !important;
+    //   }
         /* 1. The Row: Full height and alignment */
-        .blocklyTreeRow {
-            position: relative !important;
-            top: auto !important;
-            height: 60px !important;    
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            margin: 0 !important;
-            background-color: transparent !important;
-            width: 100% !important;
-            cursor: pointer !important;
-        }
+        // .blocklyTreeRow {
+        //     position: relative !important;
+        //     top: auto !important;
+        //     height: 60px !important;    
+        //     display: flex !important;
+        //     align-items: center !important;
+        //     justify-content: center !important;
+        //     margin: 0 !important;
+        //     background-color: transparent !important;
+        //     width: 100% !important;
+        //     cursor: pointer !important;
+        // }
 
-        /* 2. The Text: Inherits the category's theme color */
-        .blocklyTreeLabel {
-            font-size: 18px !important;
-            font-family: 'Segoe UI', Tahoma, sans-serif !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            text-align: center !important; 
+//         /* 2. The Text: Inherits the category's theme color */
+//         .blocklyTreeLabel {
+//             font-size: 18px !important;
+//             font-family: 'Segoe UI', Tahoma, sans-serif !important;
+//             padding: 0 !important;
+//             margin: 0 !important;
+//             text-align: center !important; 
             
-        }
+//         }
 
-        /* Ensure the label row specifically stays transparent */
-        .toolbox-label-row {
-            background-color: #299b84 !important;
-            height: 30px !important;
-            display: flex !important;   
-            align-items: center !important;     /* Vertical centering */            
-            justify-content: center !important; /* Horizontal centering */            
-            margin-top: 10px !important;
-            margin-bottom: 10px !important;
-            border-radius: 4px; /* Optional: gives it a "pill" or "tab" look */
-            cursor: default !important; /* Change pointer to standard arrow */
-            pointer-events: none; /* Secondary layer of protection */
-        }
+//         /* Ensure the label row specifically stays transparent */
+//         .toolbox-label-row {
+//             background-color: #299b84 !important;
+//             height: 30px !important;
+//             display: flex !important;   
+//             align-items: center !important;     /* Vertical centering */            
+//             justify-content: center !important; /* Horizontal centering */            
+//             margin-top: 10px !important;
+//             margin-bottom: 10px !important;
+//             border-radius: 4px; /* Optional: gives it a "pill" or "tab" look */
+//             cursor: default !important; /* Change pointer to standard arrow */
+//             pointer-events: none; /* Secondary layer of protection */
+//         }
 
-        /* 2. The Text: Remove default padding/margins that might shift it */
-        .toolbox-label-row .blocklyTreeLabel {
-            color: #f93d03 !important;
-            font-size: 25px !important;
-            font-weight: 800 !important;        
-            letter-spacing: 2px !important;
+//         /* 2. The Text: Remove default padding/margins that might shift it */
+//         .toolbox-label-row .blocklyTreeLabel {
+//             color: #f93d03 !important;
+//             font-size: 25px !important;
+//             font-weight: 800 !important;        
+//             letter-spacing: 2px !important;
             
-            /* Reset Blockly's default side-padding to ensure true center */
-            padding: 0 !important; 
-            margin: 0 !important;
-}
+//             /* Reset Blockly's default side-padding to ensure true center */
+//             padding: 0 !important; 
+//             margin: 0 !important;
+// }
 
-        .blocklyToolboxContents {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 20px !important;  /* THIS is what creates the space between buttons */
-            padding: 15px 0 !important;
-}
+//         .blocklyToolboxContents {
+//             display: flex !important;
+//             flex-direction: column !important;
+//             gap: 20px !important;  /* THIS is what creates the space between buttons */
+//             padding: 15px 0 !important;
+// }
 
-        /* 3. The Hover: Unified color for all categories */
-        .blocklyTreeRow:not(.toolbox-label-row):hover {
-            background-color: #333333 !important; /* Pick your specific hover color here */
-            cursor: pointer;
-        }
+//         /* 3. The Hover: Unified color for all categories */
+//         .blocklyTreeRow:not(.toolbox-label-row):hover {
+//             background-color: #333333 !important; /* Pick your specific hover color here */
+//             cursor: pointer;
+//         }
 
-        /* 4. Contrast: Turn text white on hover */
-        .blocklyTreeRow:hover .blocklyTreeLabel {
-            color: #ffffff !important;
-        }
+//         /* 4. Contrast: Turn text white on hover */
+//         .blocklyTreeRow:hover .blocklyTreeLabel {
+//             color: #ffffff !important;
+//         }
 
-        /* 5. Selection: The 'Active' state */
-        .blocklyTreeRow.blocklyTreeSelected {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            border-left: 6px solid #cdc71a !important;
-        }
+//         /* 5. Selection: The 'Active' state */
+//         .blocklyTreeRow.blocklyTreeSelected {
+//             background-color: rgba(255, 255, 255, 0.1) !important;
+//             border-left: 6px solid #cdc71a !important;
+//         }
 
-        /* 6. The Separator: Flush with the blocks */
-        .blocklyTreeSeparator {
-            border-bottom: 4px solid #cdc71a !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: 0px !important;
-            display: block !important;
-        }
-    `;
-    document.head.appendChild(style);
-}
+//         /* 6. The Separator: Flush with the blocks */
+//         .blocklyTreeSeparator {
+//             border-bottom: 4px solid #cdc71a !important;
+//             margin: 0 !important;
+//             padding: 0 !important;
+//             height: 0px !important;
+//             display: block !important;
+//         }
+//     `;
+    // document.head.appendChild(style);
+// }
 
 /* Code to toggle between full screen view and window view */
 

@@ -1,0 +1,15 @@
+/* Makes our label white. */
+.blocklyToolboxCategoryLabel {
+  color: white;
+}
+/* Adds padding around the group of categories and separators. */
+.blocklyToolboxContents {
+  padding: 0.5em;
+}
+/* Adds space between the categories, rounds the corners and adds space around the label. */
+.blocklyToolboxCategory {
+  padding: 3px;
+  margin-bottom: 0.5em;
+  border-radius: 4px;
+}
+

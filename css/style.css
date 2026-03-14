@@ -11,24 +11,25 @@
         overflow: hidden;       
         
     }
+
     
     /* 2. The Highlight: This is likely where the 'Top' gap is coming from */
-    .blocklyTreeSelected {
+    /* .blocklyTreeSelected {
         background-color: rgba(255, 255, 255, 0.1) !important;
         border-left: 6px solid #cdc71a !important;
-    }
+    } */
 
     /* 3. Adjust the Icon and Text spacing for the new height */
-    .blocklyTreeIcon {
+    /* .blocklyTreeIcon {
         margin-top: 12px !important;
         padding: 0 !important;
         vertical-align: middle !important;
-    }
+    } */
 
       /* This will change the background of ANY row to your specific color on hover */
-    .blocklyToolboxDiv .blocklyTreeRow:hover.blocklyTreeLabel {
+    /* .blocklyToolboxDiv .blocklyTreeRow:hover.blocklyTreeLabel {
         color: #ffffff !important; /* Ensures text is readable on the hover color */
-    }
+    /* } */ 
 
      .header-logo {
       height: 48px; /* Standard size for toolbar icons */
@@ -216,6 +217,7 @@
     width: 100% !important;
     flex: 1; /* This forces it to fill the flex container */
     font-size: 16px;
+    line-height: 1.6;
     background: #2632385e!important; /* Matches your editorContainer background */ 
     } 
 
@@ -232,7 +234,7 @@
     }
       
     .CodeMirror-code {
-    color: #ef0a0a !important; 
+    /* color: #ef0a0a !important;  */
     font-family: 'Courier New', monospace !important;
     /* Force text to white for a moment to check */
     }
@@ -523,7 +525,7 @@ input:checked + .slider:before {
 /* Code Overlay Styles */
 #code-overlay {
     position: fixed;
-    top: 50px; /* Below Nav */
+    top: 70px; /* Below Nav */
     right: 0;
     width: 30%;
     height: calc(100vh - 70px);
@@ -556,13 +558,13 @@ input:checked + .slider:before {
 
 .CodeMirror-line {
     color: #ffffff !important; /* Sharp white text */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Slight shadow to keep it readable over colorful blocks */
-    font-weight: 500;
+    /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); Slight shadow to keep it readable over colorful blocks */ 
+    font-weight: 500 !important; /* Medium weight for better readability */
     font-family: 'Fira Code', 'Courier New', monospace;
 }
 
 /* Neon Python Syntax for High Visibility */
-.cm-s-material .cm-keyword { color: #34852d !important; font-weight: bold; } /* Keywords */
+.cm-s-material .cm-keyword { color: #34852d !important; font-weight: 500 !important; } /* Keywords */
 .cm-s-material .cm-def { color: #50fa7b !important; }     /* Function names */
 .cm-s-material .cm-string { color: #f1fa8c !important; }  /* Strings */
 .cm-s-material .cm-comment { color: #6272a4 !important; font-style: italic; } /* Comments */
