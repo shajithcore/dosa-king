@@ -67,64 +67,6 @@
         color:#000 !important;
     }
 
-    #terminalContainer {
-        position: relative;
-        background: #060606;
-        border-top: 2px solid #333;
-        display: flex;
-        flex-direction: column;
-      }
-
-    .terminal-minimized {
-        height: 40px !important;
-      }
-
-  .resizer-h {
-        height: 5px;
-        cursor: ns-resize;
-        background: transparent;
-        position: absolute;
-        top: -2px;
-        width: 100%;
-        z-index: 100;
-      }
-
-  .resizer-h:hover { background: #cdc71a; }
-
-    .terminal-header {
-        height: 40px;
-        background: #e9e7d9; /* Matching your header */
-        color: #333;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 15px;
-        cursor: ns-resize; /* North-South resize cursor */
-        user-select: none;
-        font-weight: bold;
-        border-top: 2px solid rgb(228, 128, 128);
-    }
-
-    #editorContainer.CodeMirror {
-    /*    flex: 1 1 auto !important;
-        height: 100% !important;
-        width: 100% !important;
-        position: absolute !important; /* Sometimes needed if flex fails */
-        color: #000;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    } 
-
-  
-    #terminalOutput {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-        color: rgb(208, 239, 208); /* Classic Terminal Green */
-        font-family: monospace;
-    }
 
    /* #blocklyDiv { flex: 1; height: 100%; } */
 
@@ -150,13 +92,7 @@
         display: none !important;
     }
 
-    /* Force CodeMirror to fill the screen */
-    /* .CodeMirror {
-        height: 100% !important;
-        font-size: 16px; /* Larger font looks better in full-screen mode */
-  /*  }, */
-
-    
+   
     .ide-container {
       display: flex;      
       width: 100vw;
@@ -218,7 +154,8 @@
     flex: 1; /* This forces it to fill the flex container */
     font-size: 16px;
     line-height: 1.6;
-    background: #2632385e!important; /* Matches your editorContainer background */ 
+    background: #26323800!important; /* Matches your editorContainer background */ 
+    
     } 
 
     /* 2. This targets the scrollable area inside the editor */
@@ -261,6 +198,9 @@
 .overlay-hidden {
     opacity: 0;
     pointer-events: none;
+    transform: translateX(100%); /* Slide out to the right */
+    visibility: hidden;
+    transition: transform 0.3s ease-in, visibility 0s 0.3s;
 }
 
 .loader-container {
@@ -432,6 +372,7 @@
 
 .dropdown-content {
     display: none;
+    font-family: 'Courier New', Courier, monospace;
     position: absolute;
     background: #252525;
     min-width: 160px;
@@ -530,23 +471,22 @@ input:checked + .slider:before {
     width: 30%;
     height: calc(100vh - 70px);
     /* High transparency: 0.15 gives a ghost-like tint */
+    /* border-left: 1px solid rgba(255, 255, 255, 0.1); */
     background: rgba(10, 10, 10, 0.15);     
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 2000;
+    /* border-left: 1px solid rgba(10, 10, 10, 0.15); */
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
-}
-
-.overlay-hidden {
-    transform: translateX(100%); /* Slide out to the right */
+    /* transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);  */
+    transition: all 0.5s ease;
 }
 
 .overlay-header {
-    padding: 15px 20px;
-    background: rgba(0, 0, 0, 0.4); /* Slightly darker to keep buttons visible */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;    
+    background: rgba(10, 10, 10, 0.25); /* Slightly darker to keep buttons visible */
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
     display: flex;
+    color: #ffffff;
     justify-content: space-between;
     align-items: center;
 }
@@ -554,6 +494,12 @@ input:checked + .slider:before {
 #overlay-editor-container {
     flex: 1;
     overflow-y: auto;
+    transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+    visibility: visible;
+    background: rgba(10, 10, 10, 0.25); /* Slightly darker to keep buttons visible */
+
+
+    
 }
 
 .CodeMirror-line {
@@ -562,15 +508,6 @@ input:checked + .slider:before {
     font-weight: 500 !important; /* Medium weight for better readability */
     font-family: 'Fira Code', 'Courier New', monospace;
 }
-
-/* Neon Python Syntax for High Visibility */
-.cm-s-material .cm-keyword { color: #34852d !important; font-weight: 500 !important; } /* Keywords */
-.cm-s-material .cm-def { color: #50fa7b !important; }     /* Function names */
-.cm-s-material .cm-string { color: #f1fa8c !important; }  /* Strings */
-.cm-s-material .cm-comment { color: #6272a4 !important; font-style: italic; } /* Comments */
-.cm-s-material .cm-number { color: #bd93f9 !important; }  /* Numbers */
-
-
 
 
 /* The Clickable Toggle Tab */
@@ -611,8 +548,6 @@ input:checked + .slider:before {
 #simulation-container.collapsed #handle-icon {
     transform: rotate(180deg); /* Flip arrow to point right */
 }
-
-
 
 #sim-toggle-tab:hover {
     background: #223fe6; /* Edusharks Blue highlight */
@@ -660,3 +595,139 @@ input:checked + .slider:before {
 .blocklySvg {
     transition: none !important;
 }
+
+/* 1. The Gutter Background and Transparency */
+.CodeMirror-gutters {
+    /* Set transparency and background color */
+    background: rgba(10, 10, 10, 0.15) !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+
+}
+
+
+#python-edge-btn {
+    position: absolute;
+    right: 0;
+    top: 1.5%;
+    /* transform: translateY(-50%) rotate(-90deg); Rotates the text to fit the edge */
+    transform-origin: right bottom;
+    
+    background: rgba(10, 10, 10, 0.15); /* Subtle Edusharks Blue */
+    /* backdrop-filter: blur(5px); */
+    /* border: 1px solid rgba(255, 255, 255, 0.1); */
+    border: none; 
+   
+    padding: 8px 15px;
+    border-radius: 16px 0 0 16px;
+    color: white;
+    cursor: pointer;
+    z-index: 1; /* Must be above the overlay to stay visible */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.5s ease;
+    /* transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);  */
+}
+
+#python-edge-btn:hover {
+    background: rgba(10, 10, 10, 0.25);
+    padding-right: 20px; /* Slight 'pop out' effect */
+}
+
+/* Move the backpack away from the right edge */
+.blocklyBackpack {
+    /* If it's on the right, this pushes it 40px further left */
+    transform: translateX(-50px) !important;
+    transform: translateY(200px)!important; /* Adjust vertical position if needed */
+    transition: transform 0.3s ease;
+}
+
+/* If you want to move it when the code overlay is open */
+#overlay-editor-container:not(.overlay-hidden) ~ #blocklyDiv .blocklyBackpack {
+    transform: translateX(-35vw) !important; /* Shifting by roughly the width of your overlay */
+}
+
+/* Specifically target the close (X) button */
+.overlay-actions button:last-child {
+    background: transparent;
+    color: #ffffff; /* A soft "Mac-style" red */
+    border: 0px solid rgba(255, 255, 255, 0.66);
+    font-size: 18px;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 5px 10px;
+    border-radius: 24px;
+}
+
+/* Hover effect to make it feel interactive */
+.overlay-actions button:last-child:hover {
+    background: #f9fafa;
+    color: rgb(0, 0, 0);
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(222, 215, 215, 0.5);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-title {
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* 1. Remove the "Match Highlighter" (words that match your selection) */
+.cm-matchhighlight {
+    background-color: transparent !important;
+    border-bottom: none !important;
+}
+
+/* 2. Remove the "Searching" highlight (if you use find/replace) */
+.cm-searching {
+    background-color: transparent !important;
+    outline: none !important;
+}
+
+/* --- Edusharks Syntax Sync --- */
+
+/* 1. Logic & Control (if, else, for, while, pass) -> Blue */
+.cm-s-material .cm-keyword {
+    color: #4C97FF !important; /* Matches Blockly Logic Blue */
+    font-weight: bold;
+    background: transparent !important;
+}
+
+/* 2. Math & Numbers -> Purple */
+.cm-s-material .cm-number {
+    color: #9966FF !important; /* Matches Blockly Math Purple */
+}
+
+/* 3. Variables -> Orange/Red */
+.cm-s-material .cm-variable, 
+.cm-s-material .cm-variable-2 {
+    color: #FF8C1A !important; /* Matches Blockly Variable Orange */
+}
+
+/* 4. Text & Strings -> Green */
+.cm-s-material .cm-string {
+    color: #0FBD8C !important; /* Matches Blockly Text Green */
+}
+
+/* 5. Functions & Definitions -> Teal */
+.cm-s-material .cm-def,
+.cm-s-material .cm-property {
+    color: #852466 !important;
+}
+
+/* 6. Comments -> Muted Gray */
+.cm-s-material .cm-comment {
+    color: #6a9955 !important;
+    font-style: italic;
+}
+

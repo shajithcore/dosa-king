@@ -10,8 +10,9 @@
   <script src="https://unpkg.com/@blockly/workspace-backpack"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.js"></script>  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/theme/material.min.css">
-  <script src="custom_category.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/material.min.css">
+  <script src="custom_category.js"></script>  
   <script src="toolbox_label.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/mode/python/python.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
@@ -34,7 +35,7 @@
         <div class="mode-toggle-container"> <!--The container for the view toggle switches-->
             <span class="toggle-label">Build</span> <!--The label for the block view toggle-->
             <label class="switch"> <!--The switch for toggling between block and code views-->
-                <input type="checkbox" id="toggleCode" onchange="toggleEditorView()"> <!--The checkbox input for the code view toggle-->
+                <input type="checkbox" id="toggleCode" onchange="toggleMode()"> <!--The checkbox input for the code view toggle-->
                 <span class="slider round"></span> <!--The slider for the switch-->
             </label>
             <span class="toggle-label">Test</span> <!--The label for the code view toggle-->
@@ -57,16 +58,7 @@
 
     </div>
 
-    
-    <div class="actions-right">
-
-        <div class="nav-buttons">
-            <button class="icon-btn" onclick="toggleCodeOverlay()">📜 View Code</button>
-        </div>
-
-    </div>
-
-  </header>
+   </header>
 
   
   <div class="ide-container">
@@ -76,7 +68,9 @@
             <!-- <span>Simulation</span> -->
         </div>
         <div id="sim-canvas">
+
             <svg id="esp32-svg" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg">
+
                 <rect x="10" y="10" width="180" height="330" rx="10" fill="#2c2c2c" stroke="#444" stroke-width="2"/>
                 
                 <rect x="40" y="180" width="120" height="120" rx="4" fill="#c0c0c0" />
@@ -92,11 +86,28 @@
                 <circle id="led-d2" cx="135" cy="42" r="4" fill="#004" />
 
                 <g id="pins">
-                    <rect x="15" y="70" width="15" height="250" fill="#1a1a1a" />
+                <rect x="15" y="70" width="15" height="250" fill="#1a1a1a" />
                     <rect x="170" y="70" width="15" height="250" fill="#1a1a1a" />
                     
-                    <circle cx="22" cy="85" r="4" fill="#cd7f32" /> <circle cx="178" cy="85" r="4" fill="#cd7f32" /> </g>
-                </svg>
+                    <circle cx="22" cy="85" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="85" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="101" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="101" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                   
+                    <circle cx="22" cy="117" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="117" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="133" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="133" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="149" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="149" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>
+                    <circle cx="22" cy="165" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="165" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="181" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="181" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                   
+                    <circle cx="22" cy="197" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="197" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="213" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="213" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="229" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="229" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>
+                    <circle cx="22" cy="245" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="245" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="261" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="261" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                   
+                    <circle cx="22" cy="277" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="277" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="293" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="293" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>                    
+                    <circle cx="22" cy="309" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> <circle cx="178" cy="309" r="4" fill="#ffffff" stroke="#cd7f32" stroke-width="3"/> </g>
+                    
+                    
+
+            </svg> 
         </div>
 
         <div id="sim-toggle-tab" onclick="toggleSimPanel()">
@@ -108,19 +119,17 @@
 
     <div class="main-layout">
               
-        <div id="resizer-v" class="resizer-v hidden"></div>
-        
-        <!-- <div id="editor-container" class="editor-hidden"> -->
-
-        <!-- </div> -->
-
+         
         <div id="code-overlay" class="overlay-hidden">
           <div class="overlay-header">
-              <span>Python Reference</span>
-              <div class="overlay-actions">
-                  <button onclick="downloadCode()">💾 .py</button>
-                  <button onclick="toggleCodeOverlay()">✕</button>
-              </div>
+            <div class="header-left">
+              <span>Python Code</span>
+
+            </div>
+            <div class="overlay-actions">
+                 
+                <button onclick="toggleCodeOverlay()">✕</button>
+            </div>
         </div>
 
         <div id="overlay-editor-container">
@@ -129,20 +138,11 @@
     
       </div>  <!--End of main-layout-->
       
-      <div id="blocklyDiv"></div>  
-
-    <div id="terminal-container" class="terminal-minimized">
-        <div id="terminal-resizer-h" class="resizer-h"></div>
-        <div class="terminal-header">
-            <span>Terminal</span>
-            <div class="terminal-controls">
-                <button onclick="clearTerminal()">Clear</button>
-                <button id="terminalToggleBtn">⌃</button>
-            </div>
-        </div>
-        <div id="terminalOutput"></div>
-    </div>  
-</div>
+      <div id="blocklyDiv"></div>
+      <button id="python-edge-btn" onclick="toggleCodeOverlay()" title="Toggle Python Code">
+        <img src="assets/brand-python.svg" width="35">
+        <!-- <span class="btn-text">PYTHON</span>         -->
+      </button>  
 
 
 
@@ -162,28 +162,3 @@
 </body>
 </html>
 
-
-
-
-    
-    </div>     
-      
-</div>
-
-  </div>
-
-
-  <div id="loadingOverlay" class="overlay-hidden">
-    <div class="loader-container">
-        <div class="spinner"></div>
-        <p>Uploading to ESP32...</p>
-    </div>
-  </div>
-  
-  <script src="blocks.js"></script>
-  <script src="generators.js"></script>
-  <script src="toolbox.js"></script> 
-  <script src="app.js"></script>
-
-</body>
-</html>

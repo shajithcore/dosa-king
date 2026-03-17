@@ -23,7 +23,9 @@ Blockly.registry.register(
 
 
 /** @override */
-setSelected(isSelected){
+setSelected(isSelected)
+
+{
    // We do not store the label span on the category, so use getElementsByClassName.
    var labelDom = this.rowDiv_.getElementsByClassName('blocklyToolboxCategoryLabel')[0];
    if (isSelected) {
@@ -31,7 +33,9 @@ setSelected(isSelected){
      this.rowDiv_.style.backgroundColor = 'white';
      // Set the colour of the text to the colour of the category.
      labelDom.style.color = this.colour_;
-   } else {
+   } 
+   
+   else {
      // Set the background back to the original colour.
      this.rowDiv_.style.backgroundColor = this.colour_;
      // Set the text back to white.

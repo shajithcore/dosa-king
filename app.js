@@ -67,6 +67,7 @@
     }
     };
 
+  
     
  // 5. INITIALIZE CODEMIRROR
 
@@ -77,6 +78,8 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
     indentUnit: 4,
     matchBrackets: true
 });
+
+ 
 
 
   // 6. INJECT BLOCKLY (With Resizable/Zoom Settings)
@@ -110,7 +113,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
   Blockly.serialization.workspaces.load(starterState, workspace);
 
 
-  // 2. Initialize the Backpack
+    // 2. Initialize the Backpack
 // In the script-tag version, the class is usually found under the plugin name
 const backpack = new Backpack(workspace, {
     useFilledBackpackImage: true,
@@ -125,109 +128,6 @@ const backpack = new Backpack(workspace, {
 });
     backpack.init();
 
-//   forceToolboxStyles();
-
-
-  /* A function to create custom styles for block categories */
-  
-//   function forceToolboxStyles() {
-    // Check if we already added this to avoid duplicates
-    // if (document.getElementById('blockly-toolbox-overrides')) return;
-
-    // const style = document.createElement('style');
-    // style.id = 'blockly-toolbox-overrides';
-    // style.innerHTML = `
-
-      /* Hide the icon for the label category if one appears */
-    //   .toolbox-label-row .blocklyTreeIcon, 
-    //   .blocklyTreeIcon {
-    //         display: none !important;
-    //   }
-        /* 1. The Row: Full height and alignment */
-        // .blocklyTreeRow {
-        //     position: relative !important;
-        //     top: auto !important;
-        //     height: 60px !important;    
-        //     display: flex !important;
-        //     align-items: center !important;
-        //     justify-content: center !important;
-        //     margin: 0 !important;
-        //     background-color: transparent !important;
-        //     width: 100% !important;
-        //     cursor: pointer !important;
-        // }
-
-//         /* 2. The Text: Inherits the category's theme color */
-//         .blocklyTreeLabel {
-//             font-size: 18px !important;
-//             font-family: 'Segoe UI', Tahoma, sans-serif !important;
-//             padding: 0 !important;
-//             margin: 0 !important;
-//             text-align: center !important; 
-            
-//         }
-
-//         /* Ensure the label row specifically stays transparent */
-//         .toolbox-label-row {
-//             background-color: #299b84 !important;
-//             height: 30px !important;
-//             display: flex !important;   
-//             align-items: center !important;     /* Vertical centering */            
-//             justify-content: center !important; /* Horizontal centering */            
-//             margin-top: 10px !important;
-//             margin-bottom: 10px !important;
-//             border-radius: 4px; /* Optional: gives it a "pill" or "tab" look */
-//             cursor: default !important; /* Change pointer to standard arrow */
-//             pointer-events: none; /* Secondary layer of protection */
-//         }
-
-//         /* 2. The Text: Remove default padding/margins that might shift it */
-//         .toolbox-label-row .blocklyTreeLabel {
-//             color: #f93d03 !important;
-//             font-size: 25px !important;
-//             font-weight: 800 !important;        
-//             letter-spacing: 2px !important;
-            
-//             /* Reset Blockly's default side-padding to ensure true center */
-//             padding: 0 !important; 
-//             margin: 0 !important;
-// }
-
-//         .blocklyToolboxContents {
-//             display: flex !important;
-//             flex-direction: column !important;
-//             gap: 20px !important;  /* THIS is what creates the space between buttons */
-//             padding: 15px 0 !important;
-// }
-
-//         /* 3. The Hover: Unified color for all categories */
-//         .blocklyTreeRow:not(.toolbox-label-row):hover {
-//             background-color: #333333 !important; /* Pick your specific hover color here */
-//             cursor: pointer;
-//         }
-
-//         /* 4. Contrast: Turn text white on hover */
-//         .blocklyTreeRow:hover .blocklyTreeLabel {
-//             color: #ffffff !important;
-//         }
-
-//         /* 5. Selection: The 'Active' state */
-//         .blocklyTreeRow.blocklyTreeSelected {
-//             background-color: rgba(255, 255, 255, 0.1) !important;
-//             border-left: 6px solid #cdc71a !important;
-//         }
-
-//         /* 6. The Separator: Flush with the blocks */
-//         .blocklyTreeSeparator {
-//             border-bottom: 4px solid #cdc71a !important;
-//             margin: 0 !important;
-//             padding: 0 !important;
-//             height: 0px !important;
-//             display: block !important;
-//         }
-//     `;
-    // document.head.appendChild(style);
-// }
 
 /* Code to toggle between full screen view and window view */
 
@@ -248,20 +148,6 @@ fullscreenBtn.addEventListener('click', () => {
 });
 
 
-
-function toggleTerminalView() {
-    const termCont = document.getElementById('terminal-container');
-    const isChecked = document.getElementById('toggleTerminal').checked;
-
-    if (isChecked) {
-        termCont.style.display = 'flex';
-    } else {
-        termCont.style.display = 'none';
-    }
-
-    Blockly.svgResize(workspace);
-}
-
 // This function toggles the simulation view, which is currently just a placeholder div. You can expand this to include an actual simulation canvas or iframe in the future.
 function toggleSimView() {
     const simCont = document.getElementById('simulation-container');
@@ -280,77 +166,7 @@ function toggleSimView() {
 }
 
 
-/* Make the terminal output area and code editor area re-sizable */
 
-const termContainer = document.getElementById('terminalContainer');
-const termHeader = document.querySelector('.terminal-header');
-const hResizer = document.getElementById('terminal-resizer-h');
-
-hResizer.addEventListener('mousedown', (e) => {
-    document.addEventListener('mousemove', resizeTerminal);
-    document.addEventListener('mouseup', stopResizeTerminal);
-    document.body.style.cursor = 'ns-resize';
-});
-
-let isDragging = false;
-
-// 1. Double-Click or Single-Click to Toggle
-termHeader.addEventListener('click', (e) => {
-    if (e.target.closest('button')) return; // Ignore if clicking clear button
-    
-    if (termContainer.offsetHeight < 100) {
-        termContainer.style.height = "200px";
-    } else {
-        termContainer.style.height = "40px";
-    }
-    editor.refresh(); // Keep CodeMirror aligned
-});
-
-// 2. Drag to Resize
-termHeader.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    document.body.style.cursor = 'ns-resize'; // Keep cursor consistent while dragging
-});
-
-// Setting the height of the terminal to 25% of the screen when the toggle button is clicked, and minimizing it when clicked again. This allows for quick access to the terminal without taking up too much space when not needed.
-document.getElementById('terminalToggleBtn').addEventListener('click', () => {
-    const container = document.getElementById('terminal-container');
-    const targetHeight = window.innerHeight * 0.25; // 25% of screen
-
-    if (container.offsetHeight < 100) {
-        container.style.height = targetHeight + "px";
-        container.classList.remove('terminal-minimized');
-    } else {
-        container.classList.add('terminal-minimized');
-    }
-    
-    Blockly.svgResize(workspace);
-});
-
-// 3. Listen for mouse movement on the entire document to allow dragging outside the header
-document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-
-    // Calculate distance from bottom of window
-    const newHeight = window.innerHeight - e.clientY;
-
-    // Constrain height (Min: 40px, Max: 70% of screen)
-    if (newHeight >= 40 && newHeight <= window.innerHeight * 0.7) {
-        termContainer.style.height = `${newHeight}px`;
-        if (editor) editor.refresh();
-    }
-});
-
-
-/* Clears the console */
-document.getElementById('terminalOutput').innerHTML = '';
-
-
-// Stop dragging on mouse up anywhere on the document
-document.addEventListener('mouseup', () => {
-    isDragging = false;
-    document.body.style.cursor = 'default';
-});
 
 // Sync icon if user presses 'Esc' key to exit
 document.addEventListener('fullscreenchange', () => {
@@ -370,34 +186,6 @@ window.addEventListener('resize', () => {
 });
 
 
-function toggleEditorView() {
-    const blocklyView = document.getElementById('blocklyDiv');
-    const editorView = document.getElementById('editor-container');
-    const isChecked = document.getElementById('toggleCode').checked;
-
-    if (isChecked) {
-        // Switch to CODE VIEW
-        blocklyView.classList.add('hidden-view');
-        editorView.classList.remove('hidden-view');
-        
-        // Ensure CodeMirror is updated and visible
-        if (editor) {
-            // Update the code one last time before showing
-            const code = Blockly.Python.workspaceToCode(workspace);
-            editor.setValue(code);
-            editor.refresh(); 
-        }
-    } else {
-        // Switch to BLOCK VIEW
-        editorView.classList.add('hidden-view');
-        blocklyView.classList.remove('hidden-view');
-        
-        // Force Blockly to recalculate its size so blocks aren't "frozen"
-        Blockly.svgResize(workspace);
-    }
-}
-
-
 // A code to run simmulation
 function runSimulation() {
     const allBlocks = workspace.getAllBlocks(false);
@@ -413,6 +201,7 @@ function runSimulation() {
         }
     }
 }
+
 
 // Hook it into the workspace change event
 workspace.addChangeListener(runSimulation);
@@ -437,6 +226,7 @@ function updateCode(event) {
         const code = Blockly.Python.workspaceToCode(workspace);
         document.getElementById('codeTextArea').value = code;
         
+        
         // 3. LOGGING: Open your console (F12) to see this!
         console.log("Blockly generated:", code);
 
@@ -453,24 +243,6 @@ function updateCode(event) {
     }
 }
 
-
-
-
-function resizeTerminal(e) {
-    const newHeight = window.innerHeight - e.clientY;
-    // Minimum 40px, Maximum 70% of screen
-    if (newHeight > 40 && newHeight < window.innerHeight * 0.7) {
-        termContainer.style.height = `${newHeight}px`;
-        termContainer.classList.remove('terminal-minimized');
-        if (editor) editor.refresh();
-        Blockly.svgResize(workspace);
-    }
-}
-
-function stopResizeTerminal() {
-    document.removeEventListener('mousemove', resizeTerminal);
-    document.body.style.cursor = 'default';
-}
 
 // Ensure the listener is attached ONLY once
 workspace.removeChangeListener(updateCode); // Clear old ones
@@ -575,58 +347,13 @@ async function readFromESP32() {
 }
 
 
-// Swith between blockly and code editor view
-function toggleEditorView() {
-    const blocklyView = document.getElementById('blocklyDiv');
-    const editorView = document.getElementById('editor-container');
-    const isChecked = document.getElementById('toggleCode').checked;
-
-    if (isChecked) {
-        // --- PYTHON MODE ---
-        blocklyView.classList.add('hidden-view');
-        editorView.classList.remove('hidden-view');
-        
-        if (editor) {
-            const code = Blockly.Python.workspaceToCode(workspace);
-            editor.setValue(code);
-            editor.refresh(); 
-        }
-    } else {
-        // --- BLOCK MODE ---
-        editorView.classList.add('hidden-view');
-        blocklyView.classList.remove('hidden-view');
-        
-        // Ensure blocks fill the space left by the editor
-        setTimeout(() => {
-            Blockly.svgResize(workspace);
-        }, 50);
-    }
-}
-
 // Set initial state on window load
 window.addEventListener('load', () => {
     document.getElementById('toggleCode').checked = false; // Default to Block
-    toggleEditorView(); // Run once to set initial visibility
+    toggleMode(); // Run once to set initial visibility
 });
 
-// function toggleSimDrawer() {
-//     const simPanel = document.getElementById('simulation-container');
-//     const isCollapsed = simPanel.classList.toggle('collapsed');
-    
-//     // Crucial: Update Blockly after the CSS transition (300ms)
-//     setTimeout(() => {
-//         Blockly.svgResize(workspace);
-//     }, 310);
-// }
 
-// // Ensure the resizer doesn't interfere with the click
-// // We stop the resize if the panel is collapsed
-// simResizer.addEventListener('mousedown', (e) => {
-//     if (document.getElementById('simulation-container').classList.contains('collapsed')) return;
-    
-//     document.addEventListener('mousemove', resizeSim);
-//     document.addEventListener('mouseup', stopResizeSim);
-// });
 
 function toggleMode() {
     const isDebug = document.getElementById('modeToggle').checked;
@@ -713,13 +440,19 @@ workspace.addChangeListener(updateSimulation);
 
 
 function toggleCodeOverlay() {
+    const container = document.getElementById('overlay-editor-container');
     const overlay = document.getElementById('code-overlay');
-    const workspaceElement = document.querySelector('.blocklyWidgetDiv'); // Blockly's main layer
+    const edgeBtn = document.getElementById('python-edge-btn');
+    // const workspaceElement = document.querySelector('.blocklyWidgetDiv'); // Blockly's main layer
     
     overlay.classList.toggle('overlay-hidden');
     
-    if (!overlay.classList.contains('overlay-hidden')) {
 
+    
+    
+    if (!overlay.classList.contains('overlay-hidden')) {
+        
+        edgeBtn.style.right = '40%'; // Matches the width of your container
         // When open, the workspace background
         document.getElementById('blocklyDiv').style.opacity = "1";
         // Force update and refresh when opened
@@ -727,11 +460,16 @@ function toggleCodeOverlay() {
         editor.setValue(code);
         editor.refresh();
     } else {
+
         // When closed, the workspace background
-        document.getElementById('blocklyDiv').style.opacity = "1";
+        document.getElementById('blocklyDiv').style.opacity = "1";        
+        editor.refresh();
+        edgeBtn.style.right = '0';
+           
     }
 
 }
+
 
 
 // The function for uploading code onto ESP32
