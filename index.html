@@ -29,24 +29,42 @@
       <img src="assets/logo.png" alt="Company Logo" class="header-logo">  
     </div>
 
-
-    <nav class="top-nav"> <!--The navigation section that contains the view toggle and dropdown menu-->
-            
-        <div class="mode-toggle-container"> <!--The container for the view toggle switches-->
-            <span class="toggle-label">Build</span> <!--The label for the block view toggle-->
-            <label class="switch"> <!--The switch for toggling between block and code views-->
-                <input type="checkbox" id="toggleCode" onchange="toggleMode()"> <!--The checkbox input for the code view toggle-->
-                <span class="slider round"></span> <!--The slider for the switch-->
-            </label>
-            <span class="toggle-label">Test</span> <!--The label for the code view toggle-->
-        </div>      
-
+    <nav class="top-nav">
+        <div class="segmented-control">
+            <button id="btn-action" class="mode-btn active" onclick="setMode('action')">Action</button>
+            <button id="btn-debug" class="mode-btn" onclick="setMode('debug')">Debug</button>
+        </div>
+        <div id="connection-led" class="led-off" title="ESP32 Status"></div>
     </nav>
+
+
+    <!-- <nav class="top-nav"> The navigation section that contains the view toggle and dropdown menu -->
+      <!-- <div class="nav-content"> -->
+            
+        <!-- <div class="mode-toggle-container"> The container for the view toggle switches -->
+            <!-- <span class="toggle-label">Build</span> The label for the block view toggle -->
+            <!-- <label class="switch"> The switch for toggling between block and code views -->
+                <!-- <input type="checkbox" id="toggleCode" onchange="toggleMode()"> The checkbox input for the code view toggle -->
+                <!-- <span class="slider round"></span> The slider for the switch -->
+            <!-- </label> -->
+            <!-- <span class="toggle-label">Test</span> The label for the code view toggle -->
+        <!-- </div> -->
+        <!-- <div id="connection-led" class="led-off" title="ESP32 Status"></div>       -->
+      <!-- </div> -->
+    <!-- </nav> -->
 
     
     <div class="actions-center">
 
-      <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">Connect ESP32</button>
+      <button id="runBtn" class="action-btn run-style" onclick="runCode()" title="Run in RAM">
+        <span>▶</span> Run
+      </button>
+    
+      <button id="flashBtn" class="action-btn flash-style" onclick="flashCode()" title="Save to ESP32">
+         <span>⚡</span> Flash
+      </button>
+
+       <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">Connect ESP32</button>
 
       <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>Upload to ESP32</button>
 
@@ -158,6 +176,21 @@
   <script src="generators.js"></script>
   <script src="toolbox.js"></script> 
   <script src="app.js"></script>
+
+  <div id="ide-dialog-overlay" class="dialog-hidden">
+    <div class="ide-dialog">
+        <div class="dialog-header">
+            <span id="dialog-title">System Message</span>
+            <button onclick="closeDialog()" class="dialog-close-x">✕</button>
+        </div>
+        <div class="dialog-body">
+            <p id="dialog-message">Please connect your ESP32 before uploading.</p>
+        </div>
+        <div class="dialog-footer">
+            <button onclick="closeDialog()" class="primary-btn">Got it</button>
+        </div>
+    </div>
+  </div>
 
 </body>
 </html>

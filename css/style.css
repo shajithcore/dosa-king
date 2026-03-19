@@ -40,9 +40,11 @@
     } 
 
     .logo {
+      flex:1;
       display: flex;
       align-items: center;
       padding-right: 20px;
+      justify-content: flex-start;
     }
 
     .btn-stop {
@@ -292,13 +294,24 @@
       justify-content: space-between;
       align-items: center;
       background-color: #c4d447; /* Matches your dark theme */
+      background: linear-gradient(
+        180deg, 
+        #d1e05a 0%,    /* A slightly lighter version for 'top shine' */
+        #c4d447 45%,   /* Your original color in the middle */
+        #b1c136 100%   /* A slightly deeper version for weight */
+        );
       color: rgb(228, 128, 128);
       padding: 10px 20px;
       height: 50px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4); /* Adding a subtle inner glow */
+      border-bottom: 2px solid rgba(0, 0, 0, 0.15); /* A crisp dark bottom border for separation from the workspace */
+      -webkit-font-smoothing: antialiased; /* Smooth out the fonts against the bright background */
     }
 
     .actions-center {
+      flex:1;
       display: flex;
+      justify-content: flex-end;
       gap: 10px;
     }
 
@@ -311,11 +324,48 @@
     transition: 0.2s;
     }
 
+
+    
   .btn-connect { background-color: #007bff; color: white; }
   .btn-upload { background-color: #28a745; color: white; }
   .btn-sim { background-color: #6f42c1; color: white; }
   .btn-download { background-color: #555; color: white; }
 
+
+
+  .action-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+/* RUN: Edusharks Blue */
+.run-style {
+    background-color: #223fe6;
+    color: white;
+}
+.run-style:hover { background-color: #1a32b5; }
+
+/* FLASH: Bright Purple/Indigo */
+.flash-style {
+    background-color: #6a1b9a;
+    color: white;
+}
+.flash-style:hover { background-color: #4a148c; }
+
+/* Disabled state for both */
+.action-btn:disabled {
+    background-color: rgba(0,0,0,0.1) !important;
+    color: rgba(0,0,0,0.3) !important;
+    cursor: not-allowed;
+}
+  
 
   #fullscreenBtn {
     background: transparent;
@@ -355,12 +405,63 @@
 }
 
 .top-nav {
+    flex:1;
     display: flex;
-    background: #0a546d0f;
-    padding: 0 20px;
-    height: 50px;
+    justify-content: center;
     align-items: center;
-  /*  border-bottom: 1px solid #333; */
+    gap: 15px;
+ 
+}
+
+/* The outer "pill" container */
+.segmented-control {
+    display: flex;
+    background-color: #1a1a1a; /* Darker than header for depth */
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px; /* MakeCode uses slightly rounded, not full pill */
+    padding: 2px;
+    overflow: hidden;
+}
+
+/* The buttons inside */
+.mode-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* The "Active" state like MakeCode */
+.mode-btn.active {
+    background-color: #223fe6; /* Edusharks Blue */
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mode-btn:hover:not(.active) {
+    color: #ccc;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+
+/* Status LED */
+#connection-led {
+    width: 24px;
+    height: 24px;
+    border-radius: 30%;
+    background-color: #df0808;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+.led-on { 
+    background-color: #43e148 !important; 
+    /* box-shadow: 0 0 10px #00ff00;  */
 }
 
 .menu-item {
@@ -416,6 +517,7 @@
     display: inline-block;
     width: 50px;
     height: 24px;
+    content: "Build";
 }
 
 /* Hide default HTML checkbox */
@@ -440,9 +542,9 @@
 
 .slider:before {
     position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
+    content: "Build";
+    height: 36px;
+    width: 52px;
     left: 4px;
     bottom: 3px;
     background-color: white;
@@ -450,8 +552,9 @@
     border-radius: 50%;
 }
 
-/* When checked (Python Mode) */
+/* When checked (Test Mode) */
 input:checked + .slider {
+    content: "Test";
     background-color: #223fe6; /* Edusharks Blue / Python Mode */
 }
 
@@ -731,3 +834,94 @@ input:checked + .slider:before {
     font-style: italic;
 }
 
+#ide-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7); /* Dim the background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Stay on top of everything */
+    backdrop-filter: blur(4px);
+    transition: opacity 0.3s ease;
+}
+
+.dialog-hidden {
+    display: none !important;
+}
+
+.ide-dialog {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.dialog-header {
+    background: #26266e;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dialog-header span {
+    color: #f2faf3; /* Edusharks Blue */
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing:5px;
+    text-transform: uppercase;
+}
+
+.dialog-body {
+    padding: 30px 20px;
+    color: #ccc;
+    font-size: 15px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.dialog-footer {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+
+.header-row {
+    /* ... existing styles ... */
+    position: relative;
+    overflow: hidden;
+}
+
+.header-row::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Subtle noise or micro-grid */
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 15px 15px;
+    pointer-events: none;
+}
+
+
+/* Style for the button when it's locked/connected */
+#connectBtn:disabled {
+    background: rgba(0, 0, 0, 0.2) !important; /* Muted background */
+    color: rgba(255, 255, 255, 0.5) !important; /* Faded text */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: not-allowed; /* Shows a 'block' icon on hover */
+    box-shadow: none;
+    transform: none !important; /* Prevents any "click" animation */
+}
+
+/* Ensure the 'Connected' checkmark stays visible but subtle */
+#connectBtn:disabled::after {
+    opacity: 0.8;
+}
