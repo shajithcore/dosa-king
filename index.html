@@ -26,7 +26,7 @@
   <header class="ide-toolbar"> <!--The header section is a complete narrow row that holds the logo, navigation, and action buttons--> 
     
     <div class="logo"> <!--The container for the IDE logo -->
-      <img src="assets/Edusharks-logo.png" alt="Company Logo" class="header-logo">  
+      <img src="assets/logo.png" alt="Company Logo" class="header-logo">  
     </div>
 
     <nav class="top-nav">
@@ -34,7 +34,7 @@
             <button id="btn-action" class="mode-btn active" onclick="setMode('action')">Action</button>
             <button id="btn-debug" class="mode-btn" onclick="setMode('debug')">Debug</button>
         </div>
-        <div id="connection-led" class="led-off" title="ESP32 Status"></div>
+        <!-- <div id="connection-led" class="led-off" title="ESP32 Status"></div> -->
     </nav>
 
 
@@ -64,7 +64,7 @@
          <span>⚡</span> Flash
       </button>
 
-       <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">Connect ESP32</button>
+       <!-- <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">Connect ESP32</button> -->
 
       <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>Upload to ESP32</button>
 
@@ -180,12 +180,12 @@
   <footer class="ide-footer">
     <div class="footer-left">
         <div id="connection-led" class="led-off"></div>
-        <span id="footer-status">Disconnected</span>
+        <span id="footer-status">ESP32 not connected</span>
     </div>
 
     <div class="footer-center">
         <div class="connectivity-hub">
-            <button id="connectBtn" class="footer-connect-btn" onclick="handleConnection()">
+            <button id="connectBtn1" class="footer-connect-btn" onclick="connectESP32()">
                 <span class="conn-icon">🔌</span> USB Connect
             </button>
             

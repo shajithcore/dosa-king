@@ -351,40 +351,13 @@ async function autoConnectCheck() {
 // Run this when the IDE starts
 window.addEventListener('load', autoConnectCheck);
 
-
-// This listener catches the ESP32 being plugged back in
-
-navigator.serial.addEventListener('connect', async (event) => {
-    console.log("New hardware detected...");
-    
-    const detectedPort = event.target;
-
-    try {
-        // We TRY to open it silently. 
-        // This only works if this specific ESP32 was authorized before.
-        await setupESP32Connection(detectedPort);
-        
-        // If we reach this line, the connection is LIVE.
-        console.log("Auto-connection successful!");
-    } catch (err) {
-        // If we reach here, it's a "New" device that needs permission.
-        console.warn("New device needs manual authorization.");
-        
-        // IMPORTANT: Keep UI as "Disconnected" and show a helper dialog
-        updateConnectionUI(false); 
-        
-        showDialog(
-            "New Device Detected", 
-            "We see a new ESP32! Please click the 'Connect' button to give the IDE permission to use this specific board."
-        );
-    }
-});
+// updateConnectionUI(false); 
 
 // This function handles the actual "Opening" of the pipe
 
 async function setupESP32Connection(existingPort) {
     port = existingPort;
-    
+    updateConnectionUI(true); 
     // 1. Open the port
     await port.open({ baudRate: 115200 });
 
@@ -398,12 +371,44 @@ async function setupESP32Connection(existingPort) {
 
     // 4. Update UI
     document.getElementById('connection-led').className = 'led-on';
-    document.getElementById('connectBtn').innerText = "Connected";
-    connectBtn.disabled = true; // This prevents the second click and the "Red LED" reset
+    document.getElementById('connectBtn1').innerText = "Connected";
+    connectBtn1.disabled = true; // This prevents the second click and the "Red LED" reset
     document.getElementById('uploadBtn').disabled = false;
     document.getElementById('stopBtn').disabled = false;
     document.getElementById('connection-led').className = 'led-on';
-}
+    
+}   
+
+// This listener catches the ESP32 being plugged back in
+
+navigator.serial.addEventListener('connect', async (event) => {
+    console.log("New hardware detected...");
+    
+    const detectedPort = event.target;
+
+    try {
+        // We TRY to open it silently. 
+        // This only works if this specific ESP32 was authorized before.
+        await setupESP32Connection(detectedPort);
+        updateConnectionUI(true); 
+        
+        // If we reach this line, the connection is LIVE.
+        console.log("Auto-connection successful!");
+    } catch (err) {
+        // If we reach here, it's a "New" device that needs permission.
+        
+        console.warn("New device needs manual authorization.");
+        
+        // IMPORTANT: Keep UI as "Disconnected" and show a helper dialog
+        
+        
+        showDialog(
+            "New Device Detected", 
+            "We see a new ESP32! Please click the 'Connect' button to give the IDE permission to use this specific board."
+        );
+    }
+});
+    
 
 
 // check for "already authorized" devices when the page loads
@@ -427,7 +432,9 @@ async function disconnectESP32() {
         await port.close();
         port = null;
         document.getElementById('connection-led').className = 'led-off';
-        document.getElementById('connectBtn').innerText = "Connect ESP32";
+        document.getElementById('connectBtn1').innerText = "Connect ESP32";
+        document.getElementById('connection-led').innerText = "ESP 32 Not Connected";
+        
     }
 }
 
@@ -463,39 +470,16 @@ async function stopESP32() {
 // This listener catches physical unplugging events
 
 navigator.serial.addEventListener('disconnect', (event) => {
-    const connectBtn = document.getElementById('connectBtn');
-    connectBtn.disabled = false; // Re-enable for the next connection
-    connectBtn.innerText = "Connect ESP32";
+    const connectBtn1 = document.getElementById('connectBtn1');
+    connectBtn1.disabled = false; // Re-enable for the next connection
+    connectBtn1.innerText = "Connect ESP32";
     
     document.getElementById('connection-led').className = 'led-off';
+    updateConnectionUI(false); 
     port = null;
     espWriter = null;
 });
 
-// This function connects to the ESP32 using the Web Serial API. It sets up both a writer for sending code and a reader for displaying the terminal output. The UI is updated to reflect the connection status, and error handling is included to catch any issues during the connection process.
-
-// async function connectESP32() {
-//     try {
-//         port = await navigator.serial.requestPort();
-//         await port.open({ baudRate: 115200 });
-
-//         // 1. Setup the Writer (Sending code)
-//         const encoder = new TextEncoderStream();
-//         encoder.readable.pipeTo(port.writable);
-//         espWriter = encoder.writable.getWriter();
-
-//         // 2. Setup the Reader (The Terminal)
-//         readFromESP32();
-
-//         document.getElementById('uploadBtn').disabled = false;
-//         document.getElementById('stopBtn').disabled = false; // Enable Stop button
-//         document.getElementById('connectBtn').innerText = "Connected";
-//         document.getElementById('connection-led').classList.add('led-on');
-//     } catch (e) {
-//         console.error("Connection failed", e);
-//         document.getElementById('connection-led').classList.remove('led-on');
-//     }
-// }
 
 
 async function connectESP32() {
@@ -508,6 +492,7 @@ async function connectESP32() {
         
         // Success Message in your IDE UI (not console)
         showDialog("Success!", "ESP32 is now synced with Edusharks IDE.");
+       
 
     } catch (err) {
         // We "eat" the console error and show your Dialog instead
@@ -683,47 +668,6 @@ function toggleCodeOverlay() {
 }
 
 
-// The function for uploading code onto ESP32
-
-// async function uploadCode() {
-//     if (!espWriter) return;
-
-//     // 1. Show the Loading Animation
-//     const overlay = document.getElementById('loadingOverlay');
-//     overlay.classList.remove('overlay-hidden');
-
-//     const code = Blockly.Python.workspaceToCode(workspace);
-    
-//     try {
-//         // 1. Interrupt anything running (Ctrl+C)
-//         await espWriter.write('\x03\x03'); 
-//         await new Promise(r => setTimeout(r, 300));
-
-//         // 2. Enter Raw Paste Mode (Ctrl+A)
-//         await espWriter.write('\x01'); 
-//         await new Promise(r => setTimeout(r, 100));
-
-//         // 3. Send the raw code string and execute
-//         await espWriter.write(code + '\x04');
-
-//         // 4. Execute and Soft Reboot (Ctrl+D)
-//         // await espWriter.write('\x04');
-        
-//         console.log("Upload successful.");
-//     } catch (e) {
-//         console.error("Upload error:", e);
-//         alert("Upload Error. Please check connection.");
-//     }
-//     finally {
-//         // 3. Hide the Loading Animation (even if error occurs)
-//         // We add a tiny delay so the user actually sees the completion
-//         setTimeout(() => {
-//             overlay.classList.add('overlay-hidden');
-//         }, 500);
-//     }
-// }
-
-
 async function runCode() {
     if (!espWriter) return;
     const code = Blockly.Python.workspaceToCode(workspace);
@@ -789,6 +733,7 @@ async function uploadCode() {
         return;
     }
 
+
     // --- Start Upload Logic ---
     const overlay = document.getElementById('loadingOverlay');
     overlay.classList.remove('overlay-hidden');
@@ -800,7 +745,6 @@ async function uploadCode() {
         import machine
         machine.reset() # This reboots the board to run the new main.py
         `;
-
 
     try {
         
@@ -821,20 +765,20 @@ async function uploadCode() {
 }
 
 function updateConnectionUI(isConnected) {
-    const btn = document.getElementById('connectBtn');
+    const btn = document.getElementById('connectBtn1');
     const led = document.getElementById('connection-led');
     const statusText = document.getElementById('footer-status');
 
     if (isConnected) {
         btn.innerHTML = '<span class="conn-icon">🔌</span> Disconnect';
         btn.classList.add('is-connected');
-        statusText.innerText = "Connected (USB)";
+        statusText.innerText = "Connected via USB";
         statusText.style.color = "#c4d447";
         led.className = 'led-on';
     } else {
         btn.innerHTML = '<span class="conn-icon">🔌</span> USB Connect';
         btn.classList.remove('is-connected');
-        statusText.innerText = "Disconnected";
+        statusText.innerText = "ESP32 not Connected";
         statusText.style.color = "#888";
         led.className = 'led-off';
     }
