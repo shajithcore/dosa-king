@@ -925,3 +925,73 @@ input:checked + .slider:before {
 #connectBtn:disabled::after {
     opacity: 0.8;
 }
+
+.ide-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 35px; /* Slim, professional profile */
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: #888;
+    font-size: 12px;
+}
+
+/* Connection Hub Styling */
+.connectivity-hub {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.footer-connect-btn {
+    background: transparent;
+    border: none;
+    color: #ccc;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+/* When the USB is connected, highlight it with Edusharks Green */
+.footer-connect-btn.is-connected {
+    color: #c4d447;
+}
+
+.footer-conn-type {
+    background: transparent;
+    border: none;
+    color: #444;
+    padding: 0 8px;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+/* Status LED in Footer */
+#connection-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+.led-on { background-color: #00ff00; box-shadow: 0 0 5px #00ff00; }
+.led-off { background-color: #444; }
+
+.footer-info {
+    border-right: 1px solid #333;
+    padding-right: 10px;
+    margin-right: 10px;
+}

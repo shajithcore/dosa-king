@@ -746,12 +746,12 @@ async function flashCode() {
 
     // This script writes the code to main.py and reboots
     const flashScript = `
-f = open('main.py', 'w')
-f.write('''${code}''')
-f.close()
-import machine
-machine.soft_reset()
-`;
+        f = open('main.py', 'w')
+        f.write('''${code}''')
+        f.close()
+        import machine
+        machine.soft_reset()
+        `;
 
     showLoadingOverlay("Flashing to Storage..."); // Show a specific message
 
@@ -821,18 +821,24 @@ async function uploadCode() {
 }
 
 function updateConnectionUI(isConnected) {
-    const stopBtn = document.getElementById('stopBtn');
-    
+    const btn = document.getElementById('connectBtn');
+    const led = document.getElementById('connection-led');
+    const statusText = document.getElementById('footer-status');
+
     if (isConnected) {
-        // When first connected, code isn't running yet, so keep it disabled
-        stopBtn.disabled = true; 
-        // ... (rest of your connection UI logic)
+        btn.innerHTML = '<span class="conn-icon">🔌</span> Disconnect';
+        btn.classList.add('is-connected');
+        statusText.innerText = "Connected (USB)";
+        statusText.style.color = "#c4d447";
+        led.className = 'led-on';
     } else {
-        // When disconnected, definitely disable it
-        stopBtn.disabled = true;
+        btn.innerHTML = '<span class="conn-icon">🔌</span> USB Connect';
+        btn.classList.remove('is-connected');
+        statusText.innerText = "Disconnected";
+        statusText.style.color = "#888";
+        led.className = 'led-off';
     }
 }
-
 
 // The function that downloads main.py to the computer
 

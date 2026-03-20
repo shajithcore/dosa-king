@@ -139,38 +139,66 @@
               
          
         <div id="code-overlay" class="overlay-hidden">
-          <div class="overlay-header">
-            <div class="header-left">
-              <span>Python Code</span>
+
+            <div class="overlay-header">
+
+                <div class="header-left">
+                <span>Python Code</span>
+                </div>
+
+                <div class="overlay-actions">                 
+                    <button onclick="toggleCodeOverlay()">✕</button>
+                </div>
 
             </div>
-            <div class="overlay-actions">
-                 
-                <button onclick="toggleCodeOverlay()">✕</button>
-            </div>
-        </div>
 
-        <div id="overlay-editor-container">
-            <textarea id="codeTextArea"></textarea>
-        </div>
+            <div id="overlay-editor-container">
+                <textarea id="codeTextArea"></textarea>
+            </div>
     
       </div>  <!--End of main-layout-->
       
       <div id="blocklyDiv"></div>
       <button id="python-edge-btn" onclick="toggleCodeOverlay()" title="Toggle Python Code">
-        <img src="assets/brand-python.svg" width="35">
-        <!-- <span class="btn-text">PYTHON</span>         -->
+        <img src="assets/brand-python.svg" width="35">        
       </button>  
 
 
 
 
-  <div id="loadingOverlay" class="overlay-hidden">
-    <div class="loader-container">
-        <div class="spinner"></div>
-        <p>Uploading to ESP32...</p>
+        <div id="loadingOverlay" class="overlay-hidden">
+            <div class="loader-container">
+                <div class="spinner"></div>
+                <p>Uploading to ESP32...</p>
+            </div>
+        </div>
     </div>
+
   </div>
+
+
+  <footer class="ide-footer">
+    <div class="footer-left">
+        <div id="connection-led" class="led-off"></div>
+        <span id="footer-status">Disconnected</span>
+    </div>
+
+    <div class="footer-center">
+        <div class="connectivity-hub">
+            <button id="connectBtn" class="footer-connect-btn" onclick="handleConnection()">
+                <span class="conn-icon">🔌</span> USB Connect
+            </button>
+            
+            <button class="footer-conn-type disabled" title="WiFi (Coming Soon)">📶</button>
+            <button class="footer-conn-type disabled" title="Bluetooth (Coming Soon)">ᛒ</button>
+        </div>
+    </div>
+
+    <div class="footer-right">
+        <span class="footer-info">ESP32 | MicroPython</span>
+        <button class="terminal-toggle-btn" onclick="toggleTerminal()">Console ⌃</button>
+    </div>
+</footer>
   
   <script src="blocks.js"></script>
   <script src="generators.js"></script>
