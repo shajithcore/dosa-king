@@ -56,8 +56,8 @@
     
     <div class="actions-center">
 
-      <button id="runBtn" class="action-btn run-style" onclick="runCode()" title="Run in RAM">
-        <span>▶</span> Run
+      <button id="mainRunBtn" class="action-btn run-style" onclick="toggleRunStop()" title="Run in RAM">
+        <span id="run-icon">▶</span> <span id="run-text">Run</span>
       </button>
     
       <button id="flashBtn" class="action-btn flash-style" onclick="flashCode()" title="Save to ESP32">
@@ -66,9 +66,9 @@
 
        <!-- <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">Connect ESP32</button> -->
 
-      <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>Upload to ESP32</button>
+      <!-- <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>Upload to ESP32</button> -->
 
-      <button id="stopBtn" class="btn btn-stop" onclick="stopESP32()" disabled>Stop</button>
+      <!-- <button id="stopBtn" class="btn btn-stop" onclick="stopESP32()" disabled>Stop</button> -->
 
       <button id="fullscreenBtn" class="btn">
         <span id="fs-icon">⛶</span> 

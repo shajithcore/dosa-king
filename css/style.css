@@ -995,3 +995,27 @@ input:checked + .slider:before {
     padding-right: 10px;
     margin-right: 10px;
 }
+
+/* Existing run-style is blue/green, let's add the stop-style */
+.stop-style {
+    background-color: #d32f2f !important; /* Professional Red */
+    color: white !important;
+    border: none;
+    box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+}
+
+.stop-style:hover {
+    background-color: #b71c1c !important;
+    transform: translateY(-1px);
+}
+
+/* Add a subtle pulse to the button while code is running */
+.stop-style {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+}

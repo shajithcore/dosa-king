@@ -3,6 +3,7 @@
 
   let port;
   let espWriter; // Declare it here at the top!
+  let isRunning = false; // Declare toggle varaible for Run Vs Stop
   
 
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
@@ -366,6 +367,8 @@ async function setupESP32Connection(existingPort) {
     encoder.readable.pipeTo(port.writable);
     espWriter = encoder.writable.getWriter();
 
+
+
     // 3. Setup the Terminal Reader
     readFromESP32();
 
@@ -373,8 +376,8 @@ async function setupESP32Connection(existingPort) {
     document.getElementById('connection-led').className = 'led-on';
     document.getElementById('connectBtn1').innerText = "Connected";
     connectBtn1.disabled = true; // This prevents the second click and the "Red LED" reset
-    document.getElementById('uploadBtn').disabled = false;
-    document.getElementById('stopBtn').disabled = false;
+    // document.getElementById('uploadBtn').disabled = false;
+    // document.getElementById('stopBtn').disabled = false;
     document.getElementById('connection-led').className = 'led-on';
     
 }   
@@ -446,21 +449,12 @@ async function disconnectESP32() {
 async function stopESP32() {
     if (!espWriter) return;
 
-    const stopBtn = document.getElementById('stopBtn');
+    // const stopBtn = document.getElementById('mainRunBtn');
 
     try {
         // 1. Send the interrupt signals
         await espWriter.write('\x03\x03'); 
         console.log("Stopped execution (Sent Ctrl+C)");
-
-        // 2. THE FIX: Disable the button immediately
-        stopBtn.disabled = true;
-        
-        // 3. Optional: Change text or style to show it's stopped
-        stopBtn.innerText = "Stopped ⏹";
-        setTimeout(() => {
-            stopBtn.innerText = "Stop"; // Reset text after a second
-        }, 1000);
 
     } catch (e) {
         console.error("Stop failed:", e);
@@ -478,6 +472,13 @@ navigator.serial.addEventListener('disconnect', (event) => {
     updateConnectionUI(false); 
     port = null;
     espWriter = null;
+
+    isRunning = false;
+    const btn = document.getElementById('mainRunBtn');
+    btn.classList.remove('stop-style');
+    btn.classList.add('run-style');
+    document.getElementById('run-icon').innerText = "▶";
+    document.getElementById('run-text').innerText = "Run";
 });
 
 
@@ -543,6 +544,24 @@ window.addEventListener('load', () => {
     document.getElementById('toggleCode').checked = false; // Default to Block
     toggleMode(); // Run once to set initial visibility
 });
+
+
+// function resetRunButton() {
+//     // Only reset if we are actually in the "Running" state
+//     if (!isRunning) return; 
+    
+//     isRunning = false;
+//     const btn = document.getElementById('mainRunBtn');
+//     const icon = document.getElementById('run-icon');
+//     const text = document.getElementById('run-text');
+
+//     if (btn) {
+//         btn.classList.replace('stop-style', 'run-style');
+//         icon.innerText = "▶";
+//         text.innerText = "Run";
+//         console.log("Code finished naturally. UI Reset.");
+//     }
+// }
 
 
 // This function toggles between "Debug Mode" (blocks only) and "Action Mode" (blocks + code). In Debug Mode, the toolbox is hidden to encourage block-based thinking, while in Action Mode, the toolbox is visible for easy access to blocks. The workspace is resized accordingly to fill the available space.
@@ -669,7 +688,24 @@ function toggleCodeOverlay() {
 
 
 async function runCode() {
-    if (!espWriter) return;
+    if (!espWriter || !port || !port.readable) {
+        showDialog("Connection Required", "Oops! Your ESP32 isn't connected yet. Please connect first.");
+        return false;
+    }
+
+    // Situation 2: Check for "Empty" Assembly
+    // We check if there are blocks besides the two 'hat' blocks
+    const allBlocks = workspace.getAllBlocks(false);
+    const hasLogic = allBlocks.some(block => 
+        block.type !== 'base_start' && block.type !== 'base_forever'
+    );
+
+    if (!hasLogic) {
+        showDialog("Empty Workspace", "It looks like you haven't added any blocks to the 'On Start' or 'Forever' sections. Add some code first!");
+        return;
+    }
+
+    
     const code = Blockly.Python.workspaceToCode(workspace);
 
     try {
@@ -678,14 +714,34 @@ async function runCode() {
         await espWriter.write('\x01'); // Enter Raw Paste
         await espWriter.write(code + '\x04'); // Execute
         console.log("Running code in RAM...");
+        // document.getElementById('stopBtn').disabled = false;
+        return true;
     } catch (e) {
         showDialog("Run Error", "Could not send code to RAM.");
+        return false;
     }
 }
 
 
 async function flashCode() {
-    if (!espWriter) return;
+
+    if (!espWriter || !port || !port.readable) {
+        showDialog("Connection Required", "Oops! Your ESP32 isn't connected yet. Please click the 'Connect' button first.");
+        return;
+    }
+
+    // Situation 2: Check for "Empty" Assembly
+    // We check if there are blocks besides the two 'hat' blocks
+    const allBlocks = workspace.getAllBlocks(false);
+    const hasLogic = allBlocks.some(block => 
+        block.type !== 'base_start' && block.type !== 'base_forever'
+    );
+
+    if (!hasLogic) {
+        showDialog("Empty Workspace", "It looks like you haven't added any blocks to the 'On Start' or 'Forever' sections. Add some code first!");
+        return;
+    }
+
     const code = Blockly.Python.workspaceToCode(workspace);
 
     // This script writes the code to main.py and reboots
@@ -754,7 +810,7 @@ async function uploadCode() {
         await espWriter.write(code + '\x04'); // Send & Execute
         await espWriter.write(permanentCode + '\x04');
         console.log("Code saved to main.py and ESP32 rebooted.");
-        document.getElementById('stopBtn').disabled = false;
+        // document.getElementById('stopBtn').disabled = false;
     } catch (e) {
         showDialog("Upload Error", "Failed to send code. Please check your cable connection.");
     } finally {
@@ -783,6 +839,43 @@ function updateConnectionUI(isConnected) {
         led.className = 'led-off';
     }
 }
+
+
+
+// 2. Update the toggle function between Run and Stop
+async function toggleRunStop() {
+    const btn = document.getElementById('mainRunBtn');
+    const icon = document.getElementById('run-icon');
+    const text = document.getElementById('run-text');
+
+    if (!isRunning) {
+        // --- TRANSITION TO START ---
+        // We try to run the code first
+        const success = await runCode(); 
+        
+        // If successful (or assuming success for the UI toggle)
+        
+        if(success) {
+        isRunning = true;
+        btn.classList.remove('run-style');
+        btn.classList.add('stop-style');
+        icon.innerText = "⏹";
+        text.innerText = "Stop";
+        }
+
+    } else {
+        // --- TRANSITION TO STOP ---
+        await stopESP32();
+        
+        isRunning = false;
+        btn.classList.remove('stop-style');
+        btn.classList.add('run-style');
+        icon.innerText = "▶";
+        text.innerText = "Run";
+    }
+}
+
+
 
 // The function that downloads main.py to the computer
 
