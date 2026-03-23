@@ -1,10 +1,13 @@
 
+ 
   // Add this temporarily to the top of app.js
 
   let port;
   let espWriter; // Declare it here at the top!
   let isRunning = false; // Declare toggle varaible for Run Vs Stop
   
+
+//   
 
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
   'base': Blockly.Themes.Classic,
@@ -49,6 +52,7 @@
     'startHats': true
 });
   
+// A varaibale to define the workspace starter state. Places the On Start and forever blocks on the workspace automatically
 
     const starterState = {
     "blocks": {
@@ -82,17 +86,22 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
 
   // 6. INJECT BLOCKLY (With Resizable/Zoom Settings)
 
+
+
   const workspace = Blockly.inject('blocklyDiv', {
     toolbox: toolboxCategories,
+    toolboxPosition: 'start',
+    horizontalLayout:false,
     theme: DarkTheme, // This changes the "Thanos" / Dark look
     renderer: 'zelos',          // This makes blocks look like Scratch (rounded)
     move: { 
         scrollbars: {
             horizontal: true,
-            vertical: true 
+            vertical: true, 
+            drag: true, 
+            wheel: true 
         },       
-        drag: true, 
-        wheel: true 
+
     },
     zoom: { 
         controls: true, 
@@ -101,9 +110,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
     },
     trashcan: true,
     disable: true,
-    grid: { spacing: 20, length: 0.5, colour: '#ccc', snap: true },    
-    horizontalLayout: false,
-    toolboxPosition: 'start',
+    grid: { spacing: 20, length: 0.5, colour: '#ccc', snap: true }, 
     comments: true,
     collapse: true,
     disable: true,
@@ -127,7 +134,6 @@ const backpack = new Backpack(workspace, {
 });
     backpack.init();
 
-
     
 // A function to show esp32 status message
 
@@ -136,7 +142,6 @@ function showDialog(title, message) {
     document.getElementById('dialog-message').innerText = message;
     document.getElementById('ide-dialog-overlay').classList.remove('dialog-hidden');
 }
-
 
 //  A function to close dialog box
 
@@ -178,6 +183,7 @@ function setMode(mode) {
         // IDE Logic: Hide Toolbox
         workspace.getToolbox().setVisible(false);
         // If simulation panel is hidden, you might want to show it here
+
     } else {
         // UI Update
         btnAction.classList.add('active');
@@ -243,6 +249,29 @@ function runSimulation() {
             ledElement.className = 'led-off';
         }
     }
+}
+
+// A function to display a welcome message on the console
+
+function displayWelcomeMessage() {
+    const term = document.getElementById('terminalOutput');
+    if (!term) return;
+
+    // Clear the technical "system dump" from the ESP32
+    term.innerText = ""; 
+
+    // Create a stylized Edusharks header
+    const welcomeHTML = `
+
+<span style="color: #1d9208; font-size:18; font-weight:400;">  WELCOME TO EDUSHARKS IDE v1.0  </span>
+
+<span style="color: #888;">System: ESP32 MicroPython Ready</span>
+<span style="color: #888;">Status: Connected & Synchronized</span>
+<span style="color: #c4d447;">Ready to start swimming with code!</span>
+
+`;
+    // We use innerHTML here so we can use the colors defined above
+    term.innerHTML = welcomeHTML;
 }
 
 
@@ -357,30 +386,33 @@ window.addEventListener('load', autoConnectCheck);
 // This function handles the actual "Opening" of the pipe
 
 async function setupESP32Connection(existingPort) {
-    port = existingPort;
-    updateConnectionUI(true); 
+    try {port = existingPort;
+    
     // 1. Open the port
     await port.open({ baudRate: 115200 });
 
-    // 2. Setup the Writer
-    const encoder = new TextEncoderStream();
-    encoder.readable.pipeTo(port.writable);
-    espWriter = encoder.writable.getWriter();
-
-
-
-    // 3. Setup the Terminal Reader
+    setupStreams();
     readFromESP32();
 
-    // 4. Update UI
-    document.getElementById('connection-led').className = 'led-on';
-    document.getElementById('connectBtn1').innerText = "Connected";
-    connectBtn1.disabled = true; // This prevents the second click and the "Red LED" reset
-    // document.getElementById('uploadBtn').disabled = false;
-    // document.getElementById('stopBtn').disabled = false;
-    document.getElementById('connection-led').className = 'led-on';
-    
+    // WAIT 200ms for the "system dump" to finish, then show our welcome
+        setTimeout(() => {
+            displayWelcomeMessage();
+        }, 200);
+
+        updateConnectionUI(true);
+    }
+
+    // 2. Setup the Writer
+    // const encoder = new TextEncoderStream();
+    // encoder.readable.pipeTo(port.writable);
+    // espWriter = encoder.writable.getWriter();
+
+    catch (err) {
+        console.error("Connection failed:", err);
+        updateConnectionUI(false);
+    }
 }   
+
 
 // This listener catches the ESP32 being plugged back in
 
@@ -403,7 +435,7 @@ navigator.serial.addEventListener('connect', async (event) => {
         console.warn("New device needs manual authorization.");
         
         // IMPORTANT: Keep UI as "Disconnected" and show a helper dialog
-        
+        updateConnectionUI(false);
         
         showDialog(
             "New Device Detected", 
@@ -429,6 +461,20 @@ window.addEventListener('load', async () => {
 
 
 // The Nav LED to turn off when the user manually stops the connection
+
+
+function setupStreams() {
+    // 1. Create a stream that converts text to bytes
+    const encoder = new TextEncoderStream();
+    
+    // 2. Connect that stream to the ESP32's hardware input
+    encoder.readable.pipeTo(port.writable);
+    
+    // 3. Set the global writer so runCode() and flashCode() can use it
+    espWriter = encoder.writable.getWriter();
+    
+    console.log("Communication streams established.");
+}
 
 async function disconnectESP32() {
     if (port) {
@@ -513,31 +559,86 @@ async function connectESP32() {
 
 // This function continuously reads from the ESP32's serial output and appends it to the terminal div. It uses a TextDecoder to convert bytes to strings and handles auto-scrolling for a better user experience.
 
-async function readFromESP32() {
-    const appendTerminal = (text) => {
-        const term = document.getElementById('terminalOutput');
-        term.innerText += text;
-        // Auto-scroll to bottom
-        document.getElementById('terminalContainer').scrollTop = term.scrollHeight;
-    };
+// async function readFromESP32() {
+//     const appendTerminal = (text) => {
+//         const term = document.getElementById('terminalOutput');
+//         term.innerText += text;
+//         // Auto-scroll to bottom
+//         document.getElementById('terminalContainer').scrollTop = term.scrollHeight;
+//     };
 
-    while (port.readable) {
+//     while (port.readable) {
+//         const reader = port.readable.getReader();
+//         try {
+//             while (true) {
+//                 const { value, done } = await reader.read();
+//                 if (done) break;
+//                 const decoded = new TextDecoder().decode(value);
+//                 appendTerminal(decoded);
+//             }
+//         } catch (error) {
+//             console.error("Read error:", error);
+//         } finally {
+//             reader.releaseLock();
+//         }
+//     }
+// }
+
+
+async function readFromESP32() {
+    const term = document.getElementById('terminalOutput');
+    const decoder = new TextDecoder();
+
+    // The outer loop keeps the reader alive as long as the port is open
+    while (port && port.readable) {
         const reader = port.readable.getReader();
+        
         try {
             while (true) {
                 const { value, done } = await reader.read();
-                if (done) break;
-                const decoded = new TextDecoder().decode(value);
-                appendTerminal(decoded);
+                
+                if (done) {
+                    // done is true if the port is closed
+                    break;
+                }
+
+                // Convert bytes from ESP32 to a string
+                const decoded = decoder.decode(value);
+
+                // 1. Update the Terminal UI
+                if (term) {
+                // We append text as a TextNode to prevent HTML injection from the ESP32,
+                    // but this keeps your Welcome HTML intact.
+                    const textNode = document.createTextNode(decoded);
+                    term.appendChild(textNode);
+                    term.scrollTop = term.scrollHeight;
+                }
+
+                // 2. THE SAFETY RESET LOGIC
+                // We check if 'isRunning' is true and if the ESP32 
+                // has sent back a prompt ('>' or '>>>').
+                if (isRunning && (decoded.includes('>') || decoded.includes('>>>'))) {
+                    console.log("MicroPython finished execution. Resetting UI...");
+                    
+                    // We wrap this in a tiny timeout to ensure the terminal 
+                    // finishes printing before the button flips.
+                    setTimeout(() => {
+                        resetRunButton();
+                    }, 50);
+                }
             }
         } catch (error) {
-            console.error("Read error:", error);
+            console.error("Non-critical read error:", error);
+            // We don't 'return' here because we want the loop to try again 
+            // if the hardware is still technically attached.
+            break; 
         } finally {
+            // CRITICAL: Always release the lock so the port can be 
+            // closed or reset later without freezing the browser.
             reader.releaseLock();
         }
     }
 }
-
 
 // Set initial state on window load
 window.addEventListener('load', () => {
@@ -546,22 +647,80 @@ window.addEventListener('load', () => {
 });
 
 
-// function resetRunButton() {
-//     // Only reset if we are actually in the "Running" state
-//     if (!isRunning) return; 
+// Toggle Console
+function toggleTerminal() {
+    const consoleBox = document.getElementById('console-container');
     
-//     isRunning = false;
-//     const btn = document.getElementById('mainRunBtn');
-//     const icon = document.getElementById('run-icon');
-//     const text = document.getElementById('run-text');
+    if (consoleBox.classList.contains('console-closed'))
+    {
+        // OPENING: Give it a healthy default height (e.g., 180px)
+        consoleBox.classList.remove('console-closed');
+        consoleBox.style.height = "180px"; 
+    } else {
+        // CLOSING: Snap it to 0
+        consoleBox.classList.add('console-closed');
+        consoleBox.style.height = "0px";
+    }
 
-//     if (btn) {
-//         btn.classList.replace('stop-style', 'run-style');
-//         icon.innerText = "▶";
-//         text.innerText = "Run";
-//         console.log("Code finished naturally. UI Reset.");
-//     }
-// }
+// Always tell Blockly to resize so blocks don't get cut off
+    setTimeout(() => {
+        Blockly.svgResize(workspace);
+    }, 50);
+}
+
+
+// Resizing Logic
+const resizer = document.getElementById('console-resizer');
+const consoleBox = document.getElementById('console-container');
+const terminal = document.getElementById('terminalOutput');
+
+resizer.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+    });
+});
+
+function handleMouseMove(e) {
+    const newHeight = window.innerHeight - e.clientY - 35; // 35 is footer height
+    // if (newHeight > 100 && newHeight < 600) {
+        // consoleBox.style.height = (newHeight - 40) + 'px'; // Subtract input row height
+    // }
+
+    // Calculate new height based on the mouse position relative to the footer
+    // const newHeight = window.innerHeight - e.clientY - 35; 
+    
+
+    if (newHeight > 50 && newHeight < window.innerHeight * 1) {
+        const consoleBox = document.getElementById('console-container');
+        consoleBox.style.height = newHeight + 'px';
+        
+        
+// CRITICAL: Force Blockly to recalibrate its width/height
+        // to match the new space
+        if (workspace) {
+            Blockly.svgResize(workspace);
+    }
+
+}
+}
+
+async function sendConsoleCommand() {
+    const input = document.getElementById('console-input');
+    const command = input.value;
+
+    if (command && espWriter) {
+        // Send command + Enter key (\r\n)
+        await espWriter.write(command + '\r\n');
+        input.value = ''; // Clear input
+    }
+}
+
+// Allow pressing "Enter" key to send
+document.getElementById('console-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendConsoleCommand();
+});
 
 
 // This function toggles between "Debug Mode" (blocks only) and "Action Mode" (blocks + code). In Debug Mode, the toolbox is hidden to encourage block-based thinking, while in Action Mode, the toolbox is visible for easy access to blocks. The workspace is resized accordingly to fill the available space.
@@ -594,8 +753,10 @@ function toggleSimPanel() {
     const isCollapsed = sim.classList.toggle('collapsed');
 
 
+
     if (isCollapsed) {
         resizer.style.display = 'none';
+
     } else {
         setTimeout(() => {
             resizer.style.display = 'block';
@@ -819,6 +980,17 @@ async function uploadCode() {
         }, 500);
     }
 }
+
+
+function handleConnectionClick() {
+    // Check the current state (you likely have a global variable for this)
+    if (isConnected) {
+        disconnectESP32();
+    } else {
+        connectESP32();
+    }
+}
+
 
 function updateConnectionUI(isConnected) {
     const btn = document.getElementById('connectBtn1');

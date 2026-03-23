@@ -1,5 +1,5 @@
 const toolboxCategories = {
-  kind: 'categoryToolbox',
+  kind: 'categoryToolbox',  
   contents: [
     {
       kind: 'category',
@@ -163,7 +163,7 @@ const toolboxCategories = {
           type: 'math_number',
           kind: 'block',
           fields: {
-            NUM: 123,
+            NUM: 100,
           },
         },
         {
@@ -807,9 +807,14 @@ const toolboxCategories = {
       name: 'Hardware',
       categorystyle: 'hardware_category',
       contents: [
-            { 'kind': 'block', 'type': 'esp32_led' }
+            { 'kind': 'block', 'type': 'esp32_led' },
+            { 'kind': 'block', 'type': 'sensor_ultrasonic' },
+            { 'kind': 'block', 'type': 'sensor_dht11' },
+            { 'kind': 'block', 'type': 'sensor_ldr' }
+          
        ],
     },
+        
     
   ],
 }

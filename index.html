@@ -21,9 +21,9 @@
   
 </head>
 <body>
+<div class="ide-wrapper">
 
-
-  <header class="ide-toolbar"> <!--The header section is a complete narrow row that holds the logo, navigation, and action buttons--> 
+<header class="ide-toolbar"> <!--The header section is a complete narrow row that holds the logo, navigation, and action buttons--> 
     
     <div class="logo"> <!--The container for the IDE logo -->
       <img src="assets/logo.png" alt="Company Logo" class="header-logo">  
@@ -33,27 +33,10 @@
         <div class="segmented-control">
             <button id="btn-action" class="mode-btn active" onclick="setMode('action')">Action</button>
             <button id="btn-debug" class="mode-btn" onclick="setMode('debug')">Debug</button>
-        </div>
-        <!-- <div id="connection-led" class="led-off" title="ESP32 Status"></div> -->
+        </div>       
     </nav>
 
-
-    <!-- <nav class="top-nav"> The navigation section that contains the view toggle and dropdown menu -->
-      <!-- <div class="nav-content"> -->
-            
-        <!-- <div class="mode-toggle-container"> The container for the view toggle switches -->
-            <!-- <span class="toggle-label">Build</span> The label for the block view toggle -->
-            <!-- <label class="switch"> The switch for toggling between block and code views -->
-                <!-- <input type="checkbox" id="toggleCode" onchange="toggleMode()"> The checkbox input for the code view toggle -->
-                <!-- <span class="slider round"></span> The slider for the switch -->
-            <!-- </label> -->
-            <!-- <span class="toggle-label">Test</span> The label for the code view toggle -->
-        <!-- </div> -->
-        <!-- <div id="connection-led" class="led-off" title="ESP32 Status"></div>       -->
-      <!-- </div> -->
-    <!-- </nav> -->
-
-    
+  
     <div class="actions-center">
 
       <button id="mainRunBtn" class="action-btn run-style" onclick="toggleRunStop()" title="Run in RAM">
@@ -64,19 +47,13 @@
          <span>⚡</span> Flash
       </button>
 
-       <!-- <button id="connectBtn" class="btn btn-connect" onclick="connectESP32()">Connect ESP32</button> -->
-
-      <!-- <button id="uploadBtn" class="btn btn-upload" onclick="uploadCode()" disabled>Upload to ESP32</button> -->
-
-      <!-- <button id="stopBtn" class="btn btn-stop" onclick="stopESP32()" disabled>Stop</button> -->
-
       <button id="fullscreenBtn" class="btn">
         <span id="fs-icon">⛶</span> 
       </button>
 
     </div>
 
-   </header>
+</header>
 
   
   <div class="ide-container">
@@ -137,8 +114,27 @@
 
     <div class="main-layout">
               
+            <div id="blocklyDiv"></div>        
+
+            <div id="console-container" class="console-closed">
+
+                <div id="console-resizer"></div>
+
+                <div id="terminalOutput"></div>
+
+                <div class="console-input-row">
+                    <input type="text" id="console-input" placeholder="Type MicroPython command here...">
+                    <button id="send-console-btn" onclick="sendConsoleCommand()">🚀</button>
+                </div>
+            </div>
+
+        
          
-        <div id="code-overlay" class="overlay-hidden">
+        <button id="python-edge-btn" onclick="toggleCodeOverlay()" title="Toggle Python Code">
+        <img src="assets/brand-python.svg" width="35">        
+      </button>
+
+      <div id="code-overlay" class="overlay-hidden">
 
             <div class="overlay-header">
 
@@ -155,27 +151,23 @@
             <div id="overlay-editor-container">
                 <textarea id="codeTextArea"></textarea>
             </div>
+
     
-      </div>  <!--End of main-layout-->
-      
-      <div id="blocklyDiv"></div>
-      <button id="python-edge-btn" onclick="toggleCodeOverlay()" title="Toggle Python Code">
-        <img src="assets/brand-python.svg" width="35">        
-      </button>  
+      </div> 
+
+
+    </div>
 
 
 
-
-        <div id="loadingOverlay" class="overlay-hidden">
+      <div id="loadingOverlay" class="overlay-hidden">
             <div class="loader-container">
                 <div class="spinner"></div>
                 <p>Uploading to ESP32...</p>
             </div>
-        </div>
-    </div>
-
-  </div>
-
+      </div>
+    
+  </div><!--End of ide-container-->
 
   <footer class="ide-footer">
     <div class="footer-left">
@@ -198,6 +190,7 @@
         <span class="footer-info">ESP32 | MicroPython</span>
         <button class="terminal-toggle-btn" onclick="toggleTerminal()">Console ⌃</button>
     </div>
+    
 </footer>
   
   <script src="blocks.js"></script>
@@ -219,7 +212,6 @@
         </div>
     </div>
   </div>
-
+</div>
 </body>
 </html>
-
