@@ -2,20 +2,18 @@ const toolboxCategories = {
   kind: 'categoryToolbox',  
   contents: [
 
-   { kind: 'edusharks-header',
+    { kind: 'edusharks-header',
     name: 'TOOL BOX',
     cssConfig:{
       "row": 'edusharks-header-row',
       'label': 'edusharks-header-label'
-
     }       
  
     },
 
     {kind: 'sep'},
 
-    {
-      kind: 'category',
+    { kind: 'category',
       name: 'Controls',
       cssConfig:{
         "icon": 'customIconControls',
@@ -35,10 +33,23 @@ const toolboxCategories = {
           type: "base_delay",
         }
           ,]
-    },     
-   
-    {
-      kind: 'category',
+    },
+    { kind: 'category',
+      name: 'Hardware',
+      categorystyle: 'hardware_category',
+      cssConfig:{
+          "icon": 'customIconHardware',
+          "label": 'hardware-label' },
+
+      contents: [
+            { 'kind': 'block', 'type': 'esp32_led' },
+            { 'kind': 'block', 'type': 'sensor_ultrasonic' },
+            { 'kind': 'block', 'type': 'sensor_dht11' },
+            { 'kind': 'block', 'type': 'sensor_ldr' }
+          
+       ],
+    },   
+    { kind: 'category',
       name: 'Logic',
       cssConfig:{
         "icon": 'customIconLogic',
@@ -86,8 +97,7 @@ const toolboxCategories = {
         },
       ],
     },
-    {
-      kind: 'category',
+    { kind: 'category',
       name: 'Loops',
       categorystyle: 'loop_category', 
       cssConfig:{
@@ -178,8 +188,7 @@ const toolboxCategories = {
         },
       ],
     },
-    {
-      kind: 'category',
+    { kind: 'category',
       name: 'Math',
       categorystyle: 'math_category',
       cssConfig:{
@@ -401,430 +410,8 @@ const toolboxCategories = {
           },
         },
       ],
-    },
-    {
-      kind: 'category',
-      name: 'Text',
-      categorystyle: 'text_category',
-      cssConfig:{
-          "icon": 'customIconText',
-          "label": 'text-label' },
-      contents: [
-        {
-          type: 'text',
-          kind: 'block',
-          fields: {
-            TEXT: '',
-          },
-        },
-        {
-          type: 'text_join',
-          kind: 'block',
-        },
-        {
-          type: 'text_append',
-          kind: 'block',
-          fields: {
-            name: 'item',
-          },
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_length',
-          kind: 'block',
-          inputs: {
-            VALUE: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: 'abc',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_isEmpty',
-          kind: 'block',
-          inputs: {
-            VALUE: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_indexOf',
-          kind: 'block',
-          fields: {
-            END: 'FIRST',
-          },
-          inputs: {
-            VALUE: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'text',
-                  },
-                },
-              },
-            },
-            FIND: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: 'abc',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_charAt',
-          kind: 'block',
-          fields: {
-            WHERE: 'FROM_START',
-          },
-          inputs: {
-            VALUE: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'text',
-                  },
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_getSubstring',
-          kind: 'block',
-          fields: {
-            WHERE1: 'FROM_START',
-            WHERE2: 'FROM_START',
-          },
-          inputs: {
-            STRING: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'text',
-                  },
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_changeCase',
-          kind: 'block',
-          fields: {
-            CASE: 'UPPERCASE',
-          },
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: 'abc',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_trim',
-          kind: 'block',
-          fields: {
-            MODE: 'BOTH',
-          },
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: 'abc',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_count',
-          kind: 'block',
-          inputs: {
-            SUB: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_replace',
-          kind: 'block',
-          inputs: {
-            FROM: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-            TO: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_reverse',
-          kind: 'block',
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: '',
-                },
-              },
-            },
-          },
-        },
-
-        {
-          type: 'text_print',
-          kind: 'block',
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: 'abc',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'text_prompt_ext',
-          kind: 'block',
-          fields: {
-            TYPE: 'TEXT',
-          },
-          inputs: {
-            TEXT: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: 'abc',
-                },
-              },
-            },
-          },
-        },
-      ],
-    },
-    {
-      kind: 'category',
-      name: 'Lists',
-      categorystyle: 'list_category',
-      cssConfig:{
-          "icon": 'customIconLists',
-          "label": 'lists-label' },
-      contents: [
-        {
-          type: 'lists_create_with',
-          kind: 'block',
-          extraState: {
-            itemCount: 0,
-          },
-        },
-        {
-          type: 'lists_create_with',
-          kind: 'block',
-        },
-        {
-          type: 'lists_repeat',
-          kind: 'block',
-          inputs: {
-            NUM: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 5,
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'lists_length',
-          kind: 'block',
-        },
-        {
-          type: 'lists_isEmpty',
-          kind: 'block',
-        },
-        {
-          type: 'lists_indexOf',
-          kind: 'block',
-
-          fields: {
-            END: 'FIRST',
-          },
-          inputs: {
-            VALUE: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'list',
-                  },
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'lists_getIndex',
-          kind: 'block',
-          fields: {
-            MODE: 'GET',
-            WHERE: 'FROM_START',
-          },
-          inputs: {
-            VALUE: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'list',
-                  },
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'lists_setIndex',
-          kind: 'block',
-          fields: {
-            MODE: 'SET',
-            WHERE: 'FROM_START',
-          },
-          inputs: {
-            LIST: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'list',
-                  },
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'lists_getSublist',
-          kind: 'block',
-          fields: {
-            WHERE1: 'FROM_START',
-            WHERE2: 'FROM_START',
-          },
-          inputs: {
-            LIST: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'list',
-                  },
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'lists_split',
-          kind: 'block',
-
-          fields: {
-            MODE: 'SPLIT',
-          },
-          inputs: {
-            DELIM: {
-              shadow: {
-                type: 'text',
-                fields: {
-                  TEXT: ',',
-                },
-              },
-            },
-          },
-        },
-        {
-          type: 'lists_sort',
-          kind: 'block',
-
-          fields: {
-            TYPE: 'NUMERIC',
-            DIRECTION: '1',
-          },
-        },
-        {
-          type: 'lists_reverse',
-          kind: 'block',
-        },
-      ],
-    },
-    {
-      kind: 'sep',
-    },
-    {
-      kind: 'category',
+    },    
+    { kind: 'category',
       name: 'Variables',
       custom: 'VARIABLE',
       categorystyle: 'variable_category',
@@ -832,32 +419,438 @@ const toolboxCategories = {
           "icon": 'customIconVariable',
           "label": 'variable-label' },
     },
-    {
-      kind: 'category',
-      name: 'Functions',
-      custom: 'PROCEDURE',
-      categorystyle: 'procedure_category',
-      cssConfig:{
-          "icon": 'customIconFunctions',
-          "label": 'functions-label' },
-    },
-    {
-      kind: 'category',
-      name: 'Hardware',
-      categorystyle: 'hardware_category',
-      cssConfig:{
-          "icon": 'customIconHardware',
-          "label": 'hardware-label' },
+    { kind: 'sep'},
 
+    { kind: 'category',
+      name: 'Advanced', // The Parent Category
+      categorystyle: 'procedure_category',
+      expanded: 'false', // Keeps it closed by default
       contents: [
-            { 'kind': 'block', 'type': 'esp32_led' },
-            { 'kind': 'block', 'type': 'sensor_ultrasonic' },
-            { 'kind': 'block', 'type': 'sensor_dht11' },
-            { 'kind': 'block', 'type': 'sensor_ldr' }
-          
-       ],
-    },
-        
+                  { kind: 'category',
+                    name: 'Functions',
+                    custom: 'PROCEDURE',
+                    categorystyle: 'procedure_category',
+                    cssConfig:{
+                        "icon": 'customIconFunctions',
+                        "label": 'functions-label' },
+                  },
+                  { kind: 'category',
+                    name: 'Text',
+                    categorystyle: 'text_category',
+                    cssConfig:{
+                        "icon": 'customIconText',
+                        "label": 'text-label' },
+                    contents: [
+                      {
+                        type: 'text',
+                        kind: 'block',
+                        fields: {
+                          TEXT: '',
+                        },
+                      },
+                      {
+                        type: 'text_join',
+                        kind: 'block',
+                      },
+                      {
+                        type: 'text_append',
+                        kind: 'block',
+                        fields: {
+                          name: 'item',
+                        },
+                        inputs: {
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_length',
+                        kind: 'block',
+                        inputs: {
+                          VALUE: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: 'abc',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_isEmpty',
+                        kind: 'block',
+                        inputs: {
+                          VALUE: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_indexOf',
+                        kind: 'block',
+                        fields: {
+                          END: 'FIRST',
+                        },
+                        inputs: {
+                          VALUE: {
+                            block: {
+                              type: 'variables_get',
+                              fields: {
+                                VAR: {
+                                  name: 'text',
+                                },
+                              },
+                            },
+                          },
+                          FIND: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: 'abc',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_charAt',
+                        kind: 'block',
+                        fields: {
+                          WHERE: 'FROM_START',
+                        },
+                        inputs: {
+                          VALUE: {
+                            block: {
+                              type: 'variables_get',
+                              fields: {
+                                VAR: {
+                                  name: 'text',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_getSubstring',
+                        kind: 'block',
+                        fields: {
+                          WHERE1: 'FROM_START',
+                          WHERE2: 'FROM_START',
+                        },
+                        inputs: {
+                          STRING: {
+                            block: {
+                              type: 'variables_get',
+                              fields: {
+                                VAR: {
+                                  name: 'text',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_changeCase',
+                        kind: 'block',
+                        fields: {
+                          CASE: 'UPPERCASE',
+                        },
+                        inputs: {
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: 'abc',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_trim',
+                        kind: 'block',
+                        fields: {
+                          MODE: 'BOTH',
+                        },
+                        inputs: {
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: 'abc',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_count',
+                        kind: 'block',
+                        inputs: {
+                          SUB: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_replace',
+                        kind: 'block',
+                        inputs: {
+                          FROM: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                          TO: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_reverse',
+                        kind: 'block',
+                        inputs: {
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: '',
+                              },
+                            },
+                          },
+                        },
+                      },
+
+                      {
+                        type: 'text_print',
+                        kind: 'block',
+                        inputs: {
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: 'abc',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'text_prompt_ext',
+                        kind: 'block',
+                        fields: {
+                          TYPE: 'TEXT',
+                        },
+                        inputs: {
+                          TEXT: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: 'abc',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                  { kind: 'category',
+                    name: 'Lists',
+                    categorystyle: 'list_category',
+                    cssConfig:{
+                        "icon": 'customIconLists',
+                        "label": 'lists-label' },
+                    contents: [
+                      {
+                        type: 'lists_create_with',
+                        kind: 'block',
+                        extraState: {
+                          itemCount: 0,
+                        },
+                      },
+                      {
+                        type: 'lists_create_with',
+                        kind: 'block',
+                      },
+                      {
+                        type: 'lists_repeat',
+                        kind: 'block',
+                        inputs: {
+                          NUM: {
+                            shadow: {
+                              type: 'math_number',
+                              fields: {
+                                NUM: 5,
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'lists_length',
+                        kind: 'block',
+                      },
+                      {
+                        type: 'lists_isEmpty',
+                        kind: 'block',
+                      },
+                      {
+                        type: 'lists_indexOf',
+                        kind: 'block',
+
+                        fields: {
+                          END: 'FIRST',
+                        },
+                        inputs: {
+                          VALUE: {
+                            block: {
+                              type: 'variables_get',
+                              fields: {
+                                VAR: {
+                                  name: 'list',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'lists_getIndex',
+                        kind: 'block',
+                        fields: {
+                          MODE: 'GET',
+                          WHERE: 'FROM_START',
+                        },
+                        inputs: {
+                          VALUE: {
+                            block: {
+                              type: 'variables_get',
+                              fields: {
+                                VAR: {
+                                  name: 'list',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'lists_setIndex',
+                        kind: 'block',
+                        fields: {
+                          MODE: 'SET',
+                          WHERE: 'FROM_START',
+                        },
+                        inputs: {
+                          LIST: {
+                            block: {
+                              type: 'variables_get',
+                              fields: {
+                                VAR: {
+                                  name: 'list',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'lists_getSublist',
+                        kind: 'block',
+                        fields: {
+                          WHERE1: 'FROM_START',
+                          WHERE2: 'FROM_START',
+                        },
+                        inputs: {
+                          LIST: {
+                            block: {
+                              type: 'variables_get',
+                              fields: {
+                                VAR: {
+                                  name: 'list',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'lists_split',
+                        kind: 'block',
+
+                        fields: {
+                          MODE: 'SPLIT',
+                        },
+                        inputs: {
+                          DELIM: {
+                            shadow: {
+                              type: 'text',
+                              fields: {
+                                TEXT: ',',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      {
+                        type: 'lists_sort',
+                        kind: 'block',
+
+                        fields: {
+                          TYPE: 'NUMERIC',
+                          DIRECTION: '1',
+                        },
+                      },
+                      {
+                        type: 'lists_reverse',
+                        kind: 'block',
+                      },
+                    ],
+                  }        
     
   ],
+}]
 }

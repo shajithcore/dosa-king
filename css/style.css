@@ -260,7 +260,7 @@
       
     }
 
-    .customIconLogic { background-image: url('https://img.icons8.com/?size=100&id=1775&format=png&color=5b80a5'); 
+    .customIconLogic { background-image: url('https://img.icons8.com/?size=100&id=1775&format=png&color=00a4a6'); 
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -270,7 +270,7 @@
       margin-left: 5px;
 
     }
-    .customIconLoops { background-image: url('https://img.icons8.com/?size=100&id=25224&format=png&color=892d86'); 
+    .customIconLoops { background-image: url('https://img.icons8.com/?size=100&id=25224&format=png&color=00aa00'); 
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -290,7 +290,7 @@
       margin-left: 5px;
     }
 
-    .customIconMath { background-image: url('https://img.icons8.com/?size=100&id=1759&format=png&color=5b67a5'); 
+    .customIconMath { background-image: url('https://img.icons8.com/?size=100&id=1759&format=png&color=9400d3'); 
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -330,7 +330,7 @@
       margin-left: 5px;
     }
 
-     .customIconLists { background-image: url('https://img.icons8.com/?size=100&id=6440&format=png&color=745ba5'); 
+     .customIconLists { background-image: url('https://img.icons8.com/?size=100&id=6440&format=png&color=dc143c'); 
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -1163,21 +1163,21 @@ font-size: larger;
 }
 
 .logic-label {
-color: #5b80a5;
+color: #00a4a6;
 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 font-size: larger;
 
 }
 
 .loops-label {
-color: #892d86;
+color: #00aa00;
 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 font-size: larger;
 
 }
 
 .math-label {
-color: #5b67a5;
+color: #9400d3;
 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 font-size: larger;
 
@@ -1198,7 +1198,7 @@ font-size: larger;
 }
 
 .lists-label {
-color: #745ba5;
+color: #dc143c;
 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 font-size: larger;
 

@@ -42,10 +42,35 @@
             'hat': 'cap',
         },
         'loop_blocks': {
-            'colourPrimary': "#892d86",
+            'colourPrimary': "#00aa00",
             'colourSecondary':"#ff0000",
             'colourTertiary':"#C5EAFF"
         },
+
+        'math_blocks': {
+            'colourPrimary': "#9400d3",
+            'colourSecondary':"#78589f",
+            'colourTertiary':"#C5EAFF"
+        },
+        
+        'logic_blocks': {
+            'colourPrimary': "#00a4a6",
+            'colourSecondary':"#ff0000",
+            'colourTertiary':"#C5EAFF"
+        },
+        
+        'text_blocks': {
+            'colourPrimary': "#5ba58c",
+            'colourSecondary':"#59907e",
+            'colourTertiary':"#C5EAFF"
+        },
+
+        'list_blocks': {
+            'colourPrimary': "#dc143c",
+            'colourSecondary':"#59907e",
+            'colourTertiary':"#C5EAFF"
+        },
+        
         
     },
     'fontStyle': {},
