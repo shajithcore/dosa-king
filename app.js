@@ -11,20 +11,20 @@
 
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
   'base': Blockly.Themes.Classic,
-  'categoryStyles':{
-    // 'controls_category': { 'colour': '#223fe6' },
+    //  'categoryStyles':{
+    //   'controls_category': { 'colour': '#e6cf22' },
     // 'logic_category': { 'colour': '#43bf57' },
     // 'loop_category': { 'colour': '#892d86' },
     // 'math_category': { 'colour': '#5b67a5' },
     // 'variables_category': { 'colour': '#a55b80' },
-    // 'sensors_category': { 'colour': '160' },
-    // 'hardware_category': { 'colour': '#0e434e' },
+    //  'sensors_category': { 'colour': '160' },
+    //  'hardware_category': { 'colour': '#0e434e' },
 
-  },
+    // },
 
   'componentStyles': {
     'workspaceBackgroundColour': '#000511f9',
-     'toolboxBackgroundColour': '#060606',
+     'toolboxBackgroundColour': '#0b0001d4',
      'toolboxForegroundColour': '#090000',
      'flyoutBackgroundColour': '#3d447bd8',
      'flyoutForegroundColour': '#ccc',
@@ -95,17 +95,15 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
     theme: DarkTheme, // This changes the "Thanos" / Dark look
     renderer: 'zelos',          // This makes blocks look like Scratch (rounded)
     move: { 
-        scrollbars: {
-            horizontal: true,
-            vertical: true, 
+            scrollbars: true, 
             drag: true, 
             wheel: true 
         },       
 
-    },
+    
     zoom: { 
         controls: true, 
-        wheel: true,
+        wheel: false,
         startScale: 0.9          
     },
     trashcan: true,

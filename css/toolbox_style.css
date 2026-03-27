@@ -1,15 +1,70 @@
 /* Makes our label white. */
-.blocklyToolboxCategoryLabel {
-  color: white;
-}
+/* .blocklyToolboxCategoryLabel {
+  color: rgb(255, 255, 255);
+} */
 /* Adds padding around the group of categories and separators. */
-.blocklyToolboxContents {
+/* .blocklyToolboxContents {
   padding: 0.5em;
-}
+} */
 /* Adds space between the categories, rounds the corners and adds space around the label. */
-.blocklyToolboxCategory {
-  padding: 3px;
-  margin-bottom: 0.5em;
-  border-radius: 4px;
+
+/* Changes color of the icon to white. */
+/* .customIcon {
+  color: white;
+} */
+
+/* Stacks the icon on top of the label. */
+.blocklyTreeRowContentContainer {
+  display: flex;
+  flex-direction:row;
+  align-items: center;
+  line-height: 50px;
+  
 }
+
+.blocklyToolboxCategoryGroup {
+  padding-right: 20px;
+  padding-left:10px;
+
+}
+ 
+
+/* 1. Reset the background even if the mouse is over it */
+
+.edusharks-header-label {
+  color: aliceblue;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-style:normal;
+  letter-spacing: 3px;
+  font-size: 20px;
+  font-weight:600;
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+
+
+/* .edusharks-header-row:hover {
+  background-color: transparent !important;
+  cursor: default !important;
+} */
+
+/* 2. Ensure the text doesn't change color on hover */
+.edusharks-header-row:hover .blocklyTreeLabel {
+  color: white !important; 
+}
+
+/* 3. Fully ignore mouse interaction (The "Ironclad" way) */
+.edusharks-header-row {
+  align-items: center;
+  pointer-events: none; 
+  user-select: none;
+}
+
+/* Specifically target the header rows */
+.blocklyTreeRowContentContainer[aria-level="1"]:has(.blocklyTreeLabel:contains('TOOLBOX')) {
+    pointer-events: none; 
+    opacity: 0.8;
+}
+
 

@@ -1,47 +1,84 @@
-class CustomCategory extends Blockly.ToolboxCategory {
-  /**
-   * Constructor for a custom category.
-   * @override
-   */
+class EdusharksCategory extends Blockly.ToolboxCategory {
   constructor(categoryDef, toolbox, opt_parent) {
     super(categoryDef, toolbox, opt_parent);
   }
-    /** @override */
-  addColourBorder_(colour){
-    this.rowDiv_.style.backgroundColor = colour;
+
+  /** @override - This removes the left color strip */
+  addColourBorder_(colour) {
+    // Left empty on purpose
   }
 
+  /** @override - This handles the color swapping */
+  setSelected(isSelected) {
+    // Find the label Blockly created for us
+    var labelDom = this.rowDiv_.getElementsByClassName('blocklyToolboxCategoryLabel')[0];
+    
+    if (labelDom) { // Safety check
+      if (isSelected) {
+        this.rowDiv_.style.backgroundColor = this.colour_; // Background becomes category color
+        labelDom.style.color = 'white';                   // Text becomes white
+      } else {
+        this.rowDiv_.style.backgroundColor = 'transparent'; 
+        labelDom.style.color = this.colour_;               // Text returns to category color
+      }
+    }
+
+    // Keep the accessibility features working
+    Blockly.utils.aria.setState(this.htmlDiv_, Blockly.utils.aria.State.SELECTED, isSelected);
+  }
 }
 
-/* Register the CustomCategory toolbox item so that it can be used in the toolbox. */
-
+// Finally, Register the class
 Blockly.registry.register(
     Blockly.registry.Type.TOOLBOX_ITEM,
     Blockly.ToolboxCategory.registrationName,
-    CustomCategory, true);
+    EdusharksCategory, true
+);
 
 
 
-/** @override */
-setSelected(isSelected)
+class EdusharksHeader extends EdusharksCategory {
+  /**
+   * Override onClick to do absolutely nothing.
+   * This prevents the flyout from opening.
+   * @override
+   */
+  onClick(e) {
+    // Do not call super.onClick(e)
+    // This stops the "click" from happening
+  }
 
-{
-   // We do not store the label span on the category, so use getElementsByClassName.
-   var labelDom = this.rowDiv_.getElementsByClassName('blocklyToolboxCategoryLabel')[0];
-   if (isSelected) {
-     // Change the background color of the div to white.
-     this.rowDiv_.style.backgroundColor = 'white';
-     // Set the colour of the text to the colour of the category.
-     labelDom.style.color = this.colour_;
-   } 
-   
-   else {
-     // Set the background back to the original colour.
-     this.rowDiv_.style.backgroundColor = this.colour_;
-     // Set the text back to white.
-     labelDom.style.color = 'white';
-   }
-   // This is used for accessibility purposes.
-   Blockly.utils.aria.setState(/** @type {!Element} */ (this.htmlDiv_),
-       Blockly.utils.aria.State.SELECTED, isSelected);
+  /**
+   * Override setSelected to prevent the "active" look.
+   * @override
+   */
+  setSelected(isSelected) {
+    // We ignore the isSelected state and keep it in a "default" look
+    var labelDom = this.rowDiv_.getElementsByClassName('blocklyToolboxCategoryLabel')[0];
+    if (labelDom) {
+      labelDom.style.color = 'white'; // Keep it white always
+      labelDom.style.fontWeight = 'bold';
+      labelDom.style.fontSize = '14px';
+    }
+    this.rowDiv_.style.backgroundColor = 'transparent';
+    this.rowDiv_.style.cursor = 'default'; // Changes pointer to a normal arrow
+  }
+
+    /** @override - Disable hover start */
+  onMouseEnter_(e) {
+    // By leaving this empty, we prevent the "blocklyTreeRowHover" class
+  }
+
+  /** @override - Disable hover end */
+  onMouseLeave_(e) {
+    // Do nothing
+  } 
+
 }
+
+Blockly.registry.register(
+  Blockly.registry.Type.TOOLBOX_ITEM,
+  'edusharks-header', // We give it a unique internal name
+  EdusharksHeader
+);
+

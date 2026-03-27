@@ -14,7 +14,7 @@
 
         /* 1. The Main Sidebar Width */
     .blocklyToolbox {
-        width: 200px; /* Adjust this for Edusharks IDE sidebar */
+        width: 180px; /* Adjust this for Edusharks IDE sidebar */
         overflow-x: hidden !important;
         background-color: #1e1e1e; /* Dark theme for ESP32 dev */
         border-right: 1px solid #333;
@@ -22,8 +22,12 @@
 
     /* 2. The Width of each Category Row */
     .blocklyToolboxCategory {
-        height: 40px;
+        margin-bottom: 5px; 
+        border-radius: 4px;
+        margin-left: 5px;
+        border-left: none !important;
         line-height: 40px;
+        height: 50px;
         width: 100%; /* Ensures it fills the toolbox width */
     }
 
@@ -142,24 +146,6 @@
         overflow: visible !important;/* Allows the handle to stick out */
 }
 
-/* The Toggle Tab CSS */
-    #sim-toggle-tab {
-        position: absolute;
-        right: -20px;
-        top: 50%;
-        width: 20px;
-        height: 60px;
-        color: white;
-        background: #333;
-        cursor: pointer;
-        z-index: 100;
-        border-radius: 0 8px 8px 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid #444;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-}
 
     #sim-toggle-tab:hover {
         background: #158e2dcb; /* Edusharks Blue highlight */
@@ -246,34 +232,52 @@
  
     /* 5. Custom Icon Definitions (White icons for dark background) */
 
-    .customIconControls 
-    { background-image: url('https://img.icons8.com/?size=100&id=1938&format=png&color=FFFFFF');
+    .customIconControls
+    { background-image: url('https://img.icons8.com/?size=100&id=15809&format=png&color=00D1FF');
       background-size: contain;
       background-repeat: no-repeat;
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
+    }
+
+    .loops-label{
+
+        color: #0077ff;
     }
 
     .customIconHardware 
-    { background-image: url('https://img.icons8.com/?size=100&id=1938&format=png&color=FFFFFF');
+    { background-image: url('https://img.icons8.com/?size=100&id=1938&format=png&color=93a55b');
       background-size: contain;
       background-repeat: no-repeat;
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
+      
     }
 
-    .customIconLogic { background-image: url('https://img.icons8.com/?size=100&id=50986&format=png&color=FFFFFF'); 
+    .customIconLogic { background-image: url('https://img.icons8.com/?size=100&id=1775&format=png&color=5b80a5'); 
       background-size: contain;
       background-repeat: no-repeat;
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
 
     }
-    .customIconLoops { background-image: url('https://img.icons8.com/?size=100&id=413&format=png&color=FFFFFF'); 
+    .customIconLoops { background-image: url('https://img.icons8.com/?size=100&id=25224&format=png&color=892d86'); 
       background-size: contain;
       background-repeat: no-repeat;
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
 
     }
     .customIconSensors { background-image: url('https://img.icons8.com/?size=100&id=P3wQLLlOhVgs&format=png&color=000000'); 
@@ -281,27 +285,67 @@
       background-repeat: no-repeat;
       width: 24px;
       height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
     }
 
-    .customIconMath { background-image: url('https://img.icons8.com/?size=100&id=6tqSs4tVXxOJ&format=png&color=000000'); 
+    .customIconMath { background-image: url('https://img.icons8.com/?size=100&id=1759&format=png&color=5b67a5'); 
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
       height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
     }
 
-    .customIconVariables { background-image: url('https://img.icons8.com/?size=100&id=RjvDCsrwHvJE&format=png&color=000000'); 
+    .customIconVariable { background-image: url('https://img.icons8.com/?size=100&id=421&format=png&color=a55b80'); 
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
       height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
     }
+
+    .customIconFunctions { background-image: url('https://img.icons8.com/?size=100&id=46318&format=png&color=995ba5'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
+    }
+
+    .customIconText { background-image: url('https://img.icons8.com/?size=100&id=8kBx4f4mj4jX&format=png&color=5ba58c'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
+    }
+
+     .customIconLists { background-image: url('https://img.icons8.com/?size=100&id=6440&format=png&color=745ba5'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+      padding-left:5px;
+      padding-right: 5px;
+      margin-left: 5px;
+    }
+
 
     /* Typo Fixes & Global Class application */
     .customIconControls, .customIconHardware, .customIconLogic, .customIconLoops, .customIconMath, .customIconSensors, .customIconVariables {
-      display: inline-block;
-      vertical-align: middle;
-      background-size: contain;
+      display:inline-block;
+      vertical-align:middle;
+      background-size:contain;
       background-repeat: no-repeat;
     }
 
@@ -620,15 +664,15 @@ input:checked + .slider:before {
 /* The Clickable Toggle Tab */
 #sim-toggle-tab {
     position: absolute;
-    right: -25px; /* Halfway over the border */
+    right: 0px; /* Halfway over the border */
     top: 50%;
     transform: translateY(-50%);
     rotate: 180deg;
-    width: 25px;
+    width: 15px;
     height: 60px;
     background: #333;
     border: 1px solid #444;
-    border-radius:  16px 0 0 16px;
+    border-radius:  0px 16px 16px 0px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1110,3 +1154,72 @@ input:checked + .slider:before {
     height: 100vh; /* Fill the whole screen */
     overflow: hidden;
 }
+
+.controls-label {
+color: #00D1FF;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.logic-label {
+color: #5b80a5;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.loops-label {
+color: #892d86;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.math-label {
+color: #5b67a5;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.variable-label {
+color: #a55b80;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.text-label {
+color: #5ba58c;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.lists-label {
+color: #745ba5;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.functions-label {
+color: #995ba5;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.hardware-label {
+color: #93a55b;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: larger;
+
+}
+
+.customIconControls{
+color: #4372d7;
+
+}
+

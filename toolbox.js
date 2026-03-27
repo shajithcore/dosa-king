@@ -1,10 +1,26 @@
 const toolboxCategories = {
   kind: 'categoryToolbox',  
   contents: [
+
+   { kind: 'edusharks-header',
+    name: 'TOOL BOX',
+    cssConfig:{
+      "row": 'edusharks-header-row',
+      'label': 'edusharks-header-label'
+
+    }       
+ 
+    },
+
+    {kind: 'sep'},
+
     {
       kind: 'category',
       name: 'Controls',
-      categorystyle: 'controls_category',
+      cssConfig:{
+        "icon": 'customIconControls',
+        "label": 'controls-label' },
+ 
       contents: [
         {
           type: 'base_start',
@@ -24,7 +40,11 @@ const toolboxCategories = {
     {
       kind: 'category',
       name: 'Logic',
-      categorystyle: 'logic_category',
+      cssConfig:{
+        "icon": 'customIconLogic',
+        "label": 'logic-label'      
+      },
+
       contents: [
         {
           type: 'controls_if',
@@ -69,7 +89,11 @@ const toolboxCategories = {
     {
       kind: 'category',
       name: 'Loops',
-      categorystyle: 'loop_category',
+      categorystyle: 'loop_category', 
+      cssConfig:{
+          "icon": 'customIconLoops',
+          "label": 'loops-label' },
+ 
       contents: [
         {
           type: 'controls_repeat_ext',
@@ -158,6 +182,9 @@ const toolboxCategories = {
       kind: 'category',
       name: 'Math',
       categorystyle: 'math_category',
+      cssConfig:{
+          "icon": 'customIconMath',
+          "label": 'math-label' },
       contents: [
         {
           type: 'math_number',
@@ -379,6 +406,9 @@ const toolboxCategories = {
       kind: 'category',
       name: 'Text',
       categorystyle: 'text_category',
+      cssConfig:{
+          "icon": 'customIconText',
+          "label": 'text-label' },
       contents: [
         {
           type: 'text',
@@ -640,6 +670,9 @@ const toolboxCategories = {
       kind: 'category',
       name: 'Lists',
       categorystyle: 'list_category',
+      cssConfig:{
+          "icon": 'customIconLists',
+          "label": 'lists-label' },
       contents: [
         {
           type: 'lists_create_with',
@@ -795,17 +828,27 @@ const toolboxCategories = {
       name: 'Variables',
       custom: 'VARIABLE',
       categorystyle: 'variable_category',
+      cssConfig:{
+          "icon": 'customIconVariable',
+          "label": 'variable-label' },
     },
     {
       kind: 'category',
       name: 'Functions',
       custom: 'PROCEDURE',
       categorystyle: 'procedure_category',
+      cssConfig:{
+          "icon": 'customIconFunctions',
+          "label": 'functions-label' },
     },
     {
       kind: 'category',
       name: 'Hardware',
       categorystyle: 'hardware_category',
+      cssConfig:{
+          "icon": 'customIconHardware',
+          "label": 'hardware-label' },
+
       contents: [
             { 'kind': 'block', 'type': 'esp32_led' },
             { 'kind': 'block', 'type': 'sensor_ultrasonic' },
