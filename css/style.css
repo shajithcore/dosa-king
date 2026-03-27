@@ -27,8 +27,14 @@
         margin-left: 5px;
         border-left: none !important;
         line-height: 40px;
-        height: 50px;
+        height: 50px;        
         width: 100%; /* Ensures it fills the toolbox width */
+    }
+
+        /* 2. The Width of each Category Row */
+    .blocklyToolboxCategory:hover {
+        cursor:pointer;
+
     }
 
     /* This targets the text label inside every category */
@@ -101,9 +107,9 @@
 
 
     .ide-container {
-    flex: 1; /* This is the "glue" - it stretches to fill the middle */
-    display: flex;
-    position: relative;
+    flex :1; /* This is the "glue" - it stretches to fill the middle */
+    display:flex;
+    position:relative;
     overflow: hidden;
     }
 
@@ -978,13 +984,13 @@ input:checked + .slider:before {
 }
 
 .ide-footer {
-    position: fixed;
+    position:sticky;
     bottom: 0;
     left: 0;
     right: 0;
     height: 35px; /* Slim, professional profile */
     background-color: #1a1a1a;
-    display: flex;
+    display:flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 15px;
@@ -1079,7 +1085,7 @@ input:checked + .slider:before {
     flex-shrink:0;    
     padding-left: 8px;
     padding-right: 8px; 
-    overflow: hidden;
+    overflow:hidden;
     color: #000;   
     /* transition: height 0.2s ease-out;  */
 }
@@ -1094,7 +1100,7 @@ input:checked + .slider:before {
 /* The Resize Handle */
 #console-resizer {
     width: 100%;
-    height: 6px;
+    height: 2px;
     
     background: #333;
     cursor: ns-resize;
@@ -1105,7 +1111,7 @@ input:checked + .slider:before {
 #terminalOutput {
       
     flex: 1;    
-    overflow-y: auto;
+    overflow-y:scroll;
     padding: 20px;
     min-height: 0;
     font-family:'Courier New', Courier, monospace;
@@ -1118,9 +1124,9 @@ input:checked + .slider:before {
 
 .console-input-row {
     height: 35px;    
-    flex-shrink: 0;     
+    flex-shrink: 0;
     align-items: center;   
-    background: #000;
+    background: #7ba177;
     padding: 25px 55px;
 
     /* border-top: 1px solid #333;     */
@@ -1130,7 +1136,7 @@ input:checked + .slider:before {
 #console-input {
     flex-grow: 1;
     background:#cdc6c6;
-    width: 90%;
+    width: 90%;    
     border: none;
     line-height: 1.5    ;
     color: rgb(0, 0, 0);

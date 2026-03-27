@@ -22,7 +22,6 @@
   
 </head>
 <body>
-<div class="ide-wrapper">
 
 <header class="ide-toolbar"> <!--The header section is a complete narrow row that holds the logo, navigation, and action buttons--> 
     
@@ -57,7 +56,7 @@
 </header>
 
   
-  <div class="ide-container">
+<div class="ide-container">
 
     <div id="simulation-container">
         <div class="panel-header">
@@ -115,27 +114,20 @@
 
     <div class="main-layout">
               
-            <div id="blocklyDiv"></div>        
-
-            <div id="console-container" class="console-closed">
-
-                <div id="console-resizer"></div>
-
-                <div id="terminalOutput"></div>
-
+        <div id="blocklyDiv"></div>
+        <div id="console-resizer"></div>
+        <div id="console-container" class="console-closed">
+            <div id="terminalOutput"></div>
                 <div class="console-input-row">
                     <input type="text" id="console-input" placeholder="Type MicroPython command here...">
                     <button id="send-console-btn" onclick="sendConsoleCommand()">🚀</button>
                 </div>
-            </div>
-
-        
-         
+        </div>            
         <button id="python-edge-btn" onclick="toggleCodeOverlay()" title="Toggle Python Code">
         <img src="assets/brand-python.svg" width="35">        
-      </button>
+        </button>
 
-      <div id="code-overlay" class="overlay-hidden">
+        <div id="code-overlay" class="overlay-hidden">
 
             <div class="overlay-header">
 
@@ -152,25 +144,24 @@
             <div id="overlay-editor-container">
                 <textarea id="codeTextArea"></textarea>
             </div>
-
     
-      </div> 
-
+        </div> 
 
     </div>
 
-
-
-      <div id="loadingOverlay" class="overlay-hidden">
-            <div class="loader-container">
-                <div class="spinner"></div>
-                <p>Uploading to ESP32...</p>
-            </div>
-      </div>
-    
-  </div><!--End of ide-container-->
+        <div id="loadingOverlay" class="overlay-hidden">
+        <div class="loader-container">
+            <div class="spinner"></div>
+            <p>Uploading to ESP32...</p>
+        </div>
+    </div>
+</div> <!--End of ide-container-->
+ 
+  
 
   <footer class="ide-footer">
+
+
     <div class="footer-left">
         <div id="connection-led" class="led-off"></div>
         <span id="footer-status">ESP32 not connected</span>
@@ -190,14 +181,21 @@
     <div class="footer-right">
         <span class="footer-info">ESP32 | MicroPython</span>
         <button class="terminal-toggle-btn" onclick="toggleTerminal()">Console ⌃</button>
+    
+    <!-- <div id="console-container" class="console-closed">
+
+    <div id="console-resizer"></div>
+
+    <div id="terminalOutput"></div>
+
+    <div class="console-input-row">
+        <input type="text" id="console-input" placeholder="Type MicroPython command here...">
+        <button id="send-console-btn" onclick="sendConsoleCommand()">🚀</button>
+    </div>
+    </div> -->
     </div>
     
 </footer>
-  
-  <script src="blocks.js"></script>
-  <script src="generators.js"></script>
-  <script src="toolbox.js"></script> 
-  <script src="app.js"></script>
 
   <div id="ide-dialog-overlay" class="dialog-hidden">
     <div class="ide-dialog">
@@ -213,6 +211,15 @@
         </div>
     </div>
   </div>
-</div>
+
+
+  
+  <script src="blocks.js"></script>
+  <script src="generators.js"></script>
+  <script src="toolbox.js"></script> 
+  <script src="app.js"></script>
+
+
+
 </body>
 </html>
