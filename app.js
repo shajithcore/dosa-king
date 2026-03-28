@@ -431,8 +431,11 @@ async function setupESP32Connection(existingPort) {
     // espWriter = encoder.writable.getWriter();
 
     catch (err) {
-        console.error("Connection failed:", err);
-        updateConnectionUI(false);
+        // console.error("Connection failed:", err);
+        // updateConnectionUI(false);
+
+        const term = document.getElementById('terminalOutput');
+        term.innerHTML += `<br><span style="color: #ff5555;">[Error] Connection failed: ${err.message}</span>`;
     }
 }   
 
@@ -673,16 +676,28 @@ window.addEventListener('load', () => {
 // Toggle Console
 function toggleTerminal() {
     const consoleBox = document.getElementById('console-container');
+    const isClosing = !consoleBox.classList.contains('console-closed');
     
-    if (consoleBox.classList.contains('console-closed'))
-    {
-        // OPENING: Give it a healthy default height (e.g., 180px)
-        consoleBox.classList.remove('console-closed');
-        consoleBox.style.height = "180px"; 
-    } else {
-        // CLOSING: Snap it to 0
+    // if (consoleBox.classList.contains('console-closed'))
+    // {
+    //     // OPENING: Give it a healthy default height (e.g., 180px)
+    //     consoleBox.classList.remove('console-closed');
+    //     consoleBox.style.height = "180px"; 
+    // } else {
+    //     // CLOSING: Snap it to 0
+    //     consoleBox.classList.add('console-closed');
+    //     consoleBox.style.height = "0px";
+    // }
+
+    if (isClosing) {
         consoleBox.classList.add('console-closed');
         consoleBox.style.height = "0px";
+    } else {
+        consoleBox.classList.remove('console-closed');
+        consoleBox.style.height = "180px"; // Your default open height
+        
+        // NEW: Check if we need to show the "Waiting" message
+        displayIdleMessage();
     }
 
 // Always tell Blockly to resize so blocks don't get cut off
@@ -868,6 +883,22 @@ function toggleCodeOverlay() {
            
     }
 
+}
+
+// A function to display a message while the console button is clicked to open the terminal output and ESP32 is not connected
+function displayIdleMessage() {
+    const term = document.getElementById('terminalOutput');
+    if (!term) return;
+
+    // Only show this if the terminal is actually empty
+    // This prevents overwriting existing logs or the ESP32 welcome message
+    if (term.innerHTML.trim() === "") {
+        term.innerHTML = `
+<span style="color: #666;">[System] Edusharks IDE v1.0 is ready.</span>
+<span style="color: #c4d447; opacity: 0.7;">Waiting for ESP32 connection via USB...</span>
+<span style="color: #444;">--------------------------------------------------</span>
+`;
+    }
 }
 
 
