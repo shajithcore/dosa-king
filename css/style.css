@@ -1222,3 +1222,9 @@ color: #4372d7;
 
 }
 
+/* Make the highlighted block pop in Edusharks Green */
+.blocklyHighlighted > .blocklyPath {
+    stroke: #c4d447 !important; /* Your shark green */
+    stroke-width: 4px !important;
+    filter: drop-shadow(0px 0px 8px #c4d447);
+}

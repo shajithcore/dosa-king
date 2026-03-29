@@ -60,3 +60,11 @@ Blockly.Python['base_delay'] = function(block) {
     
     return "time.sleep_ms(" + ms + ")\n";
 };
+
+
+// This tells the Python generator to prefix every block with a print statement
+// %1 is a special placeholder that Blockly replaces with the actual Block ID
+Blockly.Python.STATEMENT_PREFIX = 'print("DBG:%1")\n';
+
+// Optional: If you want to track variables too, you can use:
+ Blockly.Python.INDENT = '  '; // Ensure spacing is correct

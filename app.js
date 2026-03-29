@@ -583,27 +583,182 @@ async function connectESP32() {
     }
 }
 
-// This function continuously reads from the ESP32's serial output and appends it to the terminal div. It uses a TextDecoder to convert bytes to strings and handles auto-scrolling for a better user experience.
+function processIncomingData(data) {
+    // Look for our special Debug prefix
+    if (data.startsWith("DBG:")) {
+        const blockId = data.replace("DBG:", "").trim();
+        
+        // HIGHLIGHT the block in the workspace
+        if (workspace) {
+            workspace.highlightBlock(blockId);
+        }
+    } else {
+        // Otherwise, it's just normal console output
+        appendToTerminal(data);
+    }
+}
+
+function stopExecution() {
+    // 1. Send the break command to ESP32 (Ctrl+C)
+    sendToESP32('\x03'); 
+
+    // 2. Clear all highlights in the workspace
+    if (workspace) {
+        workspace.highlightBlock(null);
+    }
+    
+    updateRunButtonState(false);
+}
+
+
+// let serialBuffer = ""; // Global buffer to hold partial data
 
 // async function readFromESP32() {
-//     const appendTerminal = (text) => {
-//         const term = document.getElementById('terminalOutput');
-//         term.innerText += text;
-//         // Auto-scroll to bottom
-//         document.getElementById('terminalContainer').scrollTop = term.scrollHeight;
-//     };
+//     const term = document.getElementById('terminalOutput');
+//     const decoder = new TextDecoder();
 
-//     while (port.readable) {
+//     // The outer loop keeps the reader alive as long as the port is open
+//     while (port && port.readable) {
 //         const reader = port.readable.getReader();
+//         const chunk = decoder.decode(value);
+//         serialBuffer += chunk;
+        
+//         try {
+//             while (true) {
+//                 const { value, done } = await reader.read();
+                
+//                 if (done) {
+//                     // done is true if the port is closed
+//                     break;
+//                 }
+
+//                 // Convert bytes from ESP32 to a string
+//                 const decoded = decoder.decode(value);
+
+//                 // 1. Update the Terminal UI
+//                 if (term) {
+//                 // We append text as a TextNode to prevent HTML injection from the ESP32,
+//                     // but this keeps your Welcome HTML intact.
+//                     const textNode = document.createTextNode(decoded);
+//                     term.appendChild(textNode);
+//                     term.scrollTop = term.scrollHeight;
+//                 }
+
+//                 // 2. THE SAFETY RESET LOGIC
+//                 // We check if 'isRunning' is true and if the ESP32 
+//                 // has sent back a prompt ('>' or '>>>').
+//                 if (isRunning && (decoded.includes('>') || decoded.includes('>>>'))) {
+//                     console.log("MicroPython finished execution. Resetting UI...");
+                    
+//                     // We wrap this in a tiny timeout to ensure the terminal 
+//                     // finishes printing before the button flips.
+//                     setTimeout(() => {
+//                         resetRunButton();
+//                     }, 50);
+//                 }
+
+//                 // Check if we have at least one complete line
+//                 if (serialBuffer.includes("\n")) {
+//                     const lines = serialBuffer.split("\n");
+                    
+//                     // Keep the last (potentially incomplete) piece in the buffer
+//                     serialBuffer = lines.pop(); 
+
+//                     // Process each complete line
+//                     lines.forEach(line => {
+//                         const cleanLine = line.trim();
+//                         if (cleanLine.startsWith("DBG:")) {
+//                             const blockId = cleanLine.replace("DBG:", "");
+                            
+//                             // LIGHT IT UP!
+//                             if (workspace) {
+//                                 workspace.highlightBlock(blockId);
+//                             }
+//                         } 
+//                         else {
+//                             // It's normal user code output, send to terminal
+//                             appendToTerminal(cleanLine + "\n");
+//                             }
+//                     });
+//                 }
+//             }
+
+//         } 
+        
+//         catch (error) {
+//             console.error("Non-critical read error:", error);
+//             // We don't 'return' here because we want the loop to try again 
+//             // if the hardware is still technically attached.
+//             break; 
+//         } 
+
+//         finally {
+//             // CRITICAL: Always release the lock so the port can be 
+//             // closed or reset later without freezing the browser.
+//             reader.releaseLock();
+//         }
+//     }
+// }
+
+// let serialBuffer = ""; // Keep this global
+
+// async function readFromESP32() {
+//     const term = document.getElementById('terminalOutput');
+//     const decoder = new TextDecoder();
+
+//     while (port && port.readable) {
+//         const reader = port.readable.getReader();
+        
 //         try {
 //             while (true) {
 //                 const { value, done } = await reader.read();
 //                 if (done) break;
-//                 const decoded = new TextDecoder().decode(value);
-//                 appendTerminal(decoded);
+
+//                 // 1. Convert the raw bytes to a string chunk
+//                 const chunk = decoder.decode(value);
+//                 serialBuffer += chunk;
+
+//                 // 2. CHECK FOR PROMPTS (The Safety Reset)
+//                 // We do this on the 'chunk' level so it feels instant
+//                 if (isRunning && (chunk.includes('>') || chunk.includes('>>>'))) {
+//                     setTimeout(() => { resetRunButton(); }, 50);
+//                 }
+
+//                 // 3. THE BUFFER LOGIC: Process complete lines
+//                 if (serialBuffer.includes("\n")) {
+//                     const lines = serialBuffer.split("\n");
+                    
+//                     // Keep the last partial line in the buffer
+//                     serialBuffer = lines.pop(); 
+
+//                     lines.forEach(line => {
+//                         const cleanLine = line.trim();
+                        
+//                         if (cleanLine.startsWith("DBG:")) {
+//                             // --- DEBUG MODE: Highlight the block ---                            
+//                             const blockId = cleanLine.replace("DBG:", "").trim();
+//                             if (blockId.startsWith("'") && blockId.endsWith("'")) {
+//                                 blockId = blockId.substring(1, blockId.length - 1);
+//                             }
+//                             if (workspace && blockId) {
+//                                 console.log("Highlighting Block ID:", blockId); // Keep this for testing!
+//                                 workspace.highlightBlock(blockId);
+//                             }
+//                         } else if (cleanLine !== "") {
+//                             // --- NORMAL MODE: Show to Student ---
+//                             // We only append to the terminal if it's NOT a debug message
+//                             if (term) {
+//                                 const textNode = document.createTextNode(cleanLine + "\n");
+//                                 term.appendChild(textNode);
+//                                 term.scrollTop = term.scrollHeight;
+//                             }
+//                         }
+//                     });
+//                 }
 //             }
 //         } catch (error) {
 //             console.error("Read error:", error);
+//             break; 
 //         } finally {
 //             reader.releaseLock();
 //         }
@@ -611,56 +766,68 @@ async function connectESP32() {
 // }
 
 
+let serialBuffer = ""; // MUST be outside the function to keep memory
+
 async function readFromESP32() {
     const term = document.getElementById('terminalOutput');
     const decoder = new TextDecoder();
 
-    // The outer loop keeps the reader alive as long as the port is open
     while (port && port.readable) {
         const reader = port.readable.getReader();
         
         try {
             while (true) {
                 const { value, done } = await reader.read();
-                
-                if (done) {
-                    // done is true if the port is closed
-                    break;
+                if (done) break;
+
+                // 1. Decode the raw bytes into a string chunk
+                const chunk = decoder.decode(value);
+                serialBuffer += chunk; // Add the chunk to our "waiting line"
+
+                // 2. CHECK FOR PROMPTS (Safety Reset)
+                if (isRunning && (chunk.includes('>') || chunk.includes('>>>'))) {
+                    setTimeout(() => { resetRunButton(); }, 50);
                 }
 
-                // Convert bytes from ESP32 to a string
-                const decoded = decoder.decode(value);
-
-                // 1. Update the Terminal UI
-                if (term) {
-                // We append text as a TextNode to prevent HTML injection from the ESP32,
-                    // but this keeps your Welcome HTML intact.
-                    const textNode = document.createTextNode(decoded);
-                    term.appendChild(textNode);
-                    term.scrollTop = term.scrollHeight;
-                }
-
-                // 2. THE SAFETY RESET LOGIC
-                // We check if 'isRunning' is true and if the ESP32 
-                // has sent back a prompt ('>' or '>>>').
-                if (isRunning && (decoded.includes('>') || decoded.includes('>>>'))) {
-                    console.log("MicroPython finished execution. Resetting UI...");
+                // 3. THE PARSER: Only process when we have a full line (\n)
+                if (serialBuffer.includes("\n")) {
+                    const lines = serialBuffer.split("\n");
                     
-                    // We wrap this in a tiny timeout to ensure the terminal 
-                    // finishes printing before the button flips.
-                    setTimeout(() => {
-                        resetRunButton();
-                    }, 50);
+                    // Keep the last partial piece for the next round
+                    serialBuffer = lines.pop(); 
+
+                    lines.forEach(line => {
+                        const cleanLine = line.trim();
+                        
+                        if (cleanLine.startsWith("DBG:")) {
+                            // --- DEBUG MODE: The "Highlight" logic ---
+                            let blockId = cleanLine.replace("DBG:", "").trim();
+
+                            // THE KEY FIX: Strip the single quotes from the ID
+                            if (blockId.startsWith("'") && blockId.endsWith("'")) {
+                                blockId = blockId.substring(1, blockId.length - 1);
+                            }
+
+                            if (workspace && blockId) {
+                                // Light up the block!
+                                workspace.highlightBlock(blockId);
+                            }
+                        } else if (cleanLine !== "") {
+                            // --- NORMAL MODE: Show to Student ---
+                            if (term) {
+                                // Add a newline back for the terminal view
+                                const textNode = document.createTextNode(cleanLine + "\n");
+                                term.appendChild(textNode);
+                                term.scrollTop = term.scrollHeight;
+                            }
+                        }
+                    });
                 }
             }
         } catch (error) {
-            console.error("Non-critical read error:", error);
-            // We don't 'return' here because we want the loop to try again 
-            // if the hardware is still technically attached.
+            console.error("Read Error:", error);
             break; 
         } finally {
-            // CRITICAL: Always release the lock so the port can be 
-            // closed or reset later without freezing the browser.
             reader.releaseLock();
         }
     }
@@ -903,6 +1070,15 @@ function displayIdleMessage() {
 
 
 async function runCode() {
+
+    Blockly.Python.STATEMENT_PREFIX = null;
+    const code = Blockly.Python.workspaceToCode(workspace);
+    
+    // Clear any old highlights before starting
+    workspace.highlightBlock(null);
+    
+    sendToESP32(code);
+
     if (!espWriter || !port || !port.readable) {
         showDialog("Connection Required", "Oops! Your ESP32 isn't connected yet. Please connect first.");
         return false;
@@ -921,7 +1097,7 @@ async function runCode() {
     }
 
     
-    const code = Blockly.Python.workspaceToCode(workspace);
+    // const code = Blockly.Python.workspaceToCode(workspace);
 
     try {
         await espWriter.write('\x03\x03'); // Interrupt current code
