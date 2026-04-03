@@ -67,4 +67,4 @@ Blockly.Python['base_delay'] = function(block) {
 Blockly.Python.STATEMENT_PREFIX = 'print("DBG:%1")\n';
 
 // Optional: If you want to track variables too, you can use:
- Blockly.Python.INDENT = '  '; // Ensure spacing is correct
+//  Blockly.Python.INDENT = '  '; // Ensure spacing is correct

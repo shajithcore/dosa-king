@@ -1,26 +1,17 @@
+// Add this temporarily to the top of app.js
 
- 
-  // Add this temporarily to the top of app.js
+let port;
+let isRunning = false;
+let isPaused = false;
+let currentMode = 'action';
+let serialBuffer = "";
+let debugInterval = null;
 
-  let port;
-  let espWriter; // Declare it here at the top!
-  let isRunning = false; // Declare toggle varaible for Run Vs Stop
-  
 
-//   
+// 1. DEFINE THE BLOCKLY THEME - DARK THEME (Thanos Theme) - You can customize these colors as you like!
 
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
   'base': Blockly.Themes.Classic,
-    //  'categoryStyles':{
-    //   'controls_category': { 'colour': '#e6cf22' },
-    // 'logic_category': { 'colour': '#43bf57' },
-    // 'loop_category': { 'colour': '#892d86' },
-    // 'math_category': { 'colour': '#5b67a5' },
-    // 'variables_category': { 'colour': '#a55b80' },
-    //  'sensors_category': { 'colour': '160' },
-    //  'hardware_category': { 'colour': '#0e434e' },
-
-    // },
 
   'componentStyles': {
     'workspaceBackgroundColour': '#000511f9',
@@ -88,11 +79,11 @@
             "x": 100,
             "y": 50
         },
-        {
-            "type": "base_forever",
-            "x": 400,
-            "y": 50
-        }
+        // {
+        //     "type": "base_forever",
+        //     "x": 400,
+        //     "y": 50
+        // }
         ]
     }
 };
@@ -194,30 +185,39 @@ fullscreenBtn.addEventListener('click', () => {
 
 // A function that operates a mode switch toggle for action and debug mode
 
-function setMode(mode) {
-    const btnAction = document.getElementById('btn-action');
-    const btnDebug = document.getElementById('btn-debug');
-    
-    if (mode === 'debug') {
-        // UI Update
-        btnDebug.classList.add('active');
-        btnAction.classList.remove('active');
-        
-        // IDE Logic: Hide Toolbox
-        workspace.getToolbox().setVisible(false);
-        // If simulation panel is hidden, you might want to show it here
 
-    } else {
-        // UI Update
-        btnAction.classList.add('active');
-        btnDebug.classList.remove('active');
-        
-        // IDE Logic: Show Toolbox
-        workspace.getToolbox().setVisible(true);
+function setMode(mode) {
+
+    // SHARK GUARD: If code is running, ignore the mode switch request
+    if (isRunning) {
+        console.warn("🦈 Edusharks: Cannot switch modes while code is running!");
+        return; 
     }
-    
-    // Always trigger a resize so Blockly fills the new space
-    Blockly.svgResize(workspace);
+    currentMode = mode;
+     Blockly.Python.STATEMENT_PREFIX = null;
+    // 1. Update Segmented Control UI
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`btn-${mode}`).classList.add('active');
+
+    // 2. Element References
+    const flashBtn = document.getElementById('flashBtn');
+    const debugControls = document.getElementById('debug-controls');
+    const runText = document.getElementById('run-text');
+
+    // 3. The Toggle Logic
+    if (mode === 'debug') {
+        flashBtn.classList.add('hidden');          // Flash disappears
+        debugControls.classList.remove('hidden');   // Debug controls appear
+        runText.innerText = "Test";          // Branding update
+    } else {
+        
+        flashBtn.classList.remove('hidden');       // Flash reappears
+        debugControls.classList.add('hidden');      // Debug controls hide
+        runText.innerText = "Run";
+        
+        // Safety: If they switch to Action while debugging, clear the glow
+        if(workspace) workspace.highlightBlock(null);
+    }
 }
 
 
@@ -401,10 +401,6 @@ async function autoConnectCheck() {
     }
 }
 
-// Run this when the IDE starts
-window.addEventListener('load', autoConnectCheck);
-
-// updateConnectionUI(false); 
 
 // This function handles the actual "Opening" of the pipe
 
@@ -414,7 +410,7 @@ async function setupESP32Connection(existingPort) {
     // 1. Open the port
     await port.open({ baudRate: 115200 });
 
-    setupStreams();
+    // setupStreams();
     readFromESP32();
 
     // WAIT 200ms for the "system dump" to finish, then show our welcome
@@ -426,13 +422,10 @@ async function setupESP32Connection(existingPort) {
     }
 
     // 2. Setup the Writer
-    // const encoder = new TextEncoderStream();
-    // encoder.readable.pipeTo(port.writable);
-    // espWriter = encoder.writable.getWriter();
 
     catch (err) {
-        // console.error("Connection failed:", err);
-        // updateConnectionUI(false);
+         console.error("Connection failed:", err);
+        updateConnectionUI(false);
 
         const term = document.getElementById('terminalOutput');
         term.innerHTML += `<br><span style="color: #ff5555;">[Error] Connection failed: ${err.message}</span>`;
@@ -471,37 +464,6 @@ navigator.serial.addEventListener('connect', async (event) => {
 });
     
 
-
-// check for "already authorized" devices when the page loads
-
-window.addEventListener('load', async () => {
-    // Check if we already have permission for any ports
-    const ports = await navigator.serial.getPorts();
-    
-    if (ports.length > 0) {
-        console.log("Found an authorized ESP32. Ready for auto-connect.");
-        // We don't auto-open here (security often blocks it), 
-        // but the 'connect' listener above will now work instantly!
-    }
-});
-
-
-// The Nav LED to turn off when the user manually stops the connection
-
-
-function setupStreams() {
-    // 1. Create a stream that converts text to bytes
-    const encoder = new TextEncoderStream();
-    
-    // 2. Connect that stream to the ESP32's hardware input
-    encoder.readable.pipeTo(port.writable);
-    
-    // 3. Set the global writer so runCode() and flashCode() can use it
-    espWriter = encoder.writable.getWriter();
-    
-    console.log("Communication streams established.");
-}
-
 async function disconnectESP32() {
     if (port) {
         await port.close();
@@ -513,25 +475,6 @@ async function disconnectESP32() {
     }
 }
 
-
-
-// This function sends a Ctrl+C signal to the ESP32 to stop any currently running code. It sends it twice to ensure that if the user is stuck in a nested loop, it will break out of both levels. Error handling is included to catch any issues during the stop process.
-
-
-async function stopESP32() {
-    if (!espWriter) return;
-
-    // const stopBtn = document.getElementById('mainRunBtn');
-
-    try {
-        // 1. Send the interrupt signals
-        await espWriter.write('\x03\x03'); 
-        console.log("Stopped execution (Sent Ctrl+C)");
-
-    } catch (e) {
-        console.error("Stop failed:", e);
-    }
-}
 
 // This listener catches physical unplugging events
 
@@ -583,190 +526,34 @@ async function connectESP32() {
     }
 }
 
-function processIncomingData(data) {
-    // Look for our special Debug prefix
-    if (data.startsWith("DBG:")) {
-        const blockId = data.replace("DBG:", "").trim();
-        
-        // HIGHLIGHT the block in the workspace
-        if (workspace) {
-            workspace.highlightBlock(blockId);
-        }
-    } else {
-        // Otherwise, it's just normal console output
-        appendToTerminal(data);
-    }
-}
 
-function stopExecution() {
-    // 1. Send the break command to ESP32 (Ctrl+C)
-    sendToESP32('\x03'); 
 
-    // 2. Clear all highlights in the workspace
-    if (workspace) {
-        workspace.highlightBlock(null);
-    }
+function processIncomingData(chunk) {
+    serialBuffer += chunk;
     
-    updateRunButtonState(false);
+    if (serialBuffer.includes("\n")) {
+        let lines = serialBuffer.split("\n");
+        serialBuffer = lines.pop();
+
+        lines.forEach(line => {
+            const cleanLine = line.trim();
+
+            // 1. CHECK FOR FINISH: Look for the result of the print, not the command
+            // We use .includes to handle any hidden characters or prompt marks (>>>)
+            if (cleanLine.includes("FINISH_LINE_REACHED") && !cleanLine.includes("print(")) {
+                console.log("🏁 Execution Complete.");
+                isRunning = false;
+                updateButtonUI('run');
+                return; // Skip the terminal update for this specific line
+            }
+
+            // 2. TERMINAL UPDATE: Only show the line if it's NOT the sentinel command
+            if (!cleanLine.includes('print("FINISH_LINE_REACHED")') && cleanLine !== "") {
+                updateTerminal(cleanLine);
+            }
+        });
+    }
 }
-
-
-// let serialBuffer = ""; // Global buffer to hold partial data
-
-// async function readFromESP32() {
-//     const term = document.getElementById('terminalOutput');
-//     const decoder = new TextDecoder();
-
-//     // The outer loop keeps the reader alive as long as the port is open
-//     while (port && port.readable) {
-//         const reader = port.readable.getReader();
-//         const chunk = decoder.decode(value);
-//         serialBuffer += chunk;
-        
-//         try {
-//             while (true) {
-//                 const { value, done } = await reader.read();
-                
-//                 if (done) {
-//                     // done is true if the port is closed
-//                     break;
-//                 }
-
-//                 // Convert bytes from ESP32 to a string
-//                 const decoded = decoder.decode(value);
-
-//                 // 1. Update the Terminal UI
-//                 if (term) {
-//                 // We append text as a TextNode to prevent HTML injection from the ESP32,
-//                     // but this keeps your Welcome HTML intact.
-//                     const textNode = document.createTextNode(decoded);
-//                     term.appendChild(textNode);
-//                     term.scrollTop = term.scrollHeight;
-//                 }
-
-//                 // 2. THE SAFETY RESET LOGIC
-//                 // We check if 'isRunning' is true and if the ESP32 
-//                 // has sent back a prompt ('>' or '>>>').
-//                 if (isRunning && (decoded.includes('>') || decoded.includes('>>>'))) {
-//                     console.log("MicroPython finished execution. Resetting UI...");
-                    
-//                     // We wrap this in a tiny timeout to ensure the terminal 
-//                     // finishes printing before the button flips.
-//                     setTimeout(() => {
-//                         resetRunButton();
-//                     }, 50);
-//                 }
-
-//                 // Check if we have at least one complete line
-//                 if (serialBuffer.includes("\n")) {
-//                     const lines = serialBuffer.split("\n");
-                    
-//                     // Keep the last (potentially incomplete) piece in the buffer
-//                     serialBuffer = lines.pop(); 
-
-//                     // Process each complete line
-//                     lines.forEach(line => {
-//                         const cleanLine = line.trim();
-//                         if (cleanLine.startsWith("DBG:")) {
-//                             const blockId = cleanLine.replace("DBG:", "");
-                            
-//                             // LIGHT IT UP!
-//                             if (workspace) {
-//                                 workspace.highlightBlock(blockId);
-//                             }
-//                         } 
-//                         else {
-//                             // It's normal user code output, send to terminal
-//                             appendToTerminal(cleanLine + "\n");
-//                             }
-//                     });
-//                 }
-//             }
-
-//         } 
-        
-//         catch (error) {
-//             console.error("Non-critical read error:", error);
-//             // We don't 'return' here because we want the loop to try again 
-//             // if the hardware is still technically attached.
-//             break; 
-//         } 
-
-//         finally {
-//             // CRITICAL: Always release the lock so the port can be 
-//             // closed or reset later without freezing the browser.
-//             reader.releaseLock();
-//         }
-//     }
-// }
-
-// let serialBuffer = ""; // Keep this global
-
-// async function readFromESP32() {
-//     const term = document.getElementById('terminalOutput');
-//     const decoder = new TextDecoder();
-
-//     while (port && port.readable) {
-//         const reader = port.readable.getReader();
-        
-//         try {
-//             while (true) {
-//                 const { value, done } = await reader.read();
-//                 if (done) break;
-
-//                 // 1. Convert the raw bytes to a string chunk
-//                 const chunk = decoder.decode(value);
-//                 serialBuffer += chunk;
-
-//                 // 2. CHECK FOR PROMPTS (The Safety Reset)
-//                 // We do this on the 'chunk' level so it feels instant
-//                 if (isRunning && (chunk.includes('>') || chunk.includes('>>>'))) {
-//                     setTimeout(() => { resetRunButton(); }, 50);
-//                 }
-
-//                 // 3. THE BUFFER LOGIC: Process complete lines
-//                 if (serialBuffer.includes("\n")) {
-//                     const lines = serialBuffer.split("\n");
-                    
-//                     // Keep the last partial line in the buffer
-//                     serialBuffer = lines.pop(); 
-
-//                     lines.forEach(line => {
-//                         const cleanLine = line.trim();
-                        
-//                         if (cleanLine.startsWith("DBG:")) {
-//                             // --- DEBUG MODE: Highlight the block ---                            
-//                             const blockId = cleanLine.replace("DBG:", "").trim();
-//                             if (blockId.startsWith("'") && blockId.endsWith("'")) {
-//                                 blockId = blockId.substring(1, blockId.length - 1);
-//                             }
-//                             if (workspace && blockId) {
-//                                 console.log("Highlighting Block ID:", blockId); // Keep this for testing!
-//                                 workspace.highlightBlock(blockId);
-//                             }
-//                         } else if (cleanLine !== "") {
-//                             // --- NORMAL MODE: Show to Student ---
-//                             // We only append to the terminal if it's NOT a debug message
-//                             if (term) {
-//                                 const textNode = document.createTextNode(cleanLine + "\n");
-//                                 term.appendChild(textNode);
-//                                 term.scrollTop = term.scrollHeight;
-//                             }
-//                         }
-//                     });
-//                 }
-//             }
-//         } catch (error) {
-//             console.error("Read error:", error);
-//             break; 
-//         } finally {
-//             reader.releaseLock();
-//         }
-//     }
-// }
-
-
-let serialBuffer = ""; // MUST be outside the function to keep memory
 
 async function readFromESP32() {
     const term = document.getElementById('terminalOutput');
@@ -778,51 +565,15 @@ async function readFromESP32() {
         try {
             while (true) {
                 const { value, done } = await reader.read();
-                if (done) break;
+                if (done) {
+                    break};
 
                 // 1. Decode the raw bytes into a string chunk
                 const chunk = decoder.decode(value);
-                serialBuffer += chunk; // Add the chunk to our "waiting line"
 
-                // 2. CHECK FOR PROMPTS (Safety Reset)
-                if (isRunning && (chunk.includes('>') || chunk.includes('>>>'))) {
-                    setTimeout(() => { resetRunButton(); }, 50);
-                }
-
-                // 3. THE PARSER: Only process when we have a full line (\n)
-                if (serialBuffer.includes("\n")) {
-                    const lines = serialBuffer.split("\n");
-                    
-                    // Keep the last partial piece for the next round
-                    serialBuffer = lines.pop(); 
-
-                    lines.forEach(line => {
-                        const cleanLine = line.trim();
-                        
-                        if (cleanLine.startsWith("DBG:")) {
-                            // --- DEBUG MODE: The "Highlight" logic ---
-                            let blockId = cleanLine.replace("DBG:", "").trim();
-
-                            // THE KEY FIX: Strip the single quotes from the ID
-                            if (blockId.startsWith("'") && blockId.endsWith("'")) {
-                                blockId = blockId.substring(1, blockId.length - 1);
-                            }
-
-                            if (workspace && blockId) {
-                                // Light up the block!
-                                workspace.highlightBlock(blockId);
-                            }
-                        } else if (cleanLine !== "") {
-                            // --- NORMAL MODE: Show to Student ---
-                            if (term) {
-                                // Add a newline back for the terminal view
-                                const textNode = document.createTextNode(cleanLine + "\n");
-                                term.appendChild(textNode);
-                                term.scrollTop = term.scrollHeight;
-                            }
-                        }
-                    });
-                }
+                // PASS the data to the brain, don't process it here!
+                processIncomingData(chunk);          
+                
             }
         } catch (error) {
             console.error("Read Error:", error);
@@ -831,13 +582,8 @@ async function readFromESP32() {
             reader.releaseLock();
         }
     }
-}
 
-// Set initial state on window load
-window.addEventListener('load', () => {
-    document.getElementById('toggleCode').checked = false; // Default to Block
-    toggleMode(); // Run once to set initial visibility
-});
+}
 
 
 // Toggle Console
@@ -845,17 +591,6 @@ function toggleTerminal() {
     const consoleBox = document.getElementById('console-container');
     const isClosing = !consoleBox.classList.contains('console-closed');
     
-    // if (consoleBox.classList.contains('console-closed'))
-    // {
-    //     // OPENING: Give it a healthy default height (e.g., 180px)
-    //     consoleBox.classList.remove('console-closed');
-    //     consoleBox.style.height = "180px"; 
-    // } else {
-    //     // CLOSING: Snap it to 0
-    //     consoleBox.classList.add('console-closed');
-    //     consoleBox.style.height = "0px";
-    // }
-
     if (isClosing) {
         consoleBox.classList.add('console-closed');
         consoleBox.style.height = "0px";
@@ -889,13 +624,6 @@ resizer.addEventListener('mousedown', (e) => {
 
 function handleMouseMove(e) {
     const newHeight = window.innerHeight - e.clientY - 35; // 35 is footer height
-    // if (newHeight > 100 && newHeight < 600) {
-        // consoleBox.style.height = (newHeight - 40) + 'px'; // Subtract input row height
-    // }
-
-    // Calculate new height based on the mouse position relative to the footer
-    // const newHeight = window.innerHeight - e.clientY - 35; 
-    
 
     if (newHeight > 50 && newHeight < window.innerHeight * 1) {
         const consoleBox = document.getElementById('console-container');
@@ -906,19 +634,20 @@ function handleMouseMove(e) {
         // to match the new space
         if (workspace) {
             Blockly.svgResize(workspace);
-    }
+        }
 
+    }
 }
-}
+
 
 async function sendConsoleCommand() {
     const input = document.getElementById('console-input');
     const command = input.value;
 
-    if (command && espWriter) {
-        // Send command + Enter key (\r\n)
-        await espWriter.write(command + '\r\n');
-        input.value = ''; // Clear input
+    // Use 'port' or 'port.writable' as the check
+    if (command && port && port.writable) {
+        await sendHardwareCommand(command + '\r\n');
+        input.value = ''; 
     }
 }
 
@@ -1069,148 +798,133 @@ function displayIdleMessage() {
 }
 
 
+async function sendHardwareCommand(command) {
+    if (!port || !port.writable) return;
+    
+    const writer = port.writable.getWriter();
+    const encoder = new TextEncoder();
+    try {
+        await writer.write(encoder.encode(command));
+    } finally {
+        writer.releaseLock(); // This is the secret to avoiding the Locked error!
+    }
+}
+
+
+// This function sends a Ctrl+C signal to the ESP32 to stop any currently running code. It sends it twice to ensure that if the user is stuck in a nested loop, it will break out of both levels. Error handling is included to catch any issues during the stop process.
+
 async function runCode() {
-
     Blockly.Python.STATEMENT_PREFIX = null;
-    const code = Blockly.Python.workspaceToCode(workspace);
-    
-    // Clear any old highlights before starting
-    workspace.highlightBlock(null);
-    
-    sendToESP32(code);
+    const rawCode = Blockly.Python.workspaceToCode(workspace);
+    const sentinel = '\nprint("FINISH_LINE_REACHED")\n';
+    const finalCode = rawCode + sentinel;
 
-    if (!espWriter || !port || !port.readable) {
-        showDialog("Connection Required", "Oops! Your ESP32 isn't connected yet. Please connect first.");
+    isRunning = true; // <--- ADD THIS LINE
+    updateButtonUI('stop');
+
+    if (!port || !port.writable) {
+        showDialog("Connection Required", "Connect your ESP32 first.");
         return false;
     }
 
-    // Situation 2: Check for "Empty" Assembly
-    // We check if there are blocks besides the two 'hat' blocks
-    const allBlocks = workspace.getAllBlocks(false);
-    const hasLogic = allBlocks.some(block => 
-        block.type !== 'base_start' && block.type !== 'base_forever'
-    );
-
-    if (!hasLogic) {
-        showDialog("Empty Workspace", "It looks like you haven't added any blocks to the 'On Start' or 'Forever' sections. Add some code first!");
-        return;
-    }
-
-    
-    // const code = Blockly.Python.workspaceToCode(workspace);
-
     try {
-        await espWriter.write('\x03\x03'); // Interrupt current code
-        await new Promise(r => setTimeout(r, 200));
-        await espWriter.write('\x01'); // Enter Raw Paste
-        await espWriter.write(code + '\x04'); // Execute
-        console.log("Running code in RAM...");
-        // document.getElementById('stopBtn').disabled = false;
-        return true;
+        // Use Paste Mode (\x05) for reliability
+        await sendHardwareCommand('\x03\x03'); // Stop current
+        await new Promise(r => setTimeout(r, 300));
+        await sendHardwareCommand('\x05');      // Enter Paste
+        await sendHardwareCommand(finalCode);   // Send Code
+        await sendHardwareCommand('\x04');      // Execute
+        
+        console.log("🚀 Running in RAM...");
+        return true; 
     } catch (e) {
-        showDialog("Run Error", "Could not send code to RAM.");
+        console.error(e);
         return false;
     }
 }
 
 
-async function flashCode() {
+async function stopESP32() {
+    try {
+        if (debugInterval) clearInterval(debugInterval);
+        debugInterval = null;
+        if (workspace) workspace.highlightBlock(null);
 
-    if (!espWriter || !port || !port.readable) {
-        showDialog("Connection Required", "Oops! Your ESP32 isn't connected yet. Please click the 'Connect' button first.");
-        return;
+        await sendHardwareCommand('\x03\x03'); // Force Stop
+        
+        isRunning = false;
+        updateButtonUI('run'); 
+        console.log("🛑 Stopped.");
+    } catch (e) {
+        console.error("Stop failed:", e);
     }
+}
 
-    // Situation 2: Check for "Empty" Assembly
-    // We check if there are blocks besides the two 'hat' blocks
-    const allBlocks = workspace.getAllBlocks(false);
-    const hasLogic = allBlocks.some(block => 
-        block.type !== 'base_start' && block.type !== 'base_forever'
-    );
-
-    if (!hasLogic) {
-        showDialog("Empty Workspace", "It looks like you haven't added any blocks to the 'On Start' or 'Forever' sections. Add some code first!");
+async function flashCode() {
+    if (!port || !port.writable) {
+        showDialog("Connection Required", "Connect your ESP32 first!");
         return;
     }
 
     const code = Blockly.Python.workspaceToCode(workspace);
+    const encoder = new TextEncoder();
+    const writer = port.writable.getWriter(); // Get a fresh writer
 
-    // This script writes the code to main.py and reboots
-    const flashScript = `
-        f = open('main.py', 'w')
-        f.write('''${code}''')
-        f.close()
-        import machine
-        machine.soft_reset()
-        `;
-
-    showLoadingOverlay("Flashing to Storage..."); // Show a specific message
+    showLoadingOverlay("Writing to Flash...");
 
     try {
-        await espWriter.write('\x03\x03'); 
-        await new Promise(r => setTimeout(r, 400));
-        await espWriter.write('\x01'); 
-        await espWriter.write(flashScript + '\x04'); 
+        // 1. CLEAR THE DECKS: Send Ctrl+C multiple times to stop any running code
+        await writer.write(encoder.encode('\x03\x03')); 
+        await new Promise(r => setTimeout(r, 500));
+
+        // 2. PREPARE THE SCRIPT
+        // We use hex/repr encoding to ensure NO special characters (like quotes) break the string
+        const escapedCode = JSON.stringify(code); 
         
-        showDialog("Flash Success", "Code saved permanently! The ESP32 will now run this every time it powers on.");
+        const commands = [
+            `f = open('main.py', 'w')`,
+            `f.write(${escapedCode})`,
+            `f.close()`,
+            `import machine`,
+            'print("FILE_WRITE_COMPLETE")',
+            `machine.soft_reset()`
+        ];
+
+        // 3. EXECUTE LINE-BY-LINE
+        // This is slower but 100% more reliable than "Paste Mode" for many ESP32 boards
+        for (let cmd of commands) {
+            await writer.write(encoder.encode(cmd + '\r\n'));
+            // Give the ESP32 100ms to process each line and write to flash
+            await new Promise(r => setTimeout(r, 100)); 
+        }
+
+        showDialog("Flash Success", "Your code is now saved as main.py and will run on boot!");
+
     } catch (e) {
-        showDialog("Flash Error", "Failed to write to the ESP32 file system.");
+        console.error("Flash Error:", e);
+        showDialog("Flash Error", "Communication failed. Check your USB cable.");
     } finally {
+        writer.releaseLock();
         hideLoadingOverlay();
     }
 }
 
 
-async function uploadCode() {
-    // Situation 1: Check Connection
-    if (!espWriter || !port || !port.readable) {
-        showDialog("Connection Required", "Oops! Your ESP32 isn't connected yet. Please click the 'Connect' button first.");
-        return;
-    }
+// 2. THE DEBUG (SONAR) FUNCTION
 
-    // Situation 2: Check for "Empty" Assembly
-    // We check if there are blocks besides the two 'hat' blocks
-    const allBlocks = workspace.getAllBlocks(false);
-    const hasLogic = allBlocks.some(block => 
-        block.type !== 'base_start' && block.type !== 'base_forever'
-    );
+function debugCode() {
+    // 1. Always use the blocking 'read' prefix
+    // This makes the ESP32 wait for 1 character before executing the block
+    Blockly.Python.STATEMENT_PREFIX = 'print("DBG:%1")\ntime.sleep_ms(250)\n';
 
-    if (!hasLogic) {
-        showDialog("Empty Workspace", "It looks like you haven't added any blocks to the 'On Start' or 'Forever' sections. Add some code first!");
-        return;
-    }
-
-
-    // --- Start Upload Logic ---
-    const overlay = document.getElementById('loadingOverlay');
-    overlay.classList.remove('overlay-hidden');
     const code = Blockly.Python.workspaceToCode(workspace);
-    const permanentCode = `
-        f = open('main.py', 'w')
-        f.write('''${code}''')
-        f.close()
-        import machine
-        machine.reset() # This reboots the board to run the new main.py
-        `;
+    const setup = "import sys, machine, time\n";
+    
+    sendCode(setup + code);
 
-    try {
-        
-        await espWriter.write('\x03\x03'); // Interrupt
-        await new Promise(r => setTimeout(r, 300));
-        await espWriter.write('\x01'); // Raw mode
-        await espWriter.write(code + '\x04'); // Send & Execute
-        await espWriter.write(permanentCode + '\x04');
-        console.log("Code saved to main.py and ESP32 rebooted.");
-        // document.getElementById('stopBtn').disabled = false;
-    } catch (e) {
-        showDialog("Upload Error", "Failed to send code. Please check your cable connection.");
-    } finally {
-        setTimeout(() => {
-            overlay.classList.add('overlay-hidden');
-        }, 500);
-    }
+    // 2. Start the Pulse if Auto-Step is checked
+    handleAutoStepChange(); 
 }
-
 
 function handleConnectionClick() {
     // Check the current state (you likely have a global variable for this)
@@ -1243,40 +957,64 @@ function updateConnectionUI(isConnected) {
 }
 
 
-
-// 2. Update the toggle function between Run and Stop
 async function toggleRunStop() {
+    const btn = document.getElementById('mainRunBtn');
+    
+    // 1. THE DEBOUNCER: Disable the button immediately 
+    // to prevent double-clicks while the hardware is thinking.
+    btn.disabled = true;
+
+    try {
+        if (!isRunning) {
+            // --- ATTEMPT TO START ---
+            const success = await runCode(); 
+            
+            if (success) {
+                // isRunning is likely set to true inside runCode(), 
+                // but we'll ensure it here for safety.
+                isRunning = true;
+                updateButtonUI('stop');
+            }
+        } else {
+            // --- ATTEMPT TO STOP ---
+            await stopESP32();
+            isRunning = false;
+            updateButtonUI('run');
+        }
+    } catch (err) {
+        console.error("Toggle failed:", err);
+    } finally {
+        // 2. RE-ENABLE: Turn the button back on after the hardware responds.
+        btn.disabled = false;
+    }
+}
+
+function updateButtonUI(state) {
     const btn = document.getElementById('mainRunBtn');
     const icon = document.getElementById('run-icon');
     const text = document.getElementById('run-text');
 
-    if (!isRunning) {
-        // --- TRANSITION TO START ---
-        // We try to run the code first
-        const success = await runCode(); 
-        
-        // If successful (or assuming success for the UI toggle)
-        
-        if(success) {
-        isRunning = true;
+    if (state === 'stop') {
+        // --- CODE IS STARTING ---
+        btn.classList.add('stop-style', 'running-pulse');
         btn.classList.remove('run-style');
-        btn.classList.add('stop-style');
         icon.innerText = "⏹";
         text.innerText = "Stop";
-        }
+
+        // LOCK the mode toggle buttons
+        toggleModeButtons(true); 
 
     } else {
-        // --- TRANSITION TO STOP ---
-        await stopESP32();
-        
-        isRunning = false;
-        btn.classList.remove('stop-style');
+        // --- CODE IS STOPPED ---
         btn.classList.add('run-style');
+        btn.classList.remove('stop-style', 'running-pulse');
         icon.innerText = "▶";
-        text.innerText = "Run";
+        text.innerText = (currentMode === 'debug') ? "Start Sonar" : "Run";
+
+        // UNLOCK the mode toggle buttons
+        toggleModeButtons(false); 
     }
 }
-
 
 
 // The function that downloads main.py to the computer
@@ -1290,18 +1028,203 @@ function downloadCode() {
     a.click();
 }
 
-// Final startup refresh
-setTimeout(() => {
-    console.log("Running manual kickstart...");
-    updateCode();    
-    if(editor) editor.refresh();
-}, 1000);
+function kickstartIDE() {
+    console.log("🚀 Kickstarting IDE visuals...");
+
+    // 1. Sync the Python preview with the current blocks
+    if (typeof updateCode === "function") {
+        updateCode();
+    }
+
+    // 2. Refresh the code editor (CodeMirror/Ace) 
+    // This fixes "squashed" text or invisible lines on load
+    if (typeof editor !== "undefined" && editor.refresh) {
+        editor.refresh();
+    }
+
+    // 3. Clear any "ghost" block highlights
+    if (typeof workspace !== "undefined" && workspace) {
+        workspace.highlightBlock(null);
+    }
+}
 
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('Service Worker Registered!', reg))
-      .catch(err => console.log('Service Worker Failed', err));
-  });
+async function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+            const reg = await navigator.serviceWorker.register('/sw.js');
+            console.log('✅ Service Worker: Registered successfully!', reg.scope);
+        } catch (err) {
+            console.warn('⚠️ Service Worker: Registration failed.', err);
+        }
+    } else {
+        console.log('ℹ️ Service Worker: Not supported in this browser.');
+    }
+}
+
+// THE MASTER BOOT SEQUENCE ---
+window.addEventListener('load', async () => {
+
+    console.log("🦈 Edusharks IDE: Commencing Master Boot...");
+
+    // 1. UI FIRST: Set the look and feel
+    setMode('action'); 
+
+    // 2. HARDWARE SECOND: Try to find the shark
+    // We 'await' this so the connection finishes before the next step
+    await autoConnectCheck();
+
+    // 3. OFFLINE THIRD: Register Service Worker
+    await registerServiceWorker();
+
+    setupDebugListeners(); // <--- Run the listeners here safely
+
+    // 4. SYNC LAST: Run the "Kickstart"
+    kickstartIDE();
+
+    console.log("✅ Boot Sequence Complete.");
+
+});
+
+
+document.getElementById('pause-btn')?.addEventListener('click', function() {
+    isPaused = !isPaused;
+    this.innerHTML = isPaused ? "▶ Resume" : "⏸ Pause";
+    
+    // Send a live command to the ESP32
+    const cmd = isPaused ? "_d_pause = True\r\n" : "_d_pause = False\r\n";
+    sendRawCommand(cmd);
+});
+
+document.getElementById('speed-slider').addEventListener('input', function() {
+    const val = this.value;
+    document.getElementById('speed-value').innerText = val + "ms";
+    
+    // Update the delay on the ESP32 in real-time!
+    sendRawCommand(`_d_delay = ${val}\r\n`);
+});
+
+
+// The actual "Pulse" that moves the code forward one block
+async function pulseNextBlock() {
+    if (!port || !port.writable || isPaused) return;
+
+    const writer = port.writable.getWriter();
+    await writer.write(new TextEncoder().encode(" ")); // Send 1 character to unblock sys.stdin.read(1)
+    writer.releaseLock();
+}
+
+// Logic to start/stop the Auto-Step timer
+function handleAutoStepChange() {
+    const isAuto = document.getElementById('auto-step-check').checked;
+    const speed = document.getElementById('speed-slider').value;
+
+    // Clear any existing timer
+    if (debugInterval) clearInterval(debugInterval);
+
+    if (isAuto && isRunning) {
+        debugInterval = setInterval(() => {
+            pulseNextBlock();
+        }, speed);
+    }
+}
+
+// When the 'Step' button is clicked manually
+document.getElementById('step-btn').addEventListener('click', pulseNextBlock);
+
+// When the 'Auto-Step' checkbox is toggled
+document.getElementById('auto-step-check').addEventListener('change', handleAutoStepChange);
+
+// When the slider moves, restart the timer with the new speed
+document.getElementById('speed-slider').addEventListener('input', (e) => {
+    document.getElementById('speed-value').innerText = e.target.value + "ms";
+    handleAutoStepChange();
+});
+
+function toggleModeButtons(isLocked) {
+    const btnAction = document.getElementById('btn-action');
+    const btnDebug = document.getElementById('btn-debug');
+    
+    if (!btnAction || !btnDebug) return;
+
+    if (isLocked) {
+        // LOCK: Prevent clicking and show visual "disabled" state
+        btnAction.style.pointerEvents = "none";
+        btnDebug.style.pointerEvents = "none";
+        btnAction.style.opacity = "0.5";
+        btnDebug.style.opacity = "0.5";
+    } else {
+        // UNLOCK: Allow clicking again
+        btnAction.style.pointerEvents = "auto";
+        btnDebug.style.pointerEvents = "auto";
+        btnAction.style.opacity = "1";
+        btnDebug.style.opacity = "1";
+    }
+}
+
+function updateTerminal(message) {
+    const term = document.getElementById('terminalOutput');
+    if (!term) return;
+
+    // Append the new message with a line break
+    term.innerText += message + "\n";
+
+    // Auto-scroll to the bottom so students see the latest data
+    const consoleBox = document.getElementById('console-container');
+    if (consoleBox) {
+        consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+}
+
+// --- SHARK-PROOF LISTENERS ---
+// We check if the element exists before adding the listener to prevent the "Null" error
+
+const pauseBtn = document.getElementById('pause-btn');
+if (pauseBtn) {
+    pauseBtn.addEventListener('click', function() {
+        isPaused = !isPaused;
+        this.innerHTML = isPaused ? "▶ Resume" : "⏸ Pause";
+        sendHardwareCommand(isPaused ? "_d_pause = True\r\n" : "_d_pause = False\r\n");
+    });
+}
+
+const speedSlider = document.getElementById('speed-slider');
+if (speedSlider) {
+    speedSlider.addEventListener('input', function() {
+        const val = this.value;
+        document.getElementById('speed-value').innerText = val + "ms";
+        sendHardwareCommand(`_d_delay = ${val}\r\n`);
+    });
+}
+
+const stepBtn = document.getElementById('step-btn');
+if (stepBtn) {
+    stepBtn.addEventListener('click', pulseNextBlock);
+}
+
+const autoStepCheck = document.getElementById('auto-step-check');
+if (autoStepCheck) {
+    autoStepCheck.addEventListener('change', handleAutoStepChange);
+}
+
+function setupDebugListeners() {
+    console.log("🛠 Setting up Debug Controls...");
+
+    document.getElementById('pause-btn')?.addEventListener('click', function() {
+        isPaused = !isPaused;
+        this.innerHTML = isPaused ? "▶ Resume" : "⏸ Pause";
+        sendHardwareCommand(isPaused ? "_d_pause = True\r\n" : "_d_pause = False\r\n");
+    });
+
+    document.getElementById('step-btn')?.addEventListener('click', pulseNextBlock);
+
+    document.getElementById('speed-slider')?.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const label = document.getElementById('speed-value');
+        if (label) label.innerText = val + "ms";
+        sendHardwareCommand(`_d_delay = ${val}\r\n`);
+        handleAutoStepChange();
+    });
+
+    document.getElementById('auto-step-check')?.addEventListener('change', handleAutoStepChange);
 }

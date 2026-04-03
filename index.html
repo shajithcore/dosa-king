@@ -13,11 +13,11 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/material.min.css">
   <script src="custom_category.js"></script>  
-  <script src="toolbox_label.js"></script>  
+  <!-- <script src="toolbox_label.js"></script>   -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.11/mode/python/python.min.js"></script>
   <link rel="stylesheet" href="css/toolbox_style.css">
     <link rel="stylesheet" href="css/style.css">
-  <link rel="manifest" href="manifest.json">
+  <!-- <link rel="manifest" href="manifest.json"> -->
   
   
 </head>
@@ -31,8 +31,8 @@
 
     <nav class="top-nav">
         <div class="segmented-control">
-            <button id="btn-action" class="mode-btn active" onclick="setMode('action')">Action</button>
-            <button id="btn-debug" class="mode-btn" onclick="setMode('debug')">Debug</button>
+            <button id="btn-action" class="mode-btn active" onclick="setMode('action')">Create</button>
+            <button id="btn-debug" class="mode-btn" onclick="setMode('debug')">Test</button>
         </div>       
     </nav>
 
@@ -42,11 +42,22 @@
       <button id="mainRunBtn" class="action-btn run-style" onclick="toggleRunStop()" title="Run in RAM">
         <span id="run-icon">▶</span> <span id="run-text">Run</span>
       </button>
-    
+
       <button id="flashBtn" class="action-btn flash-style" onclick="flashCode()" title="Save to ESP32">
          <span>⚡</span> Flash
       </button>
+      <div id="debug-controls" class="hidden">
+        <button id="step-btn">➔ Step</button>
+    
+        <label>
+            <input type="checkbox" id="auto-step-check" checked> Auto-Step
+        </label>
 
+        <div class="speed-container">
+            <input type="range" id="speed-slider" min="100" max="2000" value="500">
+            <span id="speed-value">500ms</span>
+        </div>
+      </div>
       <button id="fullscreenBtn" class="btn">
         <span id="fs-icon">⛶</span> 
       </button>
