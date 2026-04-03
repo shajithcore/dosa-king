@@ -644,7 +644,7 @@ async function sendConsoleCommand() {
     const input = document.getElementById('console-input');
     const command = input.value;
 
-    // Use 'port' or 'port.writable' as the check
+    // Use 'port' or 'port.writable' as the check   
     if (command && port && port.writable) {
         await sendHardwareCommand(command + '\r\n');
         input.value = ''; 
@@ -1093,7 +1093,7 @@ document.getElementById('pause-btn')?.addEventListener('click', function() {
     
     // Send a live command to the ESP32
     const cmd = isPaused ? "_d_pause = True\r\n" : "_d_pause = False\r\n";
-    sendRawCommand(cmd);
+    sendHardwareCommand(cmd);
 });
 
 document.getElementById('speed-slider').addEventListener('input', function() {
@@ -1101,7 +1101,7 @@ document.getElementById('speed-slider').addEventListener('input', function() {
     document.getElementById('speed-value').innerText = val + "ms";
     
     // Update the delay on the ESP32 in real-time!
-    sendRawCommand(`_d_delay = ${val}\r\n`);
+    sendHardwareCommand(`_d_delay = ${val}\r\n`);
 });
 
 
@@ -1176,6 +1176,28 @@ function updateTerminal(message) {
     }
 }
 
+function setupDebugListeners() {
+    console.log("🛠 Setting up Debug Controls...");
+
+    document.getElementById('pause-btn')?.addEventListener('click', function() {
+        isPaused = !isPaused;
+        this.innerHTML = isPaused ? "▶ Resume" : "⏸ Pause";
+        sendHardwareCommand(isPaused ? "_d_pause = True\r\n" : "_d_pause = False\r\n");
+    });
+
+    document.getElementById('step-btn')?.addEventListener('click', pulseNextBlock);
+
+    document.getElementById('speed-slider')?.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const label = document.getElementById('speed-value');
+        if (label) label.innerText = val + "ms";
+        sendHardwareCommand(`_d_delay = ${val}\r\n`);
+        handleAutoStepChange();
+    });
+
+    document.getElementById('auto-step-check')?.addEventListener('change', handleAutoStepChange);
+}
+
 // --- SHARK-PROOF LISTENERS ---
 // We check if the element exists before adding the listener to prevent the "Null" error
 
@@ -1205,26 +1227,4 @@ if (stepBtn) {
 const autoStepCheck = document.getElementById('auto-step-check');
 if (autoStepCheck) {
     autoStepCheck.addEventListener('change', handleAutoStepChange);
-}
-
-function setupDebugListeners() {
-    console.log("🛠 Setting up Debug Controls...");
-
-    document.getElementById('pause-btn')?.addEventListener('click', function() {
-        isPaused = !isPaused;
-        this.innerHTML = isPaused ? "▶ Resume" : "⏸ Pause";
-        sendHardwareCommand(isPaused ? "_d_pause = True\r\n" : "_d_pause = False\r\n");
-    });
-
-    document.getElementById('step-btn')?.addEventListener('click', pulseNextBlock);
-
-    document.getElementById('speed-slider')?.addEventListener('input', (e) => {
-        const val = e.target.value;
-        const label = document.getElementById('speed-value');
-        if (label) label.innerText = val + "ms";
-        sendHardwareCommand(`_d_delay = ${val}\r\n`);
-        handleAutoStepChange();
-    });
-
-    document.getElementById('auto-step-check')?.addEventListener('change', handleAutoStepChange);
 }
