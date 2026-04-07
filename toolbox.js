@@ -11,7 +11,7 @@ const toolboxCategories = {
  
     },
 
-    {kind: 'sep'},
+    // {kind: 'sep'},
 
     { kind: 'category',
       name: 'Controls',
@@ -419,12 +419,18 @@ const toolboxCategories = {
           "icon": 'customIconVariable',
           "label": 'variable-label' },
     },
-    { kind: 'sep'},
+    // { kind: 'sep'},
 
     { kind: 'category',
       name: 'Advanced', // The Parent Category
       categorystyle: 'procedure_category',
       expanded: 'false', // Keeps it closed by default
+      cssConfig: {
+                    "container": 'advanced-category-container', // Styles the whole group
+                    "row": 'advanced-parent-row',             // Styles just the 'Advanced' label row
+                    "icon": 'customIconAdvanced',
+                    "label": 'advanced-label'
+          },
       contents: [
                   { kind: 'category',
                     name: 'Functions',

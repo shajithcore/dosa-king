@@ -133,6 +133,10 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
   Blockly.serialization.workspaces.load(starterState, workspace);
 
 
+  // Register the "Guard" listener to the workspace
+workspace.addChangeListener(limitStartBlocks);
+
+
     // 2. Initialize the Backpack
 // In the script-tag version, the class is usually found under the plugin name
 const backpack = new Backpack(workspace, {
@@ -437,24 +441,29 @@ async function setupESP32Connection(existingPort) {
 
 navigator.serial.addEventListener('connect', async (event) => {
     console.log("New hardware detected...");
-    
+
     const detectedPort = event.target;
 
     try {
         // We TRY to open it silently. 
         // This only works if this specific ESP32 was authorized before.
         await setupESP32Connection(detectedPort);
-        updateConnectionUI(true); 
+        // updateConnectionUI(true); 
         
         // If we reach this line, the connection is LIVE.
         console.log("Auto-connection successful!");
+        
+            updateConnectionStatus(true);
+            updateHardwareButtonStates();
+
+
     } catch (err) {
         // If we reach here, it's a "New" device that needs permission.
         
         console.warn("New device needs manual authorization.");
         
         // IMPORTANT: Keep UI as "Disconnected" and show a helper dialog
-        updateConnectionUI(false);
+        // updateConnectionUI(false);
         
         showDialog(
             "New Device Detected", 
@@ -505,6 +514,9 @@ async function connectESP32() {
         
         // If the user selects a port, we take over immediately
         await setupESP32Connection(newPort);
+
+        updateHardwareButtonStates(); // Unlock buttons
+        updateConnectionStatus(true);
         
         // Success Message in your IDE UI (not console)
         showDialog("Success!", "ESP32 is now synced with Edusharks IDE.");
@@ -512,6 +524,10 @@ async function connectESP32() {
 
     } catch (err) {
         // We "eat" the console error and show your Dialog instead
+
+        updateConnectionStatus(false);
+        updateHardwareButtonStates();
+
         if (err.name === 'NotFoundError') {
             // User clicked 'Cancel' or no device was plugged in
             showDialog("No Device Selected", "You didn't pick a device! Make sure the ESP32 is plugged in and try again.");
@@ -681,30 +697,119 @@ function toggleMode() {
 
 // This function toggles the simulation panel's visibility and smoothly resizes the Blockly workspace to fill the new space. It also hides the resizer handle when collapsed for a cleaner look.
 
+// function toggleSimPanel() {
+//     const sim = document.getElementById('simulation-container');
+//     const resizer = document.getElementById('sim-resizer'); // Ensure this ID exists!
+//     const isCollapsed = sim.classList.toggle('collapsed');
+
+
+
+//     if (isCollapsed) {
+//         resizer.style.display = 'none';
+
+//     } else {
+//         setTimeout(() => {
+//             resizer.style.display = 'block';
+//         }, 100);
+//     }
+    
+//     // Set the target width
+//     sim.style.width = isCollapsed ? "0px" : "25%";
+
+   
+   
+//     // Smoothly animate the workspace resizing to match the new simulation panel size
+//     let startTime = null;
+//     const duration = 300; // Must match your CSS transition time
+
+//     function smoothResize(timestamp) {
+//         if (!startTime) startTime = timestamp;
+//         const progress = timestamp - startTime;
+
+//         Blockly.svgResize(workspace);
+
+//         if (progress < duration) {
+//             requestAnimationFrame(smoothResize);
+//         } else {
+//             // Final snap for precision
+//             Blockly.svgResize(workspace); 
+//         }
+//     }
+
+//     requestAnimationFrame(smoothResize);
+// }
+
+
+// function toggleSimPanel() {
+//     const sim = document.getElementById('simulation-container');
+//     const resizer = document.getElementById('sim-resizer'); 
+//     const isCollapsed = sim.classList.toggle('collapsed');
+
+//     // 1. Toggle the vertical layout class on the toolbox
+//     const toolboxDiv = document.querySelector('.blocklyToolboxDiv');
+//     if (toolboxDiv) {
+//         // Adds 'toolbox-vertical' when collapsed, removes it when expanded
+//         toolboxDiv.classList.toggle('toolbox-vertical', isCollapsed);
+//     }
+
+//     if (isCollapsed) {
+//         resizer.style.display = 'none';
+//     } else {
+//         setTimeout(() => {
+//             resizer.style.display = 'block';
+//         }, 100);
+//     }
+    
+//     sim.style.width = isCollapsed ? "0px" : "25%";
+
+//     let startTime = null;
+//     const duration = 300; 
+
+//     function smoothResize(timestamp) {
+//         if (!startTime) startTime = timestamp;
+//         const progress = timestamp - startTime;
+
+//         Blockly.svgResize(workspace);
+
+//         if (progress < duration) {
+//             requestAnimationFrame(smoothResize);
+//         } else {
+//             Blockly.svgResize(workspace); 
+//         }
+//     }
+
+//     requestAnimationFrame(smoothResize);
+// }
+
+
 function toggleSimPanel() {
     const sim = document.getElementById('simulation-container');
-    const resizer = document.getElementById('sim-resizer'); // Ensure this ID exists!
+    const resizer = document.getElementById('sim-resizer'); 
     const isCollapsed = sim.classList.toggle('collapsed');
 
-
+    // --- ADDED THIS SECTION ---
+    const toolboxDiv = document.querySelector('.blocklyToolbox');
+    if (toolboxDiv) {
+        if (isCollapsed) {
+            toolboxDiv.classList.add('toolbox-vertical');
+        } else {
+            toolboxDiv.classList.remove('toolbox-vertical');
+        }
+    }
+    // ---------------------------
 
     if (isCollapsed) {
         resizer.style.display = 'none';
-
     } else {
         setTimeout(() => {
             resizer.style.display = 'block';
         }, 100);
     }
     
-    // Set the target width
     sim.style.width = isCollapsed ? "0px" : "25%";
 
-   
-   
-    // Smoothly animate the workspace resizing to match the new simulation panel size
     let startTime = null;
-    const duration = 300; // Must match your CSS transition time
+    const duration = 300; 
 
     function smoothResize(timestamp) {
         if (!startTime) startTime = timestamp;
@@ -715,7 +820,6 @@ function toggleSimPanel() {
         if (progress < duration) {
             requestAnimationFrame(smoothResize);
         } else {
-            // Final snap for precision
             Blockly.svgResize(workspace); 
         }
     }
@@ -1079,6 +1183,9 @@ window.addEventListener('load', async () => {
 
     setupDebugListeners(); // <--- Run the listeners here safely
 
+
+    updateHardwareButtonStates(); // Start with buttons locked
+
     // 4. SYNC LAST: Run the "Kickstart"
     kickstartIDE();
 
@@ -1228,3 +1335,108 @@ const autoStepCheck = document.getElementById('auto-step-check');
 if (autoStepCheck) {
     autoStepCheck.addEventListener('change', handleAutoStepChange);
 }
+
+
+/**
+ * EDUSHARKS IDE - Notification System
+ * Creates a custom toast message on the screen.
+ * @param {string} message - The text to display.
+ * @param {string} type - 'info' (blue) or 'error' (red).
+ */
+function showToast(message, type = 'info') {
+    // 1. Get or create the container
+    let container = document.getElementById('edusharks-toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'edusharks-toast-container';
+        document.body.appendChild(container);
+    }
+    
+    // 2. Create the toast element
+    const toast = document.createElement('div');
+    toast.className = `edusharks-toast ${type === 'error' ? 'error' : ''}`;
+    toast.innerText = message;
+    
+    // 3. Add to screen
+    container.appendChild(toast);
+    
+    // 4. Auto-remove after 4 seconds
+    setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.5s forwards';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                container.removeChild(toast);
+            }
+        }, 500);
+    }, 2500);
+}
+
+    
+/**
+ * EDUSHARKS IDE - Logic Guard with Delay
+ * Prevents users from adding more than one "Start" block with a visual delay.
+ */
+
+function limitStartBlocks(event) {
+    // Trigger when a block is created or moved into the workspace
+    if (event.type === Blockly.Events.BLOCK_CREATE || event.type === Blockly.Events.BLOCK_MOVE) {
+        
+        const workspace = Blockly.getMainWorkspace();
+        const startBlocks = workspace.getBlocksByType('base_start');
+
+        if (startBlocks.length > 1) {
+            // Find the specific block that triggered the event
+            const newBlock = workspace.getBlockById(event.blockId);
+            
+            if (newBlock) {
+                // ADDED: Delay the removal so the user sees what happened
+                setTimeout(() => {
+                    // 1. Remove the extra block
+                    newBlock.dispose();
+
+                    // 2. Trigger the notification
+                    showToast('⚠️ \n\n Only one \n\n "On Start" \n \n block allowed! \n\n', 'error');
+                }, 1000); // 1000 milliseconds = 1 second
+            }
+        }
+    }
+}
+
+
+function updateConnectionStatus(isConnected) {
+    const statusLabel = document.getElementById('connection-status');
+    const connectBtn = document.getElementById('connectBtn1');
+
+    if (statusLabel) {
+        statusLabel.innerText = isConnected ? "ESP32 Connected" : "ESP32 not connected";
+        statusLabel.style.color = isConnected ? "#1d9208" : "#ff4444"; // Shark Green vs Red
+    }
+
+    if (connectBtn) {
+        connectBtn.innerHTML = isConnected ? 
+            '<span class="conn-icon">✅</span> Connected' : 
+            '<span class="conn-icon">🔌</span> USB Connect';
+    }
+}
+
+
+function updateHardwareButtonStates() {
+    const runBtn = document.getElementById('mainRunBtn');
+    const flashBtn = document.getElementById('flashBtn');
+    
+    // If port is defined and open, enable buttons. Otherwise, disable.
+    const isConnected = (port && port.readable);
+
+    if (runBtn) runBtn.disabled = !isConnected;
+    if (flashBtn) flashBtn.disabled = !isConnected;
+
+    console.log(`🔌 Hardware Buttons ${isConnected ? 'Enabled' : 'Disabled'}`);
+}
+
+
+navigator.serial.addEventListener('disconnect', () => {
+    console.log("⚠️ Device unplugged");
+    port = null;
+    updateConnectionStatus(false);
+    updateHardwareButtonStates();
+});

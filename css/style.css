@@ -14,17 +14,20 @@
 
         /* 1. The Main Sidebar Width */
     .blocklyToolbox {
-        width: 180px; /* Adjust this for Edusharks IDE sidebar */
+        width: 200px; /* Adjust this for Edusharks IDE sidebar */
         overflow-x: hidden !important;
         background-color: #1e1e1e; /* Dark theme for ESP32 dev */
+        border-top: 4px solid #333;
         border-right: 1px solid #333;
+        border-left: 1px solid #333;        
     }
 
     /* 2. The Width of each Category Row */
     .blocklyToolboxCategory {
-        margin-bottom: 5px; 
-        border-radius: 4px;
-        margin-left: 5px;
+        margin-bottom: 0px; 
+        border-radius: 0px;
+        /* border-left: 15px; */
+        margin-left: px;        
         border-left: none !important;
         line-height: 40px;
         height: 50px;        
@@ -121,16 +124,13 @@
         flex-direction: column;
         min-width: 0;
         color:#000;
-        background-color: #000000;
-
-        
+        background-color: #000000;       
 
     }
 
  
     #blocklyDiv {
         flex: 1;
-
     }
 
     /* Hide the editor by default */
@@ -151,11 +151,6 @@
         will-change: width; /* Tells the browser to optimize this specific animation */
         overflow: visible !important;/* Allows the handle to stick out */
 }
-
-
-    #sim-toggle-tab:hover {
-        background: #158e2dcb; /* Edusharks Blue highlight */
-    }
 
 
     /* 1. Ensure the injected wrapper takes up the full 100% of its parent */
@@ -346,9 +341,19 @@
       margin-left: 5px;
     }
 
+    .customIconAdvanced { background-image: url('https://img.icons8.com/?size=100&id=37214&format=png&color=ffffff'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin-left: 5px;
+
+    }
 
     /* Typo Fixes & Global Class application */
-    .customIconControls, .customIconHardware, .customIconLogic, .customIconLoops, .customIconMath, .customIconSensors, .customIconVariables {
+    .customIconControls, .customIconHardware, .customIconLogic, .customIconLoops, .customIconMath, .customIconSensors, .customIconVariables, .customIconFunctions, .customIconText, .customIconLists, .customIconAdvanced {
       display:inline-block;
       vertical-align:middle;
       background-size:contain;
@@ -654,8 +659,6 @@ input:checked + .slider:before {
     transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
     visibility: visible;
     background: rgba(10, 10, 10, 0.25); /* Slightly darker to keep buttons visible */
-
-
     
 }
 
@@ -672,8 +675,8 @@ input:checked + .slider:before {
     position: absolute;
     right: 0px; /* Halfway over the border */
     top: 50%;
-    transform: translateY(-50%);
-    rotate: 180deg;
+    transform: translateY(-50%) scaleX(-1);
+    /* rotate: 180deg;    */
     width: 15px;
     height: 60px;
     background: #333;
@@ -684,13 +687,33 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    transition: background 0.2s;
+    transition: all 0.3s ease; /* Smooth transition for the flip */
 }
 
 #sim-toggle-tab:hover {
     background: #159f4e; 
 }
 
+/* 2. Collapsed State - Pointing towards the Workspace */
+/* This triggers when your JavaScript adds the 'collapsed' class to the container */
+#simulation-container.collapsed #sim-toggle-tab {
+    /* rotate: 0deg; Flip the orientation */
+    transform: translateY(-50%) scaleX(1);
+    left: 0px;
+    
+    /* Flip the "D" shape to face the other way if needed */
+    /* If you want the rounded part to always face the workspace: */
+    border-radius: 0px 16px 16px 0px; 
+    
+    /* Shift it slightly if it's clipping into the edge */
+    /* right: -15px;  */
+}
+
+/* Hover effect for better UX */
+#sim-toggle-tab:hover {
+    background: #1d9208; /* Edusharks Green */
+    border-color: #c4d447;
+}
 
 #tab-icon {
     color: white;
@@ -707,21 +730,17 @@ input:checked + .slider:before {
 }
 
  #simulation-container.collapsed #tab-icon {
-    transform: rotate(0deg); /* Flip arrow to point right */
+    transform: rotate(180deg); /* Flip arrow to point right */
  }       
 
 #simulation-container.collapsed #sim-toggle-tab {
     right:-25px;
 }
 
-
-
 /* Hide internal content when collapsed so it doesn't "peek" out */
 #simulation-container.collapsed > *:not(#sim-toggle-tab) {
     display: none;
 }
-
-
 
 #sim-canvas {
     flex: 1;
@@ -762,9 +781,7 @@ input:checked + .slider:before {
     background: rgba(10, 10, 10, 0.15) !important;
     padding-right: 0 !important;
     margin-right: 0 !important;
-
 }
-
 
 #python-edge-btn {
     position: absolute;
@@ -950,7 +967,6 @@ input:checked + .slider:before {
     justify-content: center;
 }
 
-
 .header-row {
     /* ... existing styles ... */
     position: relative;
@@ -1129,8 +1145,6 @@ input:checked + .slider:before {
     background: #7ba177;
     padding: 25px 25px;
     margin-right: 15px;
-
-
     /* border-top: 1px solid #333;     */
     
 }
@@ -1251,3 +1265,61 @@ color: #4372d7;
     border-radius: 20px;
     margin: 0 10px;
 }
+
+#edusharks-toast-container {
+    position:fixed;
+    bottom: 40%;
+    right: 25%;
+    z-index: 10000;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edusharks-toast {
+    background: #333333d2;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    letter-spacing:0.1em;
+    border: 5px solid #00d4ff; /* Edusharks Blue */
+    animation: slideIn 0.3s ease-out forwards;
+    min-width: 200px;
+}
+
+.edusharks-toast.error {
+    border-color: #ff5733; /* Red for errors */
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+
+
+/* Style for disabled Run and Flash buttons */
+#mainRunBtn:disabled, 
+#flashBtn:disabled,
+.btn-inactive {
+    background-color: #333 !important;
+    color: #f6f6f6 !important;
+    cursor: not-allowed !important;
+    opacity: 0.8;
+    border-color: #444 !important;
+}
+
+/* Optional: remove hover effects when disabled */
+#mainRunBtn:disabled:hover, 
+#flashBtn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
