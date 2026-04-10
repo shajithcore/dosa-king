@@ -71,7 +71,7 @@
 
     <div id="simulation-container">
         <div class="panel-header">
-            <!-- <span>Simulation</span> -->
+            <span id="sim-panel-header">Simulator</span>
         </div>
         <div id="sim-canvas">
 
@@ -213,12 +213,22 @@
   </div>
 
 <div id="edusharks-toast-container"></div>
+
+<div id="shark-dialog-overlay" class="dialog-overlay dialog-hidden">
+        <div class="dialog-box">
+            <h2 id="shark-dialog-title"></h2>
+            <div id="shark-dialog-custom-content"></div>
+            <div style="margin-top:20px; text-align:right;">
+                <button class="secondary-btn" onclick="closeSharkDialog()">Cancel</button>
+                <button id="shark-dialog-confirm-btn" class="primary-btn">Confirm</button>
+            </div>
+        </div>
+</div>
   
   <script src="blocks.js"></script>
   <script src="generators.js"></script>
   <script src="toolbox.js"></script> 
   <script src="app.js"></script>
-
 
 
 </body>

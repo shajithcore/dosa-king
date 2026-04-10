@@ -187,6 +187,39 @@ fullscreenBtn.addEventListener('click', () => {
 });
 
 
+workspace.addChangeListener((event) => {
+    if (event.type === Blockly.Events.TOOLBOX_ITEM_SELECT) {
+        console.log("🖱️ Toolbox Selected:", event.newItem); // See what name Blockly is sending
+        
+        if (event.newItem === 'Extensions') {
+            workspace.getToolbox().clearSelection();
+            openExtensionGallery(); 
+        }
+    }
+});
+
+function openExtensionGallery() {
+    const galleryHtml = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:10px;">
+            <div class="ext-card" onclick="installExtension('neopixel')">
+                <div style="font-size:30px;">🌈</div>
+                <strong>NeoPixel</strong>
+            </div>
+            <div class="ext-card" onclick="installExtension('oled')">
+                <div style="font-size:30px;">🖥️</div>
+                <strong>OLED</strong>
+            </div>
+        </div>
+    `;
+
+    openSharkDialog({
+        title: "🧩 Extension Gallery",
+        message: "Select an extension to add its blocks to your Edusharks toolbox:",
+        customHtml: galleryHtml,
+        confirmText: "Close Gallery"
+    });
+}
+
 // A function that operates a mode switch toggle for action and debug mode
 
 
@@ -1440,3 +1473,116 @@ navigator.serial.addEventListener('disconnect', () => {
     updateConnectionStatus(false);
     updateHardwareButtonStates();
 });
+
+
+const AVAILABLE_EXTENSIONS = [
+    { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
+    { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
+    { id: 'dht', name: 'DHT Sensor', icon: '🌡️', color: '#4caf50' }
+];
+
+let activeExtensions = [];
+
+function openExtensionGallery() {
+    let galleryHtml = `<div class="extension-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">`;
+    
+    AVAILABLE_EXTENSIONS.forEach(ext => {
+        const isAdded = activeExtensions.includes(ext.id);
+        galleryHtml += `
+            <div class="extension-card ${isAdded ? 'added' : ''}" 
+                 onclick="installExtension('${ext.id}')"
+                 style="background:#1a1f2e; padding:15px; border-radius:8px; cursor:pointer; border:1px solid #333; text-align:center;">
+                <div style="font-size:30px;">${ext.icon}</div>
+                <div style="color:white; font-weight:bold; margin-top:5px;">${ext.name}</div>
+                <div style="color:#666; font-size:10px;">${isAdded ? 'Added' : 'Click to Add'}</div>
+            </div>
+        `;
+    });
+    galleryHtml += `</div>`;
+
+    openSharkDialog({
+        title: "🧩 Extension Gallery",
+        message: "Select an extension to add its blocks to your toolbox:",
+        customHtml: galleryHtml,
+        confirmText: "Close"
+    });
+}
+
+function installExtension(extId) {
+    if (activeExtensions.includes(extId)) {
+        alert("This extension is already added!");
+        return;
+    }
+
+    activeExtensions.push(extId);
+    
+    // 1. Get your current toolbox JSON
+    // If you don't have a variable storing it, you can get it from the workspace
+    let currentToolbox = workspace.options.languageTree;
+
+    // 2. Define the new extension category
+    const newCategory = getExtensionCategoryDefinition(extId);
+
+    // 3. Find the 'Advanced' category index
+    const advancedIndex = currentToolbox.contents.findIndex(cat => cat.name === 'Advanced');
+
+    // 4. Insert the new category BEFORE Advanced
+    if (advancedIndex !== -1) {
+        currentToolbox.contents.splice(advancedIndex, 0, newCategory);
+    } else {
+        currentToolbox.contents.push(newCategory);
+    }
+
+    // 5. Tell Blockly to refresh the sidebar
+    workspace.updateToolbox(currentToolbox);
+    
+    // 6. Close your Shark Dialog
+    closeSharkDialog();
+}
+
+// Helper to get definitions
+function getExtensionCategoryDefinition(id) {
+    if (id === 'neopixel') {
+        return {
+            kind: 'category',
+            name: 'NeoPixel',
+            categorystyle: 'variable_category', // or your custom style
+            contents: [
+                { kind: 'block', type: 'neopixel_setup' },
+                { kind: 'block', type: 'neopixel_set' }
+            ]
+        };
+    }
+    // Add other cases here...
+}
+
+// The Master Dialog Opener
+function openSharkDialog(config) {
+    console.log("🛠️ Attempting to open Shark Dialog...");
+    
+    const overlay = document.getElementById('shark-dialog-overlay');
+    if (!overlay) {
+        console.error("❌ ERROR: Could not find #shark-dialog-overlay in index.html");
+        return;
+    }
+
+    document.getElementById('shark-dialog-title').innerText = config.title || "Alert";
+    document.getElementById('shark-dialog-custom-content').innerHTML = config.customHtml || "";
+    
+    const confirmBtn = document.getElementById('shark-dialog-confirm-btn');
+    confirmBtn.innerText = config.confirmText || "Confirm";
+    confirmBtn.onclick = () => {
+        if (config.onConfirm) config.onConfirm();
+        closeSharkDialog();
+    };
+
+    overlay.classList.remove('dialog-hidden');
+    console.log("✅ Dialog should now be visible.");
+}
+
+function closeSharkDialog() {
+    document.getElementById('shark-dialog-overlay').classList.add('dialog-hidden');
+}
+
+
+

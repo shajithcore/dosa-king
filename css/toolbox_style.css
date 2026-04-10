@@ -28,19 +28,29 @@
 
 } 
 
+
+/* Style the text label inside the header container */
+/* .edusharks-header-row .edusharks-header-label {
+    font-size: 12px;
+    letter-spacing: 5px;
+    color: #00d4ff !important;
+} */
+
 /* 1. Reset the background even if the mouse is over it */
 
 .edusharks-header-label {
-  color: aliceblue;
+  color: aliceblue !important;
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   font-style:normal;
-  letter-spacing: 3px;
-  font-size: 20px;
-  
-  font-weight:600;
-  background-color: transparent !important;
+  letter-spacing: 2px;
+  align-items: center !important;  
+  font-size: 15px; 
+  padding-left: 0px; 
+  /* font-weight:600; */
   cursor: default !important;
 }
+
+
 
 /* .edusharks-header-row:hover {
   background-color: transparent !important;
@@ -54,10 +64,12 @@
 
 /* 3. Fully ignore mouse interaction (The "Ironclad" way) */
 .edusharks-header-row { 
-  align-items: center;
+  display:flex!important; 
+  flex-direction: column !important; 
+  align-items:center!important;
   height: 50px;
-  border-bottom: 5px solid rgba(11, 162, 54, 0.784) !important;
-  border-top: 5px solid rgba(11, 162, 54, 0.784) !important;
+  border-bottom: 2px solid rgba(11, 162, 54, 0.784) !important;
+  border-top: 2px solid rgba(11, 162, 54, 0.784) !important;
   
   padding-bottom: 0px;
   pointer-events: none; 
@@ -78,25 +90,35 @@
 .blocklyToolboxCategoryIcon {
     padding: 0 !important;
     margin: 0 !important;
-    display: block !important;
+    display:none !important;
 }
 
 
 /* 3. Adjust the Icon (Remove side margin, add bottom margin) */
-.blocklyTreeRowContentContainer span[role="presentation"] {
+.blocklyTreeRowContentContainer :not(.edusharks-header-row) span[role="presentation"] {
     padding: 0 !important;
     margin: 0 !important;
     display: block !important;
 }
 
 /* 4. Center the Labels (Controls, Hardware, etc.) */
-.blocklyTreeRowContentContainer span[id$=".label"] {
+.blocklyTreeRowContentContainer :not(.edusharks-header-row) span[id$=".label"] {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;
     font-size: 20px !important;
     text-align: left !important;
     margin-left: 0 !important;
     padding-left: 15px;
     
+}   
+
+
+/* ONLY the Advanced parent row flips */
+.advanced-parent-row .blocklyTreeRowContentContainer .customIconAdvanced.blocklyToolboxCategoryIconOpen{
+    padding-left: 15px !important;
+    margin-left: 20px !important;
+    
 }
+
 
 /* 1. The Parent "Advanced" Row */
 .advanced-parent-row {
@@ -112,10 +134,6 @@
     background-color: #28292b !important;
 }
 
-/* When collapsed, hide all nested categories inside Advanced */
-.toolbox-vertical .advanced-category-container > .blocklyToolboxContents {
-    display: none !important;
-}
 
 /* Hide the expansion arrow in vertical mode to keep it clean */
 .toolbox-vertical .advanced-parent-row .blocklyTreeIcon {
@@ -132,10 +150,10 @@
 /* ONLY the Advanced parent row flips */
 .advanced-parent-row .blocklyTreeRowContentContainer {
     display:flex !important;
-    flex-direction: row-reverse !important; /* Swap icon and text */
-    align-items:center !important;
-    width: 80% !important;
-    box-sizing: border-box !important; /* CRITICAL: Includes padding in the width */
+    flex-direction: row !important; /*Swap icon and text */
+    /* align-items:center !important; */
+    /* width: 100% !important; */
+    /* box-sizing: border-box !important; CRITICAL: Includes padding in the width */
     padding-right: 12px !important; /* Keeps icon away from the very edge */
     padding-left: 5px !important;
 }
@@ -163,9 +181,25 @@
     flex-shrink: 0 !important; /* Prevents the icon from being squashed */
 }
 
-/* 5. Keep the Expansion Arrow (Triangle) on the left */
-.advanced-parent-row .blocklyTreeIcon {
-    flex-shrink: 0 !important;
-    margin-left: 28px !important;
+/* 1. DEFAULT STATE: Text and Icon use the category color */
+/* Targets any class starting with customIcon or ending with -label */
+[class^="customIcon"], 
+[class$="-label"] {
+    color: var(--category-hover-color);
+    transition: color 0.2s ease;
 }
 
+/* 2. HOVER & SELECTED STATE: Turn everything white */
+/* Triggered when the parent row is hovered OR selected */
+.blocklyTreeRow:hover [class^="customIcon"],
+.blocklyTreeRow:hover [class$="-label"],
+.blocklyTreeRow.blocklyTreeSelected [class^="customIcon"],
+.blocklyTreeRow.blocklyTreeSelected [class$="-label"] {
+    color: #ffffff !important;
+}
+
+/* 3. ROW BACKGROUND: Fill with category color */
+.blocklyTreeRow:hover,
+.blocklyTreeRow.blocklyTreeSelected {
+    background-color: var(--category-hover-color) !important;
+}

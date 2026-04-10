@@ -4,8 +4,9 @@ const toolboxCategories = {
 
     { kind: 'edusharks-header',
     name: 'TOOL BOX',
-    cssConfig:{
+    cssConfig:{      
       "row": 'edusharks-header-row',
+      "icon": 'blocklyToolboxCategoryIcon',
       'label': 'edusharks-header-label'
     }       
  
@@ -421,6 +422,16 @@ const toolboxCategories = {
     },
     // { kind: 'sep'},
 
+    {
+    kind: 'category',
+    name: 'Extensions', // This name MUST match the string in the listener above
+    cssConfig: { 
+        "icon": 'customIconExtensions', 
+        "label": 'extensions-label' 
+    },
+    contents: [] // Keep this empty so no flyout appears
+    },    
+    
     { kind: 'category',
       name: 'Advanced', // The Parent Category
       categorystyle: 'procedure_category',
@@ -858,5 +869,8 @@ const toolboxCategories = {
                   }        
     
   ],
-}]
+    }
+
+
+]
 }
