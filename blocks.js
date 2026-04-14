@@ -52,23 +52,10 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": "#00D1FF", // Cyber Blue for high contrast
+    "colour": "#93a55b", // Cyber Blue for high contrast
     "tooltip": "Turn the internal ESP32 LED (GPIO 2) on or off"
   }
 ]);
-
-  // Blockly.Blocks['esp32_led'] = {
-  //   init: function() {
-  //     this.appendDummyInput()
-  //         .appendField("Set Built-in LED")
-  //         .appendField(new Blockly.FieldDropdown([["ON","1"], ["OFF","0"]]), "STATE");
-  //     this.setPreviousStatement(true, null);
-  //     this.setNextStatement(true, null);
-  //     this.setColour(30); 
-  //     this.setTooltip("Turn the internal ESP32 LED (GPIO 2) on or off");
-  //   }
-  // };
-
 
 
   // 2. SENSOR BLOCK DEFINITIONS ---
@@ -112,21 +99,8 @@ Blockly.defineBlocksWithJsonArray([
     }
   };
 
-//   Blockly.Blocks['base_delay'] = {
-//   init: function() {
-//     this.appendDummyInput()
-//         .appendField("Wait")
-//         .appendField(new Blockly.FieldNumber(1000, 0), "MS")
-//         .appendField("ms");
-//     this.setPreviousStatement(true, null);
-//     this.setNextStatement(true, null);
-//     this.setColour(200);
-//     this.setTooltip("Pause execution for a specific number of milliseconds.");
-//   }
-// };
 
-
-//TIME DELAY BLOCK (MILLI SECONDS)
+  //TIME DELAY BLOCK (MILLI SECONDS)
 
 Blockly.defineBlocksWithJsonArray([
   {

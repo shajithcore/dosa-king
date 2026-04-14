@@ -46,7 +46,7 @@ let debugInterval = null;
         
         'logic_blocks': {
             'colourPrimary': "#00a4a6",
-            'colourSecondary':"#ff0000",
+            'colourSecondary':"#ac4747",
             'colourTertiary':"#C5EAFF"
         },
         

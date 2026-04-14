@@ -16,9 +16,11 @@ const toolboxCategories = {
 
     { kind: 'category',
       name: 'Controls',
+      colour: '#00D0FF', // Deep Purple
       cssConfig:{
         "icon": 'customIconControls',
-        "label": 'controls-label' },
+        "label": 'controls-label' },// Custom color for this category},
+        
  
       contents: [
         {
@@ -37,7 +39,8 @@ const toolboxCategories = {
     },
     { kind: 'category',
       name: 'Hardware',
-      categorystyle: 'hardware_category',
+      colour: '#92A45B', // Deep Purple
+      // categorystyle: 'hardware_category',
       cssConfig:{
           "icon": 'customIconHardware',
           "label": 'hardware-label' },
@@ -52,6 +55,7 @@ const toolboxCategories = {
     },   
     { kind: 'category',
       name: 'Logic',
+      colour: '#00a4a6', 
       cssConfig:{
         "icon": 'customIconLogic',
         "label": 'logic-label'      
@@ -100,7 +104,8 @@ const toolboxCategories = {
     },
     { kind: 'category',
       name: 'Loops',
-      categorystyle: 'loop_category', 
+      colour: '#00AA00', 
+      // categorystyle: 'loop_category', 
       cssConfig:{
           "icon": 'customIconLoops',
           "label": 'loops-label' },
@@ -191,10 +196,11 @@ const toolboxCategories = {
     },
     { kind: 'category',
       name: 'Math',
-      categorystyle: 'math_category',
+      colour: '#9300D2', 
+      // categorystyle: 'math_category',
       cssConfig:{
           "icon": 'customIconMath',
-          "label": 'math-label' },
+          "label": 'math-label'},
       contents: [
         {
           type: 'math_number',
@@ -414,17 +420,19 @@ const toolboxCategories = {
     },    
     { kind: 'category',
       name: 'Variables',
-      custom: 'VARIABLE',
-      categorystyle: 'variable_category',
+      colour: '#A45A80',
+      custom: 'VARIABLE',      
+      // categorystyle: 'variable_category',
       cssConfig:{
           "icon": 'customIconVariable',
-          "label": 'variable-label' },
+          "label": 'variable-label'},
     },
     // { kind: 'sep'},
 
     {
     kind: 'category',
     name: 'Extensions', // This name MUST match the string in the listener above
+    colour: '#15D0AC', 
     cssConfig: { 
         "icon": 'customIconExtensions', 
         "label": 'extensions-label' 
@@ -434,7 +442,8 @@ const toolboxCategories = {
     
     { kind: 'category',
       name: 'Advanced', // The Parent Category
-      categorystyle: 'procedure_category',
+      colour: '#e5e230',
+      // categorystyle: 'procedure_category',
       expanded: 'false', // Keeps it closed by default
       cssConfig: {
                     "container": 'advanced-category-container', // Styles the whole group
@@ -716,7 +725,8 @@ const toolboxCategories = {
                   },
                   { kind: 'category',
                     name: 'Lists',
-                    categorystyle: 'list_category',
+                    colour: '#DB133B',
+                    // categorystyle: 'list_category',
                     cssConfig:{
                         "icon": 'customIconLists',
                         "label": 'lists-label' },

@@ -1,22 +1,5 @@
 /* This file stores the MicroPython code generators for all the Blocks in the IDE */
 
-
-
-// 2. CONTROL BLOCKS
-// Use 'forBlock' instead of the direct array access
-// Blockly.Python.forBlock['base_start'] = function(block) {
-//   const branch = Blockly.Python.statementToCode(block, 'SUBSTACK') || 
-//                  Blockly.Python.statementToCode(block, 'STACK');
-//   return '# --- Setup ---\n' + branch;
-// };
-
-// Blockly.Python.forBlock['base_forever'] = function(block) {
-//   let branch = Blockly.Python.statementToCode(block, 'SUBSTACK') || 
-//                Blockly.Python.statementToCode(block, 'STACK');
-//   if (!branch) branch = '  pass\n';
-//   return 'while True:\n' + branch;
-// };
-
 // 3. HARDWARE BLOCKS
 Blockly.Python.forBlock['esp32_led'] = function(block) {
     console.log("Generating: esp32_led");
@@ -67,4 +50,4 @@ Blockly.Python['base_delay'] = function(block) {
 Blockly.Python.STATEMENT_PREFIX = 'print("DBG:%1")\n';
 
 // Optional: If you want to track variables too, you can use:
-//  Blockly.Python.INDENT = '  '; // Ensure spacing is correct
+Blockly.Python.INDENT = '  '; // Ensure spacing is correct

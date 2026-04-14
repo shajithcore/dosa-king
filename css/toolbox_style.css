@@ -1,25 +1,10 @@
-/* Makes our label white. */
-/* .blocklyToolboxCategoryLabel {
-  color: rgb(255, 255, 255);
-} */
-/* Adds padding around the group of categories and separators. */
-/* .blocklyToolboxContents {
-  padding: 0.5em;
-} */
-/* Adds space between the categories, rounds the corners and adds space around the label. */
-
-/* Changes color of the icon to white. */
-/* .customIcon {
-  color: white;
-} */
-
 /* Stacks the icon on top of the label. */
 .blocklyTreeRowContentContainer {
   display: flex;
   flex-direction:row;
   align-items: center;
   line-height: 50px;
-  padding-left: 20px;
+  padding-left: 10px;
 }
 
 .blocklyToolboxCategoryGroup {
@@ -28,13 +13,6 @@
 
 } 
 
-
-/* Style the text label inside the header container */
-/* .edusharks-header-row .edusharks-header-label {
-    font-size: 12px;
-    letter-spacing: 5px;
-    color: #00d4ff !important;
-} */
 
 /* 1. Reset the background even if the mouse is over it */
 
@@ -51,12 +29,6 @@
 }
 
 
-
-/* .edusharks-header-row:hover {
-  background-color: transparent !important;
-  cursor: default !important;
-} */
-
 /* 2. Ensure the text doesn't change color on hover */
 .edusharks-header-row:hover .blocklyTreeLabel {
   color: white !important; 
@@ -70,7 +42,7 @@
   height: 50px;
   border-bottom: 2px solid rgba(11, 162, 54, 0.784) !important;
   border-top: 2px solid rgba(11, 162, 54, 0.784) !important;
-  
+  padding-left: 0px !important;
   padding-bottom: 0px;
   pointer-events: none; 
   user-select: none;
@@ -107,22 +79,13 @@
     font-size: 20px !important;
     text-align: left !important;
     margin-left: 0 !important;
-    padding-left: 15px;
-    
+    padding-left: 15px;    
 }   
-
-
-/* ONLY the Advanced parent row flips */
-.advanced-parent-row .blocklyTreeRowContentContainer .customIconAdvanced.blocklyToolboxCategoryIconOpen{
-    padding-left: 15px !important;
-    margin-left: 20px !important;
-    
-}
 
 
 /* 1. The Parent "Advanced" Row */
 .advanced-parent-row {
-    background-color: #898b93 !important; /* Slightly lighter than sidebar */
+    
     border-left: 0px solid #995ba5 !important; /* Purple accent for 'Advanced' */
     margin-bottom: 2px !important;
     font-family:monospace !important;
@@ -154,8 +117,8 @@
     /* align-items:center !important; */
     /* width: 100% !important; */
     /* box-sizing: border-box !important; CRITICAL: Includes padding in the width */
-    padding-right: 12px !important; /* Keeps icon away from the very edge */
-    padding-left: 5px !important;
+    padding-right: 10px !important; /* Keeps icon away from the very edge */
+    padding-left: 10px !important;
 }
 
 /* Ensure the sub-categories (children) stay normal */
@@ -181,25 +144,78 @@
     flex-shrink: 0 !important; /* Prevents the icon from being squashed */
 }
 
-/* 1. DEFAULT STATE: Text and Icon use the category color */
-/* Targets any class starting with customIcon or ending with -label */
-[class^="customIcon"], 
+/* .blocklyTreeRow:hover {
+    background-color: var(--category-hover-color) !important;
+    color: #ffffff !important;
+} */
+
+.advanced-parent-row .blocklyTreeRowContentContainer .customIconAdvanced.blocklyToolboxCategoryIconOpen {
+    background-position: 0px 0px !important;
+    padding-left: 0px !important;
+    margin-left: 15px !important;
+    transform: rotate(180deg)
+}
+
+.advanced-parent-row .blocklyTreeRowContentContainer .customIconAdvanced.blocklyToolboxCategoryIconClosed {
+    background-position: 0px 0px !important;
+    padding-left: 0px !important;
+    margin-left: 15px !important;
+    
+}
+
+.edusharks-header-row .blocklyTreeRowContentContainer {
+    padding-left: 0px !important;
+}
+
+
+/* 2. Target the ICON inside the hovered category */
+.blocklyToolboxCategoryContainer:hover {
+    background-color: var(--category-hover-color) !important;
+}
+
+
+/* 3. Target the LABEL inside the hovered category */
+.blocklyToolboxCategory:hover [class$="-label"] {
+    color: white !important;
+}
+
+/* Base Icon Style (Idle) */
+[class^="customIcon"] {
+    /* Uses the color set in your addColourBorder_ function */
+    background-color: var(--category-hover-color);
+    transition: background-color 0.2s ease;
+}
+
+/* 2. Target the ICON inside the hovered category */
+.blocklyToolboxCategoryContainer:hover [class^="customIcon"] {
+    background-color: white !important;
+}
+
+
+/* Base Label Style (Idle) */
 [class$="-label"] {
+    /* Inherits color or uses the variable */
     color: var(--category-hover-color);
     transition: color 0.2s ease;
 }
 
-/* 2. HOVER & SELECTED STATE: Turn everything white */
-/* Triggered when the parent row is hovered OR selected */
-.blocklyTreeRow:hover [class^="customIcon"],
-.blocklyTreeRow:hover [class$="-label"],
+
+/* 4. When hovered, the 'Stencil Fill' turns white */
+/* .blocklyToolboxCategory:hover [class^="customIcon"],
 .blocklyTreeRow.blocklyTreeSelected [class^="customIcon"],
-.blocklyTreeRow.blocklyTreeSelected [class$="-label"] {
-    color: #ffffff !important;
+.blocklyToolboxCategory.blocklyTreeSelected [class^="customIcon"] {
+    background-color: #ffffff !important;
+}  */
+
+/* :root {    
+    --category-hover-color: #00d4ff; 
+} */
+
+.blocklyToolboxCategory:hover {
+    cursor: pointer;
 }
 
-/* 3. ROW BACKGROUND: Fill with category color */
-.blocklyTreeRow:hover,
-.blocklyTreeRow.blocklyTreeSelected {
-    background-color: var(--category-hover-color) !important;
+.blocklyTreeRowContentContainer:hover [class^="customIcon"] {
+    background-image: none !important;
+    background-color: 'white' !important;
 }

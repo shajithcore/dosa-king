@@ -1,101 +1,61 @@
-// class EdusharksCategory extends Blockly.ToolboxCategory {
-//   constructor(categoryDef, toolbox, opt_parent) {
-//     super(categoryDef, toolbox, opt_parent);
-//   }
-
-//   /** @override - This removes the left color strip */
-//   addColourBorder_(colour) {
-//   // Instead of just painting the background, we save the color as a variable
-//   // This allows the CSS to "know" what color to use on hover
-//   this.rowDiv_.style.setProperty('--category-hover-color', colour);
-
-//   // 2. Set the initial border color (optional: left-side stripe)
-//     this.rowDiv_.style.borderLeft = `8px solid ${colour}`;
-  
-//   // Set the default look (white background, colored text)
-//   this.rowDiv_.style.backgroundColor = 'transparent';
-  
-//   const label = this.rowDiv_.getElementsByClassName('blocklyToolboxCategoryLabel')[0];
-//   if (label) {
-//     label.style.color = colour; // Text matches the category color initially  
-//   }
-// }
-
-//   /** @override - This handles the color swapping */
-//   setSelected(isSelected) {
-//     // Find the label Blockly created for us
-//     var labelDom = this.rowDiv_.getElementsByClassName('blocklyToolboxCategoryLabel')[0];
-    
-//     if (labelDom) { // Safety check
-//       if (isSelected) {
-//         this.rowDiv_.style.backgroundColor = this.colour_; // Background becomes category color
-//         labelDom.style.color = 'white';                   // Text becomes white
-//       } else {
-//         this.rowDiv_.style.backgroundColor = 'transparent'; 
-//         labelDom.style.color = this.colour_;               // Text returns to category color
-//       }
-//     }
-
-//     // Keep the accessibility features working
-//     Blockly.utils.aria.setState(this.htmlDiv_, Blockly.utils.aria.State.SELECTED, isSelected);
-//   }
-// }
-
-// // Finally, Register the class
-// Blockly.registry.register(
-//     Blockly.registry.Type.TOOLBOX_ITEM,
-//     Blockly.ToolboxCategory.registrationName,
-//     EdusharksCategory, true
-// );
-
 class EdusharksCategory extends Blockly.ToolboxCategory {
   constructor(categoryDef, toolbox, opt_parent) {
     super(categoryDef, toolbox, opt_parent);
   }
 
- /** @override */
-addColourBorder_(colour) {
-  this.colour_ = colour; 
-  if (this.rowDiv_) {
-    // This variable is what the CSS :hover uses for the background!
-    this.rowDiv_.style.setProperty('--category-hover-color', colour);
-
+  /** @override */
+  addColourBorder_(colour) {
+    this.colour_ = colour; 
     const label = this.rowDiv_.querySelector('[class$="-label"]');
     const icon = this.rowDiv_.querySelector('[class^="customIcon"]');
 
-    if (label) label.style.color = colour;
-    if (icon) icon.style.color = colour;
-  }
-}
-
-/** @override */
-  setSelected(isSelected) {
-    this.isSelected_ = isSelected;
-    
+    if (this.htmlDiv_) {
+      this.htmlDiv_.style.setProperty('--category-hover-color', colour, 'important');
+      
+    }
     if (this.rowDiv_) {
-      // Find the icon (class starts with customIcon)
-      const icon = this.rowDiv_.querySelector('[class^="customIcon"]');
-      // Find the label (class ends with -label)
-      const label = this.rowDiv_.querySelector('[class$="-label"]');
+      this.rowDiv_.style.setProperty('border-left', `6px solid ${colour}`, 'important');
+      this.rowDiv_.style.setProperty('background-color', 'transparent', 'important');
 
-      if (isSelected) {
-        // Lock the active state
-        this.rowDiv_.style.backgroundColor = this.colour_;
-        if (label) label.style.setProperty('color', 'white', 'important');
-        if (icon) icon.style.setProperty('color', 'white', 'important');
-      } else {
-        // Return to idle state
-        this.rowDiv_.style.backgroundColor = 'transparent';
-        if (label) label.style.setProperty('color', this.colour_, 'important');
-        if (icon) icon.style.setProperty('color', this.colour_, 'important');
+      if (label) label.style.color = colour;
+      
+      if (icon) {
+        const iconName = icon.className.replace('customIcon', '').toLowerCase();
+        const iconPath = `assets/icons/${iconName}-icon.svg`;
+        
+        icon.style.webkitMaskImage = `url('${iconPath}')`;
+        icon.style.maskImage = `url('${iconPath}')`;
+        icon.style.backgroundImage = 'none';
+        // Set initial icon color
+        icon.style.setProperty('background-color', colour, 'important');
       }
     }
-
-    super.setSelected(isSelected);
   }
 
-}
+  /** @override */
+  setSelected(isSelected) {
+    console.log(`Category: ${this.name_} | isSelected: ${isSelected}`);
+    this.isSelected_ = isSelected;
+    const icon = this.rowDiv_?.querySelector('[class^="customIcon"]');
+    const label = this.rowDiv_?.querySelector('[class$="-label"]');
 
+    if (this.rowDiv_) {
+      if (isSelected) {
+        this.rowDiv_.style.setProperty('background-color', this.colour_, 'important');
+        if (label) label.style.setProperty('color', 'white', 'important');
+        if (icon) icon.style.setProperty('background-color', 'white', 'important');
+      } 
+      
+      else {
+        // this.rowDiv_.style.display = 'none'; // This will make the category disappear
+        this.rowDiv_.style.setProperty('background-color', this.colour_, 'important');
+        if (label) label.style.setProperty('color', this.colour_);
+        if (icon) icon.style.setProperty('background-color', this.colour_);
+      }
+    }
+    super.setSelected(isSelected);
+  } 
+}
 
 // Register the class
 Blockly.registry.register(
@@ -103,7 +63,6 @@ Blockly.registry.register(
     Blockly.ToolboxCategory.registrationName,
     EdusharksCategory, true
 );
-
 
 
 class EdusharksHeader extends EdusharksCategory {
