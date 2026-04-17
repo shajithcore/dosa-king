@@ -1569,12 +1569,4 @@ input#toolbox-search-input {
     outline: none !important;
 }
 
-/* input#toolbox-search-input:focus {
-     border-color: #15D0AC !important; 
-    box-shadow: 0 0 8px rgba(21, 208, 172, 0.2);
-}   */
-
-/* .blocklyTreeRowContentContainer {
-    pointer-events: auto !important;
-} */
 
