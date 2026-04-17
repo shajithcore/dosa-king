@@ -84,8 +84,7 @@
 
 
 /* 1. The Parent "Advanced" Row */
-.advanced-parent-row {
-    
+.advanced-parent-row {    
     border-left: 0px solid #995ba5 !important; /* Purple accent for 'Advanced' */
     margin-bottom: 2px !important;
     font-family:monospace !important;
@@ -126,6 +125,12 @@
 .advanced-category-container .blocklyToolboxCategory:not(.advanced-parent-row) .blocklyTreeRowContentContainer {
     flex-direction: row !important; /* Forces icon back to the left */
     justify-content: flex-start !important;
+    padding-left: 0px !important;
+}
+
+.advanced-category-container .blocklyToolboxCategory:not(.advanced-parent-row) .blocklyToolboxCategory {
+
+    padding-left: 0px !important;
 }
 
 /* 1. Target the row container */
@@ -200,17 +205,6 @@
 }
 
 
-/* 4. When hovered, the 'Stencil Fill' turns white */
-/* .blocklyToolboxCategory:hover [class^="customIcon"],
-.blocklyTreeRow.blocklyTreeSelected [class^="customIcon"],
-.blocklyToolboxCategory.blocklyTreeSelected [class^="customIcon"] {
-    background-color: #ffffff !important;
-}  */
-
-/* :root {    
-    --category-hover-color: #00d4ff; 
-} */
-
 .blocklyToolboxCategory:hover {
     cursor: pointer;
 }
@@ -219,3 +213,38 @@
     background-image: none !important;
     background-color: 'white' !important;
 }
+
+
+/* 1. Set the anchor point to the left so the 12px border stays still */
+.blocklyTreeRowContentContainer {
+    transform-origin: left center; /* Shrinks towards the left edge */
+    transition: transform 0.15s ease-out; /* Smooth pop-back */
+}
+
+/* 2. Shrink the content on Hover or Selection */
+.blocklyToolboxCategory:hover .blocklyTreeRowContentContainer,
+.blocklyTreeRow.blocklyTreeSelected:not(#toolbox-search-input) .blocklyTreeRowContentContainer {
+    transform: scale(1.15); /* Adjust this value: 0.90 is a deep shrink, 0.95 is subtle */
+}
+
+/* 2. Explicitly lock the search area to scale 1.0 just to be safe */
+#toolbox-search-input .blocklyTreeRowContentContainer {
+    transform: scale(1) !important;
+}
+
+/* 3. Optional: Add a "Press" effect when the user actually clicks */
+.blocklyToolboxCategory:active .blocklyTreeRowContentContainer {
+    transform: scale(1.15); /* Shrinks a bit more on click */
+}
+
+/* THE "EDUSHARKS" UNIVERSAL ICON/LABEL STATE */
+.blocklyToolboxCategory:hover [class^="customIcon"],
+.blocklyTreeRow.blocklyTreeSelected [class^="customIcon"] {
+    background-color: #ffffff !important; /* Force Icon White */
+}
+
+.blocklyToolboxCategory:hover [class$="-label"],
+.blocklyTreeRow.blocklyTreeSelected [class$="-label"] {
+    color: #ffffff !important; /* Force Label White */
+}
+

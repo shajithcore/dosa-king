@@ -32,6 +32,7 @@
   <script src="custom_category.js"></script> 
   <link rel="stylesheet" href="css/style.css"> 
   <link rel="stylesheet" href="css/toolbox_style.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
   
   
 </head>
@@ -129,7 +130,10 @@
 
             </svg> 
         </div>
-
+        <div id="sim-debug-bar" class="sim-debug-controls" style="display:none;">
+            <button onclick="simStep()" title="Step Into">⏭️ Step</button>   
+            <button onclick="stopSimDebug()" title="Stop">⏹️ Stop</button>
+        </div>
         <div id="sim-toggle-tab" onclick="toggleSimPanel()">
             <span id="tab-icon">◂</span>
         </div>
@@ -240,8 +244,10 @@
 </div>
   
   <script src="blocks.js"></script>
+  <script src="blocks_extensions.js"></script>  
   <script src="generators.js"></script>
   <script src="toolbox.js"></script> 
+  <script src="node_modules\@blockly\toolbox-search\dist\index.js"></script>
   <script src="app.js"></script>
 
 

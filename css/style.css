@@ -1134,69 +1134,73 @@ input:checked + .slider:before {
 
 .advanced-label {
 color: #e5e230;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .extensions-label {
 color: #16D0AD !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .controls-label {
 color: #00D1FF !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .logic-label {
 color: #00a4a6 !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .loops-label {
 color: #00aa00 !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .math-label {
 color: #9400d3 !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .variable-label {
 color: #a55b80 !important;
-font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .text-label {
 color: #5ba58c !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .lists-label {
 color: #dc143c !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .functions-label {
 color: #995ba5 !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
 
 .hardware-label {
 color: #93a55b !important;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: larger;
+font-family:monospace;
+font-size: 18px;
 }
+
+
+
+
 
 /* .customIconControls{
 color: #00D1FF;
@@ -1363,6 +1367,8 @@ color: #00D1FF;
 .blocklyToolboxCategory.blocklyTreeSelected [class^="customIcon"]{
     /* Flip the icon to white */
     background-color: #ffffff !important;
+    transform: scale(0.96);
+    border-radius: 8px;
 }
 
 /* When the CATEGORY is hovered or selected */
@@ -1393,3 +1399,182 @@ color: #00D1FF;
     width: 24px;
     height: 24px;
 }
+
+
+
+/* NeoPixel Style */
+.customIconNeoPixel {
+
+      background-image: url('/assets/icons/neopixel-icon.svg');  
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+      /* padding-left:5px; */
+      padding-right: 5px;
+      /* margin-left: 5px; */
+      margin-right: 3px;
+
+}
+
+/* OLED Style */
+.customIconOLED {
+    mask: url('assets/icons/oled.svg') no-repeat center;
+    -webkit-mask: url('assets/icons/oled.svg') no-repeat center;
+    background-color: #00acc1; /* Cyan theme */
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+}
+
+/* Ensure the layout matches your native categories */
+.extension-cat-container .blocklyTreeRow {
+    /* padding-left: 8px !important; */
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ensure the flyout (the part with blocks) is always above the sidebar */
+.blocklyFlyout {
+    z-index: 70 !important;
+}
+
+/* Ensure the sidebar stays below the flyout */
+.blocklyToolboxDiv {
+    z-index: 60 !important;
+    overflow: visible !important; /* This prevents the flyout from being clipped */
+}
+
+/* If you are using a custom container for extension categories */
+.extension-cat-container {
+    overflow: visible !important;
+}
+
+.ext-card button {
+    transition: filter 0.2s;
+}
+
+.ext-card button:hover {
+    filter: brightness(1.2);
+}
+
+.ext-card button:active {
+    transform: scale(0.95);
+}
+
+/* 1. Make all toolbox labels white by default for the dark theme */
+.neopixel-label {
+    color: #ff9800 !important;
+    font-size: 18px;
+    font-family:monospace;
+    font-weight: 400;
+}
+
+/* 2. Force the label to take the category color when active */
+/* This targets the label inside the row you defined in your JS */
+.extension-cat-container .blocklyTreeRow.blocklyTreeSelected .blocklyTreeLabel {
+    color: 'white' !important; /* This will take the 'colour' from the categorystyle */
+}
+
+/* 3. If you want the label to ALWAYS be the category color (like NeoPixel Orange) */
+.extension-cat-container[aria-labelledby*="NeoPixel"] .blocklyTreeLabel {
+    color: #ff9800 !important;
+}
+
+/* We target the specific extension by its label name */
+.extension-cat-container[aria-labelledby*="NeoPixel"] .blocklyTreeRow {
+    border-bottom: 2px solid #ff9800 !important;
+}
+
+.extension-cat-container[aria-labelledby*="OLED"] .blocklyTreeLabel {
+    color: #00acc1 !important;
+}
+
+/* 2. Ensure the internal content container doesn't shrink */
+.extension-cat-container .blocklyTreeRowContentContainer {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.blocklyTreeRow:hover .blocklyTreeLabel {
+    color: #ffffff !important;
+    /* text-shadow: 0 0 5px rgba(255,255,255,0.3); */
+}
+
+/* Apply the font to everything inside the blocks */
+.blocklyText, 
+.blocklyFieldText {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: 300 !important;
+}
+
+/* Optional: Make the toolbox category font match */
+.blocklyTreeLabel {
+    font-family: 'JetBrains Mono', monospace !important;
+    
+}
+
+.blocklyText {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Remove the indentation for subcategories inside Advanced */
+.advanced-category-container > .blocklyToolboxContents {
+    padding-left: 0px !important;
+}
+
+/* Optional: If you want a tiny bit of breathing room but not a full offset */
+.advanced-category-container .blocklyTreeRow {
+    padding-left: 8px !important; 
+}
+
+
+/* 1. Target the row container to give it more height */
+ .blocklyToolboxCategoryContainer #toolbox-search-input.blocklyToolboxCategory {
+    height: 50px !important; 
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 0px !important;
+} 
+
+/* 2. Ensure the internal content wrapper fills the height and centers its child */
+.blocklyToolboxCategory .blocklyTreeRowContentContainer:not(#toolbox-search-input){
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;     
+ }
+
+
+/* 3. Style the actual input for better height and line-height */
+input#toolbox-search-input {
+    padding-left: 32px !important;
+    height: 40px !important;       
+    line-height: 32px !important; 
+    margin-left: 8px !important;  
+    margin-right: 12px !important; 
+    width: calc(100% - 24px) !important;
+    font-size: 18px;
+    color: white !important;
+    border-radius: 24px !important;
+    padding: 0 10px !important;    
+    font-family:monospace !important;
+    font-weight: 300 !important;
+    background: #4a576f !important;
+    border: 1px solid #d4d4d4 !important;    
+    outline: none !important;
+}
+
+/* input#toolbox-search-input:focus {
+     border-color: #15D0AC !important; 
+    box-shadow: 0 0 8px rgba(21, 208, 172, 0.2);
+}   */
+
+/* .blocklyTreeRowContentContainer {
+    pointer-events: auto !important;
+} */
+

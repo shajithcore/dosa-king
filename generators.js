@@ -2,9 +2,10 @@
 
 // 3. HARDWARE BLOCKS
 Blockly.Python.forBlock['esp32_led'] = function(block) {
+    Blockly.Python.definitions_['import_machine'] = 'import machine';
     console.log("Generating: esp32_led");
     var dropdown_state = block.getFieldValue('ESP32_LED');
-    Blockly.Python.definitions_['import_machine'] = 'import machine';
+    
     return 'machine.Pin(2, machine.Pin.OUT).value(' + dropdown_state + ')\n';
 };
 
@@ -36,12 +37,28 @@ Blockly.Python['sensor_ldr'] = function(block) {
 };
 
 Blockly.Python['base_delay'] = function(block) {
-    const ms = block.getFieldValue('MS') || '0';
-    
-    // Ensures 'import time' is at the top of your MicroPython script
+    // Ensures 'import time' is at the top of your MicroPython script    
     Blockly.Python.definitions_['import_time'] = 'import time';
+    const ms = block.getFieldValue('MS') || '0';    
     
     return "time.sleep_ms(" + ms + ")\n";
+};
+
+
+// Generator for 'set angle'
+blockly.python.forBlock['servo_set_angle'] = function(block, generator) {
+  var varName = generator.getVariableName(block.getFieldValue('SERVO'));
+  var angle = generator.valueToCode(block, 'ANGLE', python.Order.ATOMIC) || '90';
+  
+  return `${varName}.write_angle(${angle})\n`;
+};
+
+// Generator for 'continuous run'
+blockly.python.forBlock['servo_run_continuous'] = function(block, generator) {
+  var varName = generator.getVariableName(block.getFieldValue('SERVO'));
+  var speed = generator.valueToCode(block, 'SPEED', python.Order.ATOMIC) || '0';
+  
+  return `${varName}.run(${speed})\n`;
 };
 
 

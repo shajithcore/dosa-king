@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@blockly/toolbox-search": "^3.1.9"
+  }
+}

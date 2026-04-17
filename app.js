@@ -6,9 +6,16 @@ let isPaused = false;
 let currentMode = 'action';
 let serialBuffer = "";
 let debugInterval = null;
+let activeExtensions = [];
+
+const AVAILABLE_EXTENSIONS = [
+    { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
+    { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
+    { id: 'dht', name: 'DHT Sensor', icon: '🌡️', color: '#4caf50' }
+];
 
 
-// 1. DEFINE THE BLOCKLY THEME - DARK THEME (Thanos Theme) - You can customize these colors as you like!
+// 1. DEFINE THE BLOCKLY THEME - DARK THEME (Zelos Theme) - You can customize these colors as you like!
 
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
   'base': Blockly.Themes.Classic,
@@ -25,6 +32,13 @@ let debugInterval = null;
     'scrollbarOpacity': 0.4,
     'cursorColour': '#d0d0d0',  
   },
+
+'categoryStyles': {
+    'neopixel_category': { 'colour': '#ff9800' },
+    'oled_category': { 'colour': '#00acc1' },
+  },
+
+
     'blockStyles':{
         'base_start': {
             'hat': 'cap',
@@ -64,7 +78,11 @@ let debugInterval = null;
         
         
     },
-    'fontStyle': {},
+    'fontStyle': {
+        'family': '"JetBrains Mono", monospace', // Your new font
+        'weight': '300',                         // Making it thinner
+        'size': 12
+    },
     'startHats': true
 });
   
@@ -102,14 +120,12 @@ var editor = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
 
   // 6. INJECT BLOCKLY (With Resizable/Zoom Settings)
 
-
-
   const workspace = Blockly.inject('blocklyDiv', {
     toolbox: toolboxCategories,
     toolboxPosition: 'start',
     horizontalLayout:false,
-    theme: DarkTheme, // This changes the "Thanos" / Dark look
-    renderer: 'zelos',          // This makes blocks look like Scratch (rounded)
+    theme: DarkTheme, 
+    renderer: 'zelos',      // This makes blocks look like Scratch (rounded)
     move: { 
             scrollbars: true, 
             drag: true, 
@@ -198,29 +214,6 @@ workspace.addChangeListener((event) => {
     }
 });
 
-function openExtensionGallery() {
-    const galleryHtml = `
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:10px;">
-            <div class="ext-card" onclick="installExtension('neopixel')">
-                <div style="font-size:30px;">🌈</div>
-                <strong>NeoPixel</strong>
-            </div>
-            <div class="ext-card" onclick="installExtension('oled')">
-                <div style="font-size:30px;">🖥️</div>
-                <strong>OLED</strong>
-            </div>
-        </div>
-    `;
-
-    openSharkDialog({
-        title: "🧩 Extension Gallery",
-        message: "Select an extension to add its blocks to your Edusharks toolbox:",
-        customHtml: galleryHtml,
-        confirmText: "Close Gallery"
-    });
-}
-
-// A function that operates a mode switch toggle for action and debug mode
 
 
 function setMode(mode) {
@@ -243,10 +236,14 @@ function setMode(mode) {
 
     // 3. The Toggle Logic
     if (mode === 'debug') {
+
+        
+        
         flashBtn.classList.add('hidden');          // Flash disappears
         debugControls.classList.remove('hidden');   // Debug controls appear
         runText.innerText = "Test";          // Branding update
     } else {
+        
         
         flashBtn.classList.remove('hidden');       // Flash reappears
         debugControls.classList.add('hidden');      // Debug controls hide
@@ -256,6 +253,8 @@ function setMode(mode) {
         if(workspace) workspace.highlightBlock(null);
     }
 }
+
+
 
 
 // This function toggles the simulation view, which is currently just a placeholder div. You can expand this to include an actual simulation canvas or iframe in the future.
@@ -728,92 +727,6 @@ function toggleMode() {
 }
 
 
-// This function toggles the simulation panel's visibility and smoothly resizes the Blockly workspace to fill the new space. It also hides the resizer handle when collapsed for a cleaner look.
-
-// function toggleSimPanel() {
-//     const sim = document.getElementById('simulation-container');
-//     const resizer = document.getElementById('sim-resizer'); // Ensure this ID exists!
-//     const isCollapsed = sim.classList.toggle('collapsed');
-
-
-
-//     if (isCollapsed) {
-//         resizer.style.display = 'none';
-
-//     } else {
-//         setTimeout(() => {
-//             resizer.style.display = 'block';
-//         }, 100);
-//     }
-    
-//     // Set the target width
-//     sim.style.width = isCollapsed ? "0px" : "25%";
-
-   
-   
-//     // Smoothly animate the workspace resizing to match the new simulation panel size
-//     let startTime = null;
-//     const duration = 300; // Must match your CSS transition time
-
-//     function smoothResize(timestamp) {
-//         if (!startTime) startTime = timestamp;
-//         const progress = timestamp - startTime;
-
-//         Blockly.svgResize(workspace);
-
-//         if (progress < duration) {
-//             requestAnimationFrame(smoothResize);
-//         } else {
-//             // Final snap for precision
-//             Blockly.svgResize(workspace); 
-//         }
-//     }
-
-//     requestAnimationFrame(smoothResize);
-// }
-
-
-// function toggleSimPanel() {
-//     const sim = document.getElementById('simulation-container');
-//     const resizer = document.getElementById('sim-resizer'); 
-//     const isCollapsed = sim.classList.toggle('collapsed');
-
-//     // 1. Toggle the vertical layout class on the toolbox
-//     const toolboxDiv = document.querySelector('.blocklyToolboxDiv');
-//     if (toolboxDiv) {
-//         // Adds 'toolbox-vertical' when collapsed, removes it when expanded
-//         toolboxDiv.classList.toggle('toolbox-vertical', isCollapsed);
-//     }
-
-//     if (isCollapsed) {
-//         resizer.style.display = 'none';
-//     } else {
-//         setTimeout(() => {
-//             resizer.style.display = 'block';
-//         }, 100);
-//     }
-    
-//     sim.style.width = isCollapsed ? "0px" : "25%";
-
-//     let startTime = null;
-//     const duration = 300; 
-
-//     function smoothResize(timestamp) {
-//         if (!startTime) startTime = timestamp;
-//         const progress = timestamp - startTime;
-
-//         Blockly.svgResize(workspace);
-
-//         if (progress < duration) {
-//             requestAnimationFrame(smoothResize);
-//         } else {
-//             Blockly.svgResize(workspace); 
-//         }
-//     }
-
-//     requestAnimationFrame(smoothResize);
-// }
-
 
 function toggleSimPanel() {
     const sim = document.getElementById('simulation-container');
@@ -1097,18 +1010,28 @@ function updateConnectionUI(isConnected) {
 async function toggleRunStop() {
     const btn = document.getElementById('mainRunBtn');
     
-    // 1. THE DEBOUNCER: Disable the button immediately 
-    // to prevent double-clicks while the hardware is thinking.
+    // 1. THE DEBOUNCER: Disable the button immediately
     btn.disabled = true;
 
     try {
         if (!isRunning) {
+            // --- SHARK GUARD: EMPTY WORKSPACE CHECK ---
+            if (isWorkspaceEmpty()) {
+                openSharkDialog({
+                    title: "🦈 Empty Workspace",
+                    message: "No blocks added to 'on start' or 'forever' blocks. Add some code before running!",
+                    confirmText: "Got it!"
+                });
+                
+                // Re-enable button and exit function early
+                btn.disabled = false;
+                return; 
+            }
+
             // --- ATTEMPT TO START ---
             const success = await runCode(); 
             
             if (success) {
-                // isRunning is likely set to true inside runCode(), 
-                // but we'll ensure it here for safety.
                 isRunning = true;
                 updateButtonUI('stop');
             }
@@ -1121,10 +1044,13 @@ async function toggleRunStop() {
     } catch (err) {
         console.error("Toggle failed:", err);
     } finally {
-        // 2. RE-ENABLE: Turn the button back on after the hardware responds.
+        // 2. RE-ENABLE: Turn the button back on after hardware responds.
+        // (This won't affect the 'return' above because of how 'finally' works, 
+        // but explicit re-enabling in the guard is safer for readability).
         btn.disabled = false;
     }
 }
+
 
 function updateButtonUI(state) {
     const btn = document.getElementById('mainRunBtn');
@@ -1146,7 +1072,7 @@ function updateButtonUI(state) {
         btn.classList.add('run-style');
         btn.classList.remove('stop-style', 'running-pulse');
         icon.innerText = "▶";
-        text.innerText = (currentMode === 'debug') ? "Start Sonar" : "Run";
+        text.innerText = (currentMode === 'debug') ? " Run" : "Run";
 
         // UNLOCK the mode toggle buttons
         toggleModeButtons(false); 
@@ -1475,86 +1401,139 @@ navigator.serial.addEventListener('disconnect', () => {
 });
 
 
-const AVAILABLE_EXTENSIONS = [
-    { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
-    { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
-    { id: 'dht', name: 'DHT Sensor', icon: '🌡️', color: '#4caf50' }
-];
-
-let activeExtensions = [];
-
 function openExtensionGallery() {
-    let galleryHtml = `<div class="extension-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">`;
+    let galleryHtml = `<div class="extension-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; padding:10px;">`;
     
-    AVAILABLE_EXTENSIONS.forEach(ext => {
-        const isAdded = activeExtensions.includes(ext.id);
+    // We loop through our available list (NeoPixel, OLED, etc.)
+    const available = [
+        { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
+        { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
+        { id: 'servo', name: 'Servo Motor', icon: '🖥️', color: '#73c535' },
+    ];
+
+    available.forEach(ext => {
+        const isInstalled = activeExtensions.includes(ext.id);
+        
         galleryHtml += `
-            <div class="extension-card ${isAdded ? 'added' : ''}" 
-                 onclick="installExtension('${ext.id}')"
-                 style="background:#1a1f2e; padding:15px; border-radius:8px; cursor:pointer; border:1px solid #333; text-align:center;">
-                <div style="font-size:30px;">${ext.icon}</div>
-                <div style="color:white; font-weight:bold; margin-top:5px;">${ext.name}</div>
-                <div style="color:#666; font-size:10px;">${isAdded ? 'Added' : 'Click to Add'}</div>
+            <div class="ext-card" style="background:#1a1f2e; padding:20px; border-radius:12px; border: 2px solid ${isInstalled ? ext.color : '#333'}; text-align:center; transition: 0.3s;">
+                <div style="font-size:40px; margin-bottom:10px;">${ext.icon}</div>
+                <div style="color:white; font-weight:bold; font-size:16px; margin-bottom:15px;">${ext.name}</div>
+                
+                <button 
+                    onclick="${isInstalled ? `handleRemove('${ext.id}')` : `handleInstall('${ext.id}')`}" 
+                    style="width:100%; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold; border:none; 
+                           background-color: ${isInstalled ? '#ff4444' : '#1d9208'}; 
+                           color: white;">
+                    ${isInstalled ? 'Remove Extension' : 'Add Extension'}
+                </button>
             </div>
         `;
     });
+
     galleryHtml += `</div>`;
 
     openSharkDialog({
         title: "🧩 Extension Gallery",
-        message: "Select an extension to add its blocks to your toolbox:",
+        message: "Add hardware modules to your project:",
         customHtml: galleryHtml,
         confirmText: "Close"
     });
 }
 
-function installExtension(extId) {
-    if (activeExtensions.includes(extId)) {
-        alert("This extension is already added!");
-        return;
-    }
 
+// 1. INSTALL
+function handleInstall(extId) {
+    if (activeExtensions.includes(extId)) return;
+    
     activeExtensions.push(extId);
-    
-    // 1. Get your current toolbox JSON
-    // If you don't have a variable storing it, you can get it from the workspace
-    let currentToolbox = workspace.options.languageTree;
-
-    // 2. Define the new extension category
     const newCategory = getExtensionCategoryDefinition(extId);
+    let toolboxJson = workspace.options.languageTree;
 
-    // 3. Find the 'Advanced' category index
-    const advancedIndex = currentToolbox.contents.findIndex(cat => cat.name === 'Advanced');
-
-    // 4. Insert the new category BEFORE Advanced
+    // Find "Advanced" to insert before it
+    const advancedIndex = toolboxJson.contents.findIndex(c => c.name === 'Advanced');
     if (advancedIndex !== -1) {
-        currentToolbox.contents.splice(advancedIndex, 0, newCategory);
+        toolboxJson.contents.splice(advancedIndex, 0, newCategory);
     } else {
-        currentToolbox.contents.push(newCategory);
+        toolboxJson.contents.push(newCategory);
     }
 
-    // 5. Tell Blockly to refresh the sidebar
-    workspace.updateToolbox(currentToolbox);
-    
-    // 6. Close your Shark Dialog
-    closeSharkDialog();
+    workspace.updateToolbox(toolboxJson);
+    openExtensionGallery(); // REFRESH THE UI
 }
 
-// Helper to get definitions
+// 2. REMOVE
+function handleRemove(extId) {
+    activeExtensions = activeExtensions.filter(id => id !== extId);
+    
+    let toolboxJson = workspace.options.languageTree;
+    const definition = getExtensionCategoryDefinition(extId);
+
+    // Filter out the category that matches the extension name
+    toolboxJson.contents = toolboxJson.contents.filter(cat => cat.name !== definition.name);
+
+    workspace.updateToolbox(toolboxJson);
+    openExtensionGallery(); // REFRESH THE UI
+}
+
+
+
 function getExtensionCategoryDefinition(id) {
-    if (id === 'neopixel') {
-        return {
+    const definitions = {
+        'neopixel': {
             kind: 'category',
             name: 'NeoPixel',
-            categorystyle: 'variable_category', // or your custom style
+            // Using a style name or a hex color
+            categorystyle: 'neopixel_category', 
+            cssConfig: {
+                "container": 'extension-cat-container',
+                "row": 'blocklyTreeRow', // Standard Blockly row class
+                "icon": 'customIconNeoPixel', // The CSS class for the icon
+                "label": 'neopixel-label'
+            },
             contents: [
                 { kind: 'block', type: 'neopixel_setup' },
-                { kind: 'block', type: 'neopixel_set' }
+                { kind: 'block', type: 'neopixel_set_color' },
+                { kind: 'block', type: 'neopixel_show' },
+                { kind: 'block', type: 'neopixel_clear' }
             ]
-        };
-    }
-    // Add other cases here...
+        },
+        'oled': {
+            kind: 'category',
+            name: 'OLED',
+            categorystyle: 'oled_category',
+            cssConfig: {
+                "container": 'extension-cat-container',
+                "row": 'blocklyTreeRow',
+                "icon": 'customIconOLED',
+                "label": 'oled-label'
+            },
+            contents: [
+                { kind: 'block', type: 'oled_setup' },
+                { kind: 'block', type: 'oled_print' },
+                { kind: 'block', type: 'oled_clear' }
+            ]
+        },
+
+        'servo' : {
+          kind: "category",
+          name: "Servo",
+          categorystyle: 'servo_category',
+          cssConfig: {
+                container: 'extension-cat-container',
+                row: 'blocklyTreeRow',
+                icon: 'customIconServo',
+                label: 'servo-label'
+            },
+          colour: "#03AA74",
+          contents: [
+            { kind: "block", type: "servo_set_angle" },
+            { kind: "block", type: "servo_run_continuous" }
+          ]
+        }
+    };
+    return definitions[id];
 }
+
 
 // The Master Dialog Opener
 function openSharkDialog(config) {
@@ -1568,6 +1547,7 @@ function openSharkDialog(config) {
 
     document.getElementById('shark-dialog-title').innerText = config.title || "Alert";
     document.getElementById('shark-dialog-custom-content').innerHTML = config.customHtml || "";
+    
     
     const confirmBtn = document.getElementById('shark-dialog-confirm-btn');
     confirmBtn.innerText = config.confirmText || "Confirm";
@@ -1585,4 +1565,25 @@ function closeSharkDialog() {
 }
 
 
+
+function isWorkspaceEmpty() {
+    // 1. Get all blocks currently in the workspace
+    const topBlocks = workspace.getTopBlocks(false);
+    
+    let hasLogic = false;
+
+    topBlocks.forEach(block => {
+        // 2. Check for your specific "Start" and "Forever" block types
+        // Note: Change 'on_start' and 'forever' to the actual type names in your block definitions
+        if (block.type === 'base_start' || block.type === 'base_forever') {
+            
+            // 3. Check if there is a block connected to the bottom of it
+            if (block.getNextBlock()) {
+                hasLogic = true;
+            }
+        }
+    });
+
+    return !hasLogic;
+}
 
