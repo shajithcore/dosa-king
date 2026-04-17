@@ -1553,7 +1553,7 @@ color: #00D1FF;
 /* 3. Style the actual input for better height and line-height */
 input#toolbox-search-input {
     padding-left: 32px !important;
-    height: 40px !important;       
+    height: 35px !important;       
     line-height: 32px !important; 
     margin-left: 8px !important;  
     margin-right: 12px !important; 
