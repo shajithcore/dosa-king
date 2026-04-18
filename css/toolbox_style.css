@@ -13,7 +13,6 @@
 
 } 
 
-
 /* 1. Reset the background even if the mouse is over it */
 
 .edusharks-header-label {
@@ -22,10 +21,12 @@
   font-style:normal;
   letter-spacing: 2px;
   align-items: center !important;  
-  font-size: 15px; 
+  font-size: 15px;
+  border-left: 0px !important; 
   padding-left: 0px; 
   /* font-weight:600; */
   cursor: default !important;
+  line-height: 30px !important;
 }
 
 
@@ -39,9 +40,9 @@
   display:flex!important; 
   flex-direction: column !important; 
   align-items:center!important;
-  height: 50px;
-  border-bottom: 2px solid rgba(11, 162, 54, 0.784) !important;
-  border-top: 2px solid rgba(11, 162, 54, 0.784) !important;
+  height: 30px;  
+  border-bottom: 2px solid rgba(55, 0, 0, 0.15) !important;
+  /* border-top: 2px solid rgba(11, 162, 54, 0.784) !important; */
   padding-left: 0px !important;
   padding-bottom: 0px;
   pointer-events: none; 
@@ -169,6 +170,7 @@
 }
 
 .edusharks-header-row .blocklyTreeRowContentContainer {
+    position: sticky !important;
     padding-left: 0px !important;
 }
 
@@ -178,6 +180,16 @@
     background-color: var(--category-hover-color) !important;
 }
 
+
+/* 2. Target the ICON inside the hovered category */
+.blocklyTreeRow:hover {
+    background-color: var(--category-hover-color) !important;
+}
+
+/* 3. Target the LABEL inside the hovered category */
+.blocklyTreeRow:hover [class$="-label"] {
+    color: white !important;
+}
 
 /* 3. Target the LABEL inside the hovered category */
 .blocklyToolboxCategory:hover [class$="-label"] {
@@ -189,6 +201,11 @@
     /* Uses the color set in your addColourBorder_ function */
     background-color: var(--category-hover-color);
     transition: background-color 0.2s ease;
+}
+
+/* 2. Target the ICON inside the hovered category */
+.blocklyTreeRow:hover [class^="customIcon"] {
+    background-color: white !important;
 }
 
 /* 2. Target the ICON inside the hovered category */

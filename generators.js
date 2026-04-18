@@ -46,17 +46,17 @@ Blockly.Python['base_delay'] = function(block) {
 
 
 // Generator for 'set angle'
-blockly.python.forBlock['servo_set_angle'] = function(block, generator) {
-  var varName = generator.getVariableName(block.getFieldValue('SERVO'));
-  var angle = generator.valueToCode(block, 'ANGLE', python.Order.ATOMIC) || '90';
+Blockly.Python.forBlock['servo_set_angle'] = function(block) {
+  var varName = block.getVariableName(block.getFieldValue('SERVO'));
+  var angle = block.valueToCode(block, 'ANGLE', python.Order.ATOMIC) || '90';
   
   return `${varName}.write_angle(${angle})\n`;
 };
 
 // Generator for 'continuous run'
-blockly.python.forBlock['servo_run_continuous'] = function(block, generator) {
-  var varName = generator.getVariableName(block.getFieldValue('SERVO'));
-  var speed = generator.valueToCode(block, 'SPEED', python.Order.ATOMIC) || '0';
+Blockly.Python.forBlock['servo_run_continuous'] = function(block) {
+  var varName = block.getVariableName(block.getFieldValue('SERVO'));
+  var speed = block.valueToCode(block, 'SPEED', python.Order.ATOMIC) || '0';
   
   return `${varName}.run(${speed})\n`;
 };

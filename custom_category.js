@@ -14,7 +14,7 @@ class EdusharksCategory extends Blockly.ToolboxCategory {
       
     }
     if (this.rowDiv_) {
-      this.rowDiv_.style.setProperty('border-left', `6px solid ${colour}`, 'important');
+      this.rowDiv_.style.setProperty('border-left', `8px solid ${colour}`, 'important');
       this.rowDiv_.style.setProperty('background-color', 'transparent', 'important');
 
       if (label) label.style.color = colour;

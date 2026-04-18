@@ -8,11 +8,12 @@ let serialBuffer = "";
 let debugInterval = null;
 let activeExtensions = [];
 
-const AVAILABLE_EXTENSIONS = [
-    { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
-    { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
-    { id: 'dht', name: 'DHT Sensor', icon: '🌡️', color: '#4caf50' }
-];
+// const AVAILABLE_EXTENSIONS = [
+//     { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
+//     { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
+//     // { id: 'dht', name: 'DHT Sensor', icon: '🌡️', color: '#4caf50' }
+//     {id: 'servo', name: 'Servo', icon: '🌡️', color: '#03AA74'}
+// ];
 
 
 // 1. DEFINE THE BLOCKLY THEME - DARK THEME (Zelos Theme) - You can customize these colors as you like!
@@ -36,6 +37,7 @@ const AVAILABLE_EXTENSIONS = [
 'categoryStyles': {
     'neopixel_category': { 'colour': '#ff9800' },
     'oled_category': { 'colour': '#00acc1' },
+    'servo_category': {'colour': '#03AA74'}
   },
 
 
@@ -1407,8 +1409,8 @@ function openExtensionGallery() {
     // We loop through our available list (NeoPixel, OLED, etc.)
     const available = [
         { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
-        { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
-        { id: 'servo', name: 'Servo Motor', icon: '🖥️', color: '#73c535' },
+        { id: 'oled', name: 'OLED', icon: '🖥️', color: '#00acc1' },
+        { id: 'servo', name: 'Servo', icon: '🖥️', color: '#73c535' },
     ];
 
     available.forEach(ext => {
@@ -1451,9 +1453,10 @@ function handleInstall(extId) {
 
     // Find "Advanced" to insert before it
     const advancedIndex = toolboxJson.contents.findIndex(c => c.name === 'Advanced');
-    if (advancedIndex !== -1) {
+    if (advancedIndex !== 0) {
         toolboxJson.contents.splice(advancedIndex, 0, newCategory);
-    } else {
+    } 
+    else {
         toolboxJson.contents.push(newCategory);
     }
 
@@ -1515,14 +1518,14 @@ function getExtensionCategoryDefinition(id) {
         },
 
         'servo' : {
-          kind: "category",
-          name: "Servo",
+          kind: 'category',
+          name: 'Servo',
           categorystyle: 'servo_category',
           cssConfig: {
-                container: 'extension-cat-container',
-                row: 'blocklyTreeRow',
-                icon: 'customIconServo',
-                label: 'servo-label'
+                "container": 'extension-cat-container',
+                "row": 'blocklyTreeRow',
+                "icon": 'customIconServo',
+                "label": 'servo-label'
             },
           colour: "#03AA74",
           contents: [
