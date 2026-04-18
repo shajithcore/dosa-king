@@ -1356,20 +1356,21 @@ color: #00D1FF;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 50px;
+    height: 30px;
     align-content: center;
     /* margin-top: 5px; */
     /* margin-bottom: 5px; */
-    border-top: 2px solid #00a4a6;
-    border-bottom: 2px solid #00a4a6;
+    /* border-top: 2px solid #00a4a6;
+    border-bottom: 2px solid #00a4a6; */
 }
 
 #sim-panel-header {
-    font-size: 20px;
-    font-weight: 600;
-    color: #c4d447;
+    font-family: monospace;
+    font-size: 18px;
+    font-weight: 400;
+    color: #ffffff;
     /* margin-bottom: 15px; */
-    letter-spacing: 0.1em;
+    letter-spacing: 2px;
     text-align: center;
     text-transform: uppercase;
     
