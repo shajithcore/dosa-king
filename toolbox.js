@@ -24,6 +24,7 @@ const toolboxCategories = {
         "label": 'controls-label' },  // Custom color for this category       
  
       contents: [
+        { "kind": "sep", "gap": "16" },
         { kind: 'block', type: 'base_start'},
         { kind: 'block', type: 'base_forever'},
         { kind: "block", type: "base_delay"}
@@ -39,10 +40,30 @@ const toolboxCategories = {
           "label": 'hardware-label' },
 
       contents: [
+            { "kind": "sep", "gap": "16" },
+            {"kind": "label","text": "Built-in devices"},
+            { "kind": "sep", "gap": "16" },
             { 'kind': 'block', 'type': 'esp32_led' },
+            { "kind": "block", "type": "esp32_internal_temp" },
+            { "kind": "sep", "gap": "24" },
+
+            {"kind": "label","text": "PINs"},    
+            { "kind": "sep", "gap": "16" },
+            { "kind": "block", "type": "pin_digital_write" },
+            { "kind": "block", "type": "pin_digital_read" },
+            { "kind": "sep", "gap": "12" },
+            { "kind": "block", "type": "pin_analog_read" },
+            { "kind": "block", "type": "pin_pwm_write" },
+    
+                    
+            { "kind": "sep", "gap": "24" },
+          
+            {"kind": "label","text": "Sensors"},
+            { "kind": "sep", "gap": "16" },
             { 'kind': 'block', 'type': 'sensor_ultrasonic' },
             { 'kind': 'block', 'type': 'sensor_dht11' },
-            { 'kind': 'block', 'type': 'sensor_ldr' }          
+            { 'kind': 'block', 'type': 'sensor_ldr' },
+     
        ],
     },
 
@@ -54,6 +75,7 @@ const toolboxCategories = {
         "label": 'logic-label'      
       },
       contents: [
+        { "kind": "sep", "gap": "16" },
         { kind: 'block', type: 'controls_if'},
         { kind: 'block', type: 'logic_compare', fields: { OP: 'EQ'}},
         { kind: 'block', type: 'logic_operation', fields: {OP: 'AND'}},
@@ -73,6 +95,7 @@ const toolboxCategories = {
           "label": 'loops-label' },
  
       contents: [
+        { "kind": "sep", "gap": "16" },
         { kind: 'block', type: 'controls_repeat_ext', inputs: { TIMES: { shadow: { type: 'math_number', fields: { NUM: 10 } } } }  },        
         { kind: 'block', type: 'controls_whileUntil', fields: { MODE: 'WHILE' } },
         { kind: 'block', type: 'controls_for', fields: { VAR: { name: 'i' } }, inputs: { FROM: { shadow: { type: 'math_number', fields: { NUM: 1 } } }, TO: { shadow: { type: 'math_number', fields: { NUM: 10 } } }, BY: { shadow: { type: 'math_number', fields: { NUM: 1 } } } } },
@@ -89,6 +112,7 @@ const toolboxCategories = {
           "icon": 'customIconMath',
           "label": 'math-label'},
       contents: [
+        { "kind": "sep", "gap": "16" },
         { kind: 'block', type: 'math_number', fields: { NUM: 100 } },
         { kind: 'block', type: 'math_arithmetic', fields: { OP: 'ADD' }, inputs: { A: { shadow: { type: 'math_number', fields: { NUM: 1 } } }, B: { shadow: { type: 'math_number', fields: { NUM: 1 } } } } },
         { kind: 'block', type: 'math_single', fields: { OP: 'ROOT'}, inputs: { NUM: { shadow: { type: 'math_number', fields: { NUM: 9 } } } } },
@@ -103,6 +127,8 @@ const toolboxCategories = {
         { kind: 'block', type: 'math_random_float' },
         { kind: 'block', type: 'math_atan2', inputs: { X: { shadow: { type: 'math_number', fields: {  NUM: 1 } } }, Y: { shadow: { type: 'math_number', fields: { NUM: 1 } } } } },
       ],
+
+      
     },
 
     { name: 'Variables',
@@ -117,7 +143,7 @@ const toolboxCategories = {
     
     { name: 'ADVANCED',
       kind: 'category',
-      colour: '#e5e230',
+      // colour: '#e5e230',
       // categorystyle: 'procedure_category',
       expanded: 'false', // Keeps it closed by default
       cssConfig: {
@@ -143,6 +169,7 @@ const toolboxCategories = {
                         "icon": 'customIconText',
                         "label": 'text-label' },
                     contents: [
+                      { "kind": "sep", "gap": "16" },
                       { kind: 'block', type: 'text', fields: { TEXT: '' } },
                       { kind: 'block', type: 'text_join' },
                       { kind: 'block', type: 'text_append', fields: { name: 'item'}, inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: '' } } } } },
@@ -169,6 +196,7 @@ const toolboxCategories = {
                         "label": 'lists-label' },
 
                     contents: [
+                      { "kind": "sep", "gap": "16" },
                       { kind: 'block', type: 'lists_create_with', extraState: { itemCount: 0 } },
                       { kind: 'block', type: 'lists_create_with' },
                       { kind: 'block', type: 'lists_repeat', inputs: { NUM: { shadow: { type: 'math_number', fields: { NUM: 5 } } } } },

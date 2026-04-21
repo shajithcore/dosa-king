@@ -1,3 +1,68 @@
+  const ESP32_PINS_DIGITAL = [
+  ['GPIO 2 (LED)', '2'], ['GPIO 4', '4'], ['GPIO 5', '5'],
+  ['GPIO 12', '12'], ['GPIO 13', '13'], ['GPIO 14', '14'],
+  ['GPIO 15', '15'], ['GPIO 16', '16'], ['GPIO 17', '17'],
+  ['GPIO 18', '18'], ['GPIO 19', '19'], ['GPIO 21', '21'],
+  ['GPIO 22', '22'], ['GPIO 23', '23'], ['GPIO 25', '25'],
+  ['GPIO 26', '26'], ['GPIO 27', '27'], ['GPIO 32', '32'], ['GPIO 33', '33']
+];
+
+
+const ESP32_PHYSICAL_MAP = [
+  // Left Column (Grid) | Right Column (Grid)
+  ['EN (Reset)', 'EN'],  ['GPIO 23', '23'],
+  ['GPIO 36 (VP)', '36'], ['GPIO 22', '22'],
+  ['GPIO 39 (VN)', '39'], ['TX0 (GPIO 1)', '1'],
+  ['GPIO 34', '34'],      ['RX0 (GPIO 3)', '3'],
+  ['GPIO 35', '35'],      ['GPIO 21', '21'],
+  ['GPIO 32', '32'],      ['GPIO 19', '19'],
+  ['GPIO 33', '33'],      ['GPIO 18', '18'],
+  ['GPIO 25', '25'],      ['GPIO 5', '5'],
+  ['GPIO 26', '26'],      ['GPIO 17', '17'],
+  ['GPIO 27', '27'],      ['GPIO 16', '16'],
+  ['GPIO 14', '14'],      ['GPIO 4', '4'],
+  ['GPIO 12', '12'],      ['GPIO 0', '0'],
+  ['GPIO 13', '13'],      ['GPIO 2', '2'],
+  ['GND', 'GND'],         ['GPIO 15', '15'],
+  ['VIN (5V)', 'VIN'],    ['GPIO 8', '8']
+];
+
+const ESP32_30PIN_MAP = [
+  ['RST', 'EN'],      ['D23', '23'],
+  ['VP', '36'],    ['D22', '22'],
+  ['VN', '39'],    ['TX0', 'TX0'],
+  ['D34', '34'],    ['RX0', 'RX0'],
+  ['D35', '35'],    ['D21', '21'],
+  ['D32', '32'],         ['D19', '19'],
+  ['D33', '33'],         ['D18', '18'],
+  ['D25', '25'],         ['D5', '5'],
+  ['D26', '26'],         ['D17', '17'],
+  ['D27', '27'],         ['D16', '16'],
+  ['D14', '14'],         ['D4', '4'],
+  ['D12', '12'],         ['D2', '2'],
+  ['D13', '13'],         ['D15', '15'],
+  ['GND', 'GND'],   ['GND', 'GND'],
+  ['VIN', 'VIN'],    ['3V3', '3V3']
+];
+
+
+const hardwarePinValidator = function(newValue) {
+    // List of values that are physical-only
+    const restricted = ['EN', 'GND', 'VIN', '3V3'];
+    
+    if (restricted.includes(newValue)) {
+        // Reject the selection and keep the previous value
+        return null; 
+    }
+    return newValue;
+};
+
+
+Blockly.Extensions.register('set_default_pin', function() {
+  // This code runs every time a new block is created
+  this.getField('PIN').setValue('2');
+});
+
 
   // THIS FILE HELPS CREATES THE VISUAL CODING BLOCKS IN THE IDE // 
   
@@ -100,6 +165,7 @@ Blockly.defineBlocksWithJsonArray([
   };
 
 
+
   //TIME DELAY BLOCK (MILLI SECONDS)
 
 Blockly.defineBlocksWithJsonArray([
@@ -120,5 +186,80 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "Pause execution for a specific number of milliseconds."
   }
 ]);
+
+
+Blockly.defineBlocksWithJsonArray([
+  {
+    "type": "esp32_internal_temp",
+    "message0": " Get ESP32 Chip Temperature ",
+    "output": "Number",
+    "colour": 160,
+    "tooltip": "get ESP32's internal temperature",
+    "helpUrl": ""
+  },
+  
+]);
+
+
+Blockly.defineBlocksWithJsonArray([
+  // Digital Write
+  {
+    "type": "pin_digital_write",
+    "message0": "set digital pin %1 to %2",
+    "args0": [
+      { "type": "field_grid_dropdown", "name": "PIN", "columns": 2,"options": ESP32_30PIN_MAP, "value": 4 },
+      // { "type": "field_number", "name": "PIN", "value": 2 },
+      { "type": "field_grid_dropdown", "name": "STATE", "columns": 1,"options": [["HIGH", "1"], ["LOW", "0"]] }
+    ],
+    "extensions": ["set_default_pin"],
+    "config": {
+    "maxHeight": 400 
+    },
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120
+  },
+  // Digital Read
+  {
+    "type": "pin_digital_read",
+    "message0": "read digital pin %1",
+    "args0": [{ "type": "field_number", "name": "PIN", "value": 4 }],
+    "output": "Number",
+    "colour": 120
+  },
+  // Analog Read
+  {
+    "type": "pin_analog_read",
+    "message0": "read analog pin %1",
+    "args0": [{ "type": "field_number", "name": "PIN", "value": 34 }],
+    "output": "Number",
+    "colour": 120
+  },
+  // PWM Write
+  {
+    "type": "pin_pwm_write",
+    "message0": "set PWM pin %1 duty %2",
+    "args0": [
+      { "type": "field_number", "name": "PIN", "value": 2 },
+      { "type": "input_value", "name": "DUTY", "check": "Number" }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120
+  }
+]);
+
+// Apply this to the PIN field of your digital write block
+Blockly.Blocks['pin_digital_write'].getField('PIN').setValidator(hardwarePinValidator);
+
+
+// 2. Force the default values immediately
+if (Blockly.Blocks['pin_digital_write']) {
+    // We create a dummy instance to set the "template" default
+    const tempBlock = workspace.newBlock('pin_digital_write');
+    tempBlock.getField('PIN').setValue('2');
+    tempBlock.dispose(); // Delete the dummy block
+}
+
 
 

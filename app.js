@@ -8,13 +8,6 @@ let serialBuffer = "";
 let debugInterval = null;
 let activeExtensions = [];
 
-// const AVAILABLE_EXTENSIONS = [
-//     { id: 'neopixel', name: 'NeoPixel', icon: '🌈', color: '#ff9800' },
-//     { id: 'oled', name: 'OLED Display', icon: '🖥️', color: '#00acc1' },
-//     // { id: 'dht', name: 'DHT Sensor', icon: '🌡️', color: '#4caf50' }
-//     {id: 'servo', name: 'Servo', icon: '🌡️', color: '#03AA74'}
-// ];
-
 
 // 1. DEFINE THE BLOCKLY THEME - DARK THEME (Zelos Theme) - You can customize these colors as you like!
 
@@ -1568,25 +1561,34 @@ function closeSharkDialog() {
 }
 
 
-
 function isWorkspaceEmpty() {
-    // 1. Get all blocks currently in the workspace
     const topBlocks = workspace.getTopBlocks(false);
     
-    let hasLogic = false;
+    // 1. If there are literally no blocks on the screen, it's empty
+    if (topBlocks.length === 0) return true;
 
-    topBlocks.forEach(block => {
-        // 2. Check for your specific "Start" and "Forever" block types
-        // Note: Change 'on_start' and 'forever' to the actual type names in your block definitions
+    let hasUserCode = false;
+
+    for (let block of topBlocks) {
+        // 2. Check the Start and Forever containers
         if (block.type === 'base_start' || block.type === 'base_forever') {
             
-            // 3. Check if there is a block connected to the bottom of it
-            if (block.getNextBlock()) {
-                hasLogic = true;
+            // Look through the block's inputs (the "mouth" of the C-shape)
+            for (let input of block.inputList) {
+                // If there's a connection and it has a "target block" attached
+                if (input.connection && input.connection.targetBlock()) {
+                    hasUserCode = true;
+                    break;
+                }
             }
+        } else {
+            // 3. If the student put a stray block (like a pin write) 
+            // floating outside of Start/Forever, we consider the workspace "not empty"
+            hasUserCode = true;
         }
-    });
+        
+        if (hasUserCode) break;
+    }
 
-    return !hasLogic;
+    return !hasUserCode;
 }
-

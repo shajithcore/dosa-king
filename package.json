@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@blockly/field-grid-dropdown": "^6.0.10",
     "@blockly/toolbox-search": "^3.1.9"
   }
 }

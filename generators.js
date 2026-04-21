@@ -62,6 +62,50 @@ Blockly.Python.forBlock['servo_run_continuous'] = function(block) {
 };
 
 
+// Generator for Internal Temperature
+Blockly.Python.forBlock['esp32_internal_temp'] = function(block) {  
+  // This line ensures 'import esp32' is added to the top of the file
+  Blockly.Python.definitions_['import_esp32'] = 'import esp32';
+  
+  // Formula to convert Fahrenheit to Celsius
+  var code = 'esp32.raw_temperature()';
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
+
+// Digital Write logic
+Blockly.Python.forBlock['pin_digital_write'] = function(block) {
+  Blockly.Python.definitions_['import_machine'] = 'import machine';
+  var pin = block.getFieldValue('PIN');
+  var state = block.getFieldValue('STATE');
+  return 'machine.Pin(' + pin + ', machine.Pin.OUT).value(' + state + ')\n';
+};
+
+// Digital Read logic
+Blockly.Python.forBlock['pin_digital_read'] = function(block) {
+  Blockly.Python.definitions_['import_machine'] = 'import machine';
+  var pin = block.getFieldValue('PIN');
+  var code = 'machine.Pin(' + pin + ', machine.Pin.IN).value()';
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
+// Analog Read logic (0-4095 range)
+Blockly.Python.forBlock['pin_analog_read'] = function(block) {
+  Blockly.Python.definitions_['import_machine'] = 'import machine';
+  var pin = block.getFieldValue('PIN');
+  var code = 'machine.ADC(machine.Pin(' + pin + ')).read()';
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
+// PWM logic
+Blockly.Python.forBlock['pin_pwm_write'] = function(block) {
+  Blockly.Python.definitions_['import_machine'] = 'import machine';
+  var pin = block.getFieldValue('PIN');
+  var duty = Blockly.Python.valueToCode(block, 'DUTY', Blockly.Python.ORDER_ATOMIC) || '0';
+  return 'machine.PWM(machine.Pin(' + pin + ')).duty(' + duty + ')\n';
+};
+
+
 // This tells the Python generator to prefix every block with a print statement
 // %1 is a special placeholder that Blockly replaces with the actual Block ID
 Blockly.Python.STATEMENT_PREFIX = 'print("DBG:%1")\n';

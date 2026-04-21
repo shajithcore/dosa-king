@@ -186,33 +186,34 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
- 
+} 
 
-    .customIconControls
-    { background-image: url('/assets/icons/controls-icon.svg');
+.customIconControls
+    { 
+      /* background-image: url('/assets/icons/controls-icon.svg'); */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
       height: 24px;
       padding-left:5px;
       padding-right: 5px;
-      margin-left: 5px;
+      margin-left: 5px; 
     }
 
-     .customIconHardware 
-    { background-image: url('/assets/icons/hardware-icon.svg'); 
+.customIconHardware 
+    { 
+      background-image: url('/assets/icons/hardware-icon.svg'); 
       background-size: contain;
       background-repeat: no-repeat;
-      width: 24px;
-      height: 24px;
+      width: 10px;
+      height: 10px;
       padding-left:5px;
       padding-right: 5px;
       margin-left: 5px;
       
     }
 
-    .customIconLogic { 
+.customIconLogic { 
       background-image: url('/assets/icons/logic-icon.svg'); 
       background-size: contain;
       background-repeat: no-repeat;
@@ -223,7 +224,7 @@
       margin-left: 5px;
     }
 
-    .customIconLoops { 
+.customIconLoops { 
       background-image: url('/assets/icons/loops-icon.svg'); 
       background-size: contain;
       background-repeat: no-repeat;
@@ -234,7 +235,7 @@
       margin-left: 5px;
     }
 
-    .customIconSensors { background-image: url('https://img.icons8.com/?size=100&id=P3wQLLlOhVgs&format=png&color=000000'); 
+.customIconSensors { background-image: url('https://img.icons8.com/?size=100&id=P3wQLLlOhVgs&format=png&color=000000'); 
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -244,8 +245,8 @@
       margin-left: 5px;
     }
 
-    .customIconMath { 
-      background-image: url('/assets/icons/math-icon.svg'); 
+.customIconMath { 
+      /* background-image: url('/assets/icons/math-icon.svg');  */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -255,8 +256,8 @@
       margin-left: 5px;
     }
 
-    .customIconVariable { 
-      background-image: url('/assets/icons/variable-icon.svg'); 
+.customIconVariable { 
+      /* background-image: url('/assets/icons/variable-icon.svg');  */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -266,8 +267,8 @@
       margin-left: 5px;
     }
 
-    .customIconFunctions { 
-      background-image: url('/assets/icons/functions-icon.svg'); 
+.customIconFunctions { 
+      /* background-image: url('/assets/icons/functions-icon.svg');  */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -277,8 +278,8 @@
       margin-left: 5px;
     }
 
-    .customIconText { 
-      background-image: url('/assets/icons/text-icon.svg'); 
+.customIconText { 
+      /* background-image: url('/assets/icons/text-icon.svg');  */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -288,8 +289,8 @@
       margin-left: 5px;
     }
 
-     .customIconLists { 
-      background-image: url('/assets/icons/lists-icon.svg'); 
+.customIconLists { 
+      /* background-image: url('/assets/icons/lists-icon.svg');  */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -299,19 +300,19 @@
       margin-left: 5px;
     }
 
-    .customIconAdvanced { 
-      background-image: url('/assets/Icons/advanced-icon.svg'); 
+.customIconAdvanced { 
+      /* background-image: url('/assets/icons/advanced-icon.svg');  */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
       height: 24px;
       padding-left: 5px;
-      padding-right: 10px;
+      padding-right: 5px;
       margin-left: 5px;
     }
 
-    .customIconExtensions {
-      background-image: url('/assets/icons/extensions-icon.svg');  
+.customIconExtensions {
+      /* background-image: url('/assets/icons/extensions-icon.svg');   */
       background-size: contain;
       background-repeat: no-repeat;
       width: 24px;
@@ -322,14 +323,14 @@
     }
 
     /* Typo Fixes & Global Class application */
-    .customIconControls, .customIconHardware, .customIconLogic, .customIconLoops, .customIconMath, .customIconSensors, .customIconVariables, .customIconFunctions, .customIconText, .customIconLists, .customIconExtensions, .customIconAdvanced {
+.customIconControls, .customIconHardware, .customIconLogic, .customIconLoops, .customIconMath, .customIconSensors, .customIconVariables, .customIconFunctions, .customIconText, .customIconLists, .customIconExtensions, .customIconAdvanced {
       display:inline-block;
       vertical-align:middle;
       background-size:contain;
       background-repeat: no-repeat;
     }
 
-    .ide-toolbar {
+.ide-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -349,14 +350,14 @@
       -webkit-font-smoothing: antialiased; /* Smooth out the fonts against the bright background */
     }
 
-    .actions-center {
+.actions-center {
       flex:1;
       display: flex;
       justify-content: flex-end;
       gap: 10px;
     }
 
-  .btn {
+.btn {
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
@@ -364,12 +365,26 @@
     font-weight: bold;
     transition: 0.2s;
     }
-
     
-  .btn-connect { background-color: #007bff; color: white; }
-  .btn-upload { background-color: #28a745; color: white; }
-  .btn-sim { background-color: #6f42c1; color: white; }
-  .btn-download { background-color: #555; color: white; }
+.btn-connect { 
+    background-color: #007bff; 
+    color: white;
+    }
+
+.btn-upload { 
+    background-color: #28a745; 
+    color: white; 
+    }
+
+.btn-sim { 
+    background-color: #6f42c1; 
+    color: white; 
+    }
+
+.btn-download { 
+    background-color: #555; 
+    color: white; 
+    }
 
 
   .action-btn {
@@ -448,8 +463,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
- 
+    gap: 15px; 
     }
 
 /* The outer "pill" container */
@@ -488,7 +502,6 @@
     color: #ccc;
     background-color: rgba(255, 255, 255, 0.05);
     }
-
 
 .menu-item {
     position: relative;
@@ -667,13 +680,7 @@ input:checked + .slider:before {
     /* rotate: 0deg; Flip the orientation */
     transform: translateY(-50%) scaleX(1);
     left: 0px;
-    
-    /* Flip the "D" shape to face the other way if needed */
-    /* If you want the rounded part to always face the workspace: */
     border-radius: 0px 16px 16px 0px; 
-    
-    /* Shift it slightly if it's clipping into the edge */
-    /* right: -15px;  */
 }
 
 /* Hover effect for better UX */
@@ -688,7 +695,6 @@ input:checked + .slider:before {
     user-select: none;
     transform: rotate(180deg); /* Flip arrow to point right */
 }
-
 
 /* Hidden/Collapsed State */
 #simulation-container.collapsed {
@@ -771,7 +777,6 @@ input:checked + .slider:before {
     align-items: center;
     gap: 8px;
     transition: all 0.5s ease;
-    /* transition: transform 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);  */
 }
 
 #python-edge-btn:hover {
@@ -1070,7 +1075,6 @@ input:checked + .slider:before {
     padding-right: 8px; 
     overflow:hidden;
     color: #000;   
-    /* transition: height 0.2s ease-out;  */
 }
 
 .console-closed {
@@ -1111,9 +1115,7 @@ input:checked + .slider:before {
     align-items: center;   
     background: #7ba177;
     padding: 25px 25px;
-    margin-right: 15px;
-    /* border-top: 1px solid #333;     */
-    
+    margin-right: 15px;        
 }
 
 #console-input {
@@ -1136,90 +1138,98 @@ input:checked + .slider:before {
 }
 
 .advanced-label {
-color: #e5e230;
+color: #ffffff;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .extensions-label {
 color: #16D0AD !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .controls-label {
 color: #00D1FF !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .logic-label {
 color: #00a4a6 !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .loops-label {
 color: #00aa00 !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .math-label {
 color: #9400d3 !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .variable-label {
 color: #a55b80 !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .text-label {
 color: #5ba58c !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .lists-label {
 color: #dc143c !important;
 font-family:monospace;
-font-size: 18px;
+font-weight: 500;
+font-size: 20px;
+font-weight: 500;
 }
 
 .functions-label {
 color: #995ba5 !important;
 font-family:monospace;
-font-size: 18px;
+font-size: 20px;
+font-weight: 500;
 }
 
 .hardware-label {
 color: #93a55b !important;
 font-family:monospace;
-font-size: 18px;
+font-weight: 500;
+font-size: 20px;
 }
 
 /* 1. Make all toolbox labels white by default for the dark theme */
 .neopixel-label {
     color: #ff9800 !important;
-    font-size: 18px;
+    font-size: 20px;
     font-family:monospace !important;
-    font-weight: 100;
+    font-weight: 500;
 }
 
 /* 1. Make all toolbox labels white by default for the dark theme */
 .servo-label {
     color: #73c535 !important;
-    font-size: 18px;
+    font-size: 20px;
     font-family:monospace !important;
-    font-weight: 100;
+    font-weight: 500;
 }
-
-/* .customIconControls{
-color: #00D1FF;
-} */
 
 /* Make the highlighted block pop in Edusharks Green */
 .blocklyHighlighted > .blocklyPath {
@@ -1358,10 +1368,6 @@ color: #00D1FF;
     justify-content: center;
     height: 30px;
     align-content: center;
-    /* margin-top: 5px; */
-    /* margin-bottom: 5px; */
-    /* border-top: 2px solid #00a4a6;
-    border-bottom: 2px solid #00a4a6; */
 }
 
 #sim-panel-header {
@@ -1372,8 +1378,7 @@ color: #00D1FF;
     /* margin-bottom: 15px; */
     letter-spacing: 2px;
     text-align: center;
-    text-transform: uppercase;
-    
+    text-transform: uppercase;    
 }
 
 /* When the CATEGORY is hovered or selected */
@@ -1384,15 +1389,6 @@ color: #00D1FF;
     transform: scale(0.96);
     border-radius: 8px;
 }
-
-/* When the CATEGORY is hovered or selected */
-/* .blocklyToolboxCategory:hover [class$="-label"] ,
-.blocklyToolboxCategory.blocklyTreeSelected [class$="-label"]{ */
-    /* Flip the icon to white */
-    /* color: #ffffff !important;
-} */
-
-
 
 [class^="customIcon"] {
     /* 1. Remove the old background-image if it exists */
@@ -1407,7 +1403,7 @@ color: #00D1FF;
     mask-position: center;
 
     /* 3. The 'Icon Color' is actually the background-color now */
-    background-color: var(--category-hover-color);
+    background-color:var(--category-hover-color); 
     
     display: inline-block;
     width: 24px;
@@ -1427,7 +1423,6 @@ color: #00D1FF;
       padding-right: 5px;
       /* margin-left: 5px; */
       margin-right: 3px;
-
 }
 
 /* OLED Style */
@@ -1577,3 +1572,206 @@ input#toolbox-search-input {
 }
 
 
+/* Styling the grid as a physical chip */
+/* .blocklyGridDropdownMenu {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    column-gap: 60px !important; 
+    background-color: #121212 !important; 
+    padding: 20px !important;
+    border: 3px solid #15D0AC !important;
+    border-radius: 12px !important;
+} */
+
+/* Styling the pins to look like silver headers */
+/* .blocklyGridDropdownMenuItem {
+    width: 110px !important;
+    height: 30px !important;
+    margin-bottom: 4px !important;
+    font-size: 8px !important;
+    background: #252b3d !important;
+    color: #ffffff !important;
+    border: 1px solid #444 !important;
+    text-align: center;
+} */
+
+/* Left side pins border */
+/* .blocklyFieldGrid[style*="--grid-columns: 2"].blocklyGridDropdownMenuItem:nth-child(odd) {
+    border-left: 5px solid #15D0AC !important;
+} */
+
+/* Right side pins border */
+/* .blocklyFieldGrid[style*="--grid-columns: 2"].blocklyGridDropdownMenuItem:nth-child(even) {
+    border-right: 5px solid #15D0AC !important;
+} */
+
+/* 1. Target RST (Row 1, Col 1) */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1),
+
+/* 2. Target Ground Row (Row 14, Both Columns) */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem,
+
+/* 3. Target Power Row (Row 15, Both Columns: VIN & 3V3) */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
+    pointer-events: none !important;
+    background-color: #0d1117 !important;
+    color: #b1c0ce !important;
+    opacity: 0.5;
+    border: 1px solid #222 !important;
+    cursor: default;
+}
+
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1) { 
+    border: 2px solid #2a1f1f !important; /* Ground Alert */
+    background-color: #1a17b9;
+}
+
+/* Color codes for safety labels */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem { 
+    border: 1px solid #cdc6c6 !important; /* Ground Alert */
+}
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem { 
+    border: 1px solid #cdc6c6 !important; /* Power Alert */
+    background-color: #ba3307 !important;
+}
+
+.blocklyDropDownDiv {
+    background-color: #1a1f2e !important; /* Dark blue/black */
+    border: 2px solid #15D0AC !important; /* Your Cyan signature */
+    border-radius: 12px !important;
+}
+
+.blocklyFieldGridItem {
+    /* border-radius: 4px !important; */
+    margin: 0px !important;
+    font-weight:lighter !important;
+    transition: all 0.2s;
+    height: 20px !important; 
+    padding: 0 4px !important;
+    line-height: 20px !important;
+}
+
+
+/* Style for the active/selectable pins */
+.blocklyFieldGridItem:not([style*="pointer-events: none"]) {
+    background-color: #252b3d !important;
+    color: #15D0AC !important;
+}
+
+.blocklyFieldGridItem:hover {
+    background-color: #15D0AC !important;
+    color: #000 !important;
+}
+
+/* Remove the height limit and scrollbar */
+.blocklyDropDownContent {
+    max-height: none !important; 
+    overflow-y: visible !important;
+}
+
+/* Ensure the grid doesn't have internal scrolling */
+.blocklyFieldGrid {
+    overflow: visible !important;
+    height: auto !important;
+}
+
+/* Optional: Tighten the row spacing to save vertical space */
+.blocklyFieldGridRow {
+    margin-bottom: 1px !important;
+}
+
+/* Styling for the 1-column 'State' grid */
+.blocklyFieldGrid[style*="--grid-columns: 1"] {
+    gap: 8px !important;
+    padding: 10px !important;
+}
+
+.blocklyFieldGrid[style*="--grid-columns: 1"] .blocklyFieldGridItem {
+    width: 80px !important; /* Make it wide and easy to click */
+    height: 24px !important;
+    font-size: 14px !important;
+    /* border-left: 5px solid #15D0AC !important; Shark Cyan accent */
+}
+
+/* Target only the 2-column Pin Grid container */
+.blocklyFieldGrid[style*="--grid-columns: 2"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    
+    /* This creates the space between the columns */
+    column-gap: 120px !important; 
+    
+    /* Adds some breathing room inside the dropdown */
+    padding: 15px !important;
+    
+    /* Optional: Center the grid in the dropdown div */
+    justify-items: center !important;
+
+}
+
+/* Optional: Make the buttons a bit wider to fill the space nicely */
+.blocklyFieldGrid[style*="--grid-columns: 2"] .blocklyFieldGridItem {
+    width: 30px !important;
+    border-radius: 24px !important;
+    height: 30px !important;
+    font-family: monospace !important;
+    font-size: small !important;
+}
+
+.blocklyFieldGrid[style*="--grid-columns: 2"]::after {
+    content: "ESP32";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: rgba(21, 208, 172, 0.1); /* Very faint Shark Cyan */
+    letter-spacing: 5px;
+    pointer-events: none;
+}
+
+
+/* 1. Target only the 30-pin ESP32 Grid (2 columns) */
+/* We look for any grid where the columns variable contains '2' */
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1),
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem,
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
+    pointer-events: none !important; /* Disables clicking */
+    /* background-color: #0d1117 !important;  */
+    color: #b6bec7 !important; /* Ghostly gray text */
+    opacity: 0.6;
+    border: 1px solid #222 !important;
+    cursor: default;
+}
+
+/* 2. Reinforce the Safety Borders (Visual Cues) */
+/* Ground Row (Red) */
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem {
+    /* border-top: 2px solid #ff4444 !important; */
+    background-color: #2e2b2b !important;
+}
+
+/* Power Row (Orange/Yellow) */
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
+    /* border-top: 2px solid #ff9900 !important; */
+    color: #fffdfd !important;
+    background-color:#ea3c02 !important;
+}
+
+/* 3. Keep your column gap active */
+.blocklyFieldGrid[style*="2"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    column-gap: 100px !important;
+    padding: 5px !important;
+}
+
+/* The Nuclear Option: Target by text content if all else fails */
+button.blocklyFieldGridItem[aria-label*="RST"],
+button.blocklyFieldGridItem[aria-label*="GND"],
+button.blocklyFieldGridItem[aria-label*="VIN"],
+button.blocklyFieldGridItem[aria-label*="3V3"] {
+    pointer-events: none !important;
+    opacity: 0.5;
+}

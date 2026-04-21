@@ -10,7 +10,6 @@
 .blocklyToolboxCategoryGroup {
   padding-right: 0px;
   padding-left:0px;
-
 } 
 
 /* 1. Reset the background even if the mouse is over it */
@@ -28,7 +27,6 @@
   cursor: default !important;
   line-height: 30px !important;
 }
-
 
 /* 2. Ensure the text doesn't change color on hover */
 .edusharks-header-row:hover .blocklyTreeLabel {
@@ -66,7 +64,6 @@
     display:none !important;
 }
 
-
 /* 3. Adjust the Icon (Remove side margin, add bottom margin) */
 .blocklyTreeRowContentContainer :not(.edusharks-header-row) span[role="presentation"] {
     padding: 0 !important;
@@ -83,7 +80,6 @@
     padding-left: 15px;    
 }   
 
-
 /* 1. The Parent "Advanced" Row */
 .advanced-parent-row {    
     border-left: 0px solid #995ba5 !important; /* Purple accent for 'Advanced' */
@@ -91,12 +87,6 @@
     font-family:monospace !important;
     color: thistle;
 }
-
-/* 4. Hover effect for the Advanced group */
-.advanced-parent-row:hover {
-    background-color: #28292b !important;
-}
-
 
 /* Hide the expansion arrow in vertical mode to keep it clean */
 .toolbox-vertical .advanced-parent-row .blocklyTreeIcon {
@@ -109,14 +99,10 @@
     justify-content: center !important;
 }
 
-
 /* ONLY the Advanced parent row flips */
 .advanced-parent-row .blocklyTreeRowContentContainer {
     display:flex !important;
     flex-direction: row !important; /*Swap icon and text */
-    /* align-items:center !important; */
-    /* width: 100% !important; */
-    /* box-sizing: border-box !important; CRITICAL: Includes padding in the width */
     padding-right: 10px !important; /* Keeps icon away from the very edge */
     padding-left: 10px !important;
 }
@@ -150,11 +136,6 @@
     flex-shrink: 0 !important; /* Prevents the icon from being squashed */
 }
 
-/* .blocklyTreeRow:hover {
-    background-color: var(--category-hover-color) !important;
-    color: #ffffff !important;
-} */
-
 .advanced-parent-row .blocklyTreeRowContentContainer .customIconAdvanced.blocklyToolboxCategoryIconOpen {
     background-position: 0px 0px !important;
     padding-left: 0px !important;
@@ -165,8 +146,7 @@
 .advanced-parent-row .blocklyTreeRowContentContainer .customIconAdvanced.blocklyToolboxCategoryIconClosed {
     background-position: 0px 0px !important;
     padding-left: 0px !important;
-    margin-left: 15px !important;
-    
+    margin-left: 15px !important;    
 }
 
 .edusharks-header-row .blocklyTreeRowContentContainer {
@@ -174,21 +154,14 @@
     padding-left: 0px !important;
 }
 
-
 /* 2. Target the ICON inside the hovered category */
 .blocklyToolboxCategoryContainer:hover {
     background-color: var(--category-hover-color) !important;
 }
 
-
 /* 2. Target the ICON inside the hovered category */
 .blocklyTreeRow:hover {
     background-color: var(--category-hover-color) !important;
-}
-
-/* 3. Target the LABEL inside the hovered category */
-.blocklyTreeRow:hover [class$="-label"] {
-    color: white !important;
 }
 
 /* 3. Target the LABEL inside the hovered category */
@@ -204,7 +177,7 @@
 }
 
 /* 2. Target the ICON inside the hovered category */
-.blocklyTreeRow:hover [class^="customIcon"] {
+.blocklyTreeRow :hover [class^="customIcon"] {
     background-color: white !important;
 }
 
@@ -213,14 +186,12 @@
     background-color: white !important;
 }
 
-
 /* Base Label Style (Idle) */
 [class$="-label"] {
     /* Inherits color or uses the variable */
     color: var(--category-hover-color);
     transition: color 0.2s ease;
 }
-
 
 .blocklyToolboxCategory:hover {
     cursor: pointer;
@@ -231,7 +202,6 @@
     background-color: 'white' !important;
 }
 
-
 /* 1. Set the anchor point to the left so the 12px border stays still */
 .blocklyTreeRowContentContainer {
     transform-origin: left center; /* Shrinks towards the left edge */
@@ -241,7 +211,13 @@
 /* 2. Shrink the content on Hover or Selection */
 .blocklyToolboxCategory:hover .blocklyTreeRowContentContainer,
 .blocklyTreeRow.blocklyTreeSelected:not(#toolbox-search-input) .blocklyTreeRowContentContainer {
-    transform: scale(1.15); /* Adjust this value: 0.90 is a deep shrink, 0.95 is subtle */
+    transform: scale(1.10); /* Adjust this value: 0.90 is a deep shrink, 0.95 is subtle */
+}
+
+/* 2. Shrink the content on Hover or Selection */
+.extension-cat-container:hover .blocklyTreeRowContentContainer,
+.blocklyTreeRow.blocklyTreeSelected .blocklyTreeRowContentContainer {
+    transform: scale(1.10); /* Adjust this value: 0.90 is a deep shrink, 0.95 is subtle */
 }
 
 /* 2. Explicitly lock the search area to scale 1.0 just to be safe */
@@ -251,7 +227,7 @@
 
 /* 3. Optional: Add a "Press" effect when the user actually clicks */
 .blocklyToolboxCategory:active .blocklyTreeRowContentContainer {
-    transform: scale(1.15); /* Shrinks a bit more on click */
+    transform: scale(1.10); /* Enlarge a bit more on click */
 }
 
 /* THE "EDUSHARKS" UNIVERSAL ICON/LABEL STATE */
@@ -265,3 +241,6 @@
     color: #ffffff !important; /* Force Label White */
 }
 
+.advanced-category-container .blocklyToolboxCategory{
+    padding-left: 8px !important;
+}
