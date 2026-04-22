@@ -9,6 +9,27 @@ let debugInterval = null;
 let activeExtensions = [];
 
 
+
+
+const ESP32_PIN_DETAILS = {
+    'EN': 'Hardware Reset. Pull to GND to restart the chip.',
+    '36': 'ADC1_CH0. Input only. Great for Analog sensors.',
+    '39': 'ADC1_CH3. Input only. Low noise Analog input.',
+    '34': 'Input only pin. No internal pull-up resistor.',
+    '35': 'Input only pin. No internal pull-up resistor.',
+    '32': 'ADC1_CH4. Capacitive Touch 9. Supports PWM.',
+    '33': 'ADC1_CH5. Capacitive Touch 8. Supports PWM.',
+    '25': 'DAC1. Digital-to-Analog Converter. Supports PWM.',
+    '1': 'TX0 (Transmit). Used for Serial Debugging. Using this may cause LED flickering during code upload.',
+    '3': 'RX0 (Receive). Used for Programming. Connecting sensors here may block you from uploading new code!',
+    '2':  'Built-in Blue LED. ADC2_CH2. Touch 2.',
+    'GND': 'Ground. Connect to the negative side of your circuit.',
+    'VIN': 'Voltage Input. 5V from USB or 3.3V-12V external.',
+    '3V3': '3.3V Power Output. Max 600mA limit.',
+};
+
+
+
 // 1. DEFINE THE BLOCKLY THEME - DARK THEME (Zelos Theme) - You can customize these colors as you like!
 
   const DarkTheme = Blockly.Theme.defineTheme('dark_theme', {
@@ -665,6 +686,8 @@ resizer.addEventListener('mousedown', (e) => {
     });
 });
 
+
+
 function handleMouseMove(e) {
     const newHeight = window.innerHeight - e.clientY - 35; // 35 is footer height
 
@@ -700,7 +723,8 @@ document.getElementById('console-input').addEventListener('keypress', (e) => {
 });
 
 
-// This function toggles between "Debug Mode" (blocks only) and "Action Mode" (blocks + code). In Debug Mode, the toolbox is hidden to encourage block-based thinking, while in Action Mode, the toolbox is visible for easy access to blocks. The workspace is resized accordingly to fill the available space.
+
+// This function toggles between "Debug Mode" (blocks only) and "Action Mode" (blocks + code). 
 
 function toggleMode() {
     const isDebug = document.getElementById('modeToggle').checked;
@@ -796,7 +820,7 @@ function updateSimulation() {
 workspace.addChangeListener(updateSimulation);
 
 
-// This function toggles the code overlay, which shows the generated Python code in a CodeMirror editor. It also adjusts the workspace opacity and button position for better UX.
+/******  A FUNCTION THAT OPERATES THE "python-edge-btn" THAT TOGGELS MICRO-PYTHON CODE EDITOR ******/
 
 function toggleCodeOverlay() {
     const container = document.getElementById('overlay-editor-container');
@@ -827,6 +851,7 @@ function toggleCodeOverlay() {
 }
 
 // A function to display a message while the console button is clicked to open the terminal output and ESP32 is not connected
+
 function displayIdleMessage() {
     const term = document.getElementById('terminalOutput');
     if (!term) return;
@@ -856,7 +881,7 @@ async function sendHardwareCommand(command) {
 }
 
 
-// This function sends a Ctrl+C signal to the ESP32 to stop any currently running code. It sends it twice to ensure that if the user is stuck in a nested loop, it will break out of both levels. Error handling is included to catch any issues during the stop process.
+/**************  RUN MICROPYTHON CODE ON THE ESP32 RAM. WILL RUN TILL THE ESP32 IS POWERED  *************/
 
 async function runCode() {
     Blockly.Python.STATEMENT_PREFIX = null;
@@ -904,6 +929,9 @@ async function stopESP32() {
         console.error("Stop failed:", e);
     }
 }
+
+
+/*********************         FLASH MICRO-PYTHON CODE ON TO THE ESP32    **********************/
 
 async function flashCode() {
     if (!port || !port.writable) {
@@ -979,7 +1007,6 @@ function handleConnectionClick() {
         connectESP32();
     }
 }
-
 
 function updateConnectionUI(isConnected) {
     const btn = document.getElementById('connectBtn1');
@@ -1592,3 +1619,153 @@ function isWorkspaceEmpty() {
 
     return !hasUserCode;
 }
+
+
+// 1. Create the popup element once when the app starts
+const createHoverPopup = () => {
+    if (document.getElementById('pin-hover-popup')) return;
+    const popup = document.createElement('div');
+    popup.id = 'pin-hover-popup';
+    document.body.appendChild(popup);
+};
+
+
+// EVENT LISTNER - MOUSE MOVE TRACKING FOR POP UP INSIDE PIN SELECTOR DROPDPWN GRID
+
+let hoverTimeout; // Variable to hold our timer
+const HOVER_DELAY = 100; // 500ms (half a second) - Adjust this as you like!
+
+document.addEventListener('mousemove', (e) => {
+
+//     if (item.classList.contains('pin-in-use')) {
+//     popup.innerHTML = `
+//         <div class="popup-header" style="color: #ff4d4d;">⚠️ PIN IN USE</div>
+//         <div class="popup-body">This pin is already connected to another block. Please disconnect that block first.</div>
+//     `;
+//     return; // Stop here so it doesn't show the normal info
+// }
+
+
+    const popup = document.getElementById('pin-hover-popup');
+    const dropDownDiv = document.querySelector('.blocklyDropDownDiv');
+
+    // If the popup doesn't exist, info is toggled off, OR the dropdown is closed...
+    if (!popup || !dropDownDiv) {
+        if (popup) popup.style.display = 'none';
+        clearTimeout(hoverTimeout);
+        return;
+    }
+
+    const item = e.target.closest('.blocklyFieldGridItem');
+    
+    if (item) {
+
+        if (popup.style.display === 'block') {
+            updatePopupPosition(e, popup, dropDownDiv);
+            return;
+        }
+
+        // Clear any existing timer so we don't get multiple popups
+        clearTimeout(hoverTimeout);
+
+        // Start a new timer
+        hoverTimeout = setTimeout(() => {
+            const pinLabel = item.innerText;
+            const pinValue = pinLabel.replace(/\D/g, "");
+            const systemKey = pinLabel.includes("GND") ? "GND" : 
+                              pinLabel.includes("VIN") ? "VIN" : 
+                              pinLabel.includes("3V3") ? "3V3" : 
+                              pinLabel.includes("RST") || pinLabel.includes("EN") ? "EN" : 
+                              pinValue;
+
+            const info = ESP32_PIN_DETAILS[systemKey] || `Standard GPIO Pin ${pinValue}`;
+            
+            popup.innerHTML = `
+                <div class="popup-header">${pinLabel}</div>
+                <div class="popup-body">${info}</div>
+            `;
+            
+            popup.style.display = 'block';
+            // popup.dataset.currentPin = pinLabel; // Mark which pin we are showing
+
+            updatePopupPosition(e, popup, dropDownDiv);
+
+        }, HOVER_DELAY);
+    } 
+    
+    else {
+        // We aren't over a pin at all - Hide and Clear
+        clearTimeout(hoverTimeout);
+        popup.style.display = 'none';        
+    }
+});
+
+/**
+ * Calculates whether to show the popup on the left or right of the cursor
+ */
+function updatePopupPosition(e, popup, dropDownDiv) {
+    const dropDownRect = dropDownDiv.getBoundingClientRect();
+    const popupRect = popup.getBoundingClientRect();
+    
+    // Find the horizontal center of the dropdown grid
+    const dropDownCenter = dropDownRect.left + (dropDownRect.width / 2);
+
+    let finalLeft;
+
+    if (e.clientX > dropDownCenter) {
+        // --- RIGHT SIDE PINS: Show popup on the LEFT ---
+        // Mouse X - Popup Width - Gap
+        finalLeft = e.clientX - popupRect.width - 20;
+    } else {
+        // --- LEFT SIDE PINS: Show popup on the RIGHT ---
+        // Mouse X + Gap
+        finalLeft = e.clientX + 20;
+    }
+
+    popup.style.left = finalLeft + 'px';
+    popup.style.top = (e.clientY + 10) + 'px';
+}
+
+
+// Run the creation on startup
+createHoverPopup();
+
+
+// 1. Capture the original Blockly hide function
+const originalBlocklyHide = Blockly.DropDownDiv.hide;
+
+// 2. Create our own version that hides the popup too
+Blockly.DropDownDiv.hide = function() {
+    // Call the original function so Blockly still works perfectly
+    originalBlocklyHide.apply(this, arguments);
+
+    // Shark Cleanup: Find the popup and hide it immediately
+    const popup = document.getElementById('pin-hover-popup');
+    if (popup) {
+        popup.style.display = 'none';
+        popup.dataset.currentPin = ""; // Reset the tracker
+    }
+
+    // Crucial: Clear the timer so a popup doesn't "ghost" in 
+    // half a second after the menu is already gone!
+    if (typeof hoverTimeout !== 'undefined') {
+        clearTimeout(hoverTimeout);
+    }
+};
+
+document.addEventListener('mousedown', (e) => {
+
+    // If the click happened on the resizer, do nothing and exit
+    
+    if (e.target.id === 'resizer' || e.target.closest('#resizer')) {
+        return;
+    }
+
+    if (e.target.closest('.blocklyFieldGridItem')) {
+        const popup = document.getElementById('pin-hover-popup');
+        if (popup) popup.style.display = 'none';
+        clearTimeout(hoverTimeout);
+    }
+});
+
+

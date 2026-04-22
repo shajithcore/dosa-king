@@ -1,0 +1,251 @@
+/* 1. Target RST (Row 1, Col 1) */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1),
+
+/* 2. Target Ground Row (Row 14, Both Columns) */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem,
+
+/* 3. Target Power Row (Row 15, Both Columns: VIN & 3V3) */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
+    pointer-events: none !important;
+    background-color: #0d1117 !important;
+    color: #b1c0ce !important;
+    opacity: 0.5;
+    border: 1px solid #222 !important;
+    cursor: default;
+}
+
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1) { 
+    border: 2px solid #2a1f1f !important; /* Ground Alert */
+    background-color: #1a17b9;
+}
+
+/* Color codes for safety labels */
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem { 
+    border: 1px solid #cdc6c6 !important; /* Ground Alert */
+}
+.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem { 
+    border: 1px solid #cdc6c6 !important; /* Power Alert */
+    background-color: #ba3307 !important;
+}
+
+.blocklyDropDownDiv {
+    background-color: #1a1f2e !important; /* Dark blue/black */
+    border: 2px solid #15D0AC !important; /* Your Cyan signature */
+    border-radius: 12px !important;
+    /* z-index: 90 !important; */
+    margin-top: 5px;
+}
+
+.blocklyFieldGridItem {
+    /* border-radius: 4px !important; */
+    margin: 0px !important;
+    font-weight:lighter !important;
+    transition: all 0.2s;
+    height: 24px !important; 
+    padding: 0 2px !important;
+    line-height: 12px !important;
+}
+
+
+/* Style for the active/selectable pins */
+.blocklyFieldGridItem:not([style*="pointer-events: none"]) {
+    background-color: #252b3d !important;
+    color: #15D0AC !important;
+}
+
+.blocklyFieldGridItem:hover {
+    background-color: #15D0AC !important;
+    color: #000 !important;
+}
+
+/* Remove the height limit and scrollbar */
+.blocklyDropDownContent {
+    overflow-y:visible !important;
+    display: flex;
+    flex-direction: column;
+    max-height: none !important;
+}
+
+/* Ensure the grid doesn't have internal scrolling */
+.blocklyFieldGrid {
+    overflow: visible !important;
+    height: auto !important;
+    padding-bottom: 20px !important;
+}
+
+/* Optional: Tighten the row spacing to save vertical space */
+.blocklyFieldGridRow {
+    margin-bottom: 0px !important;
+}
+
+/* Styling for the 1-column 'State' grid */
+.blocklyFieldGrid[style*="--grid-columns: 1"] {
+    gap: 8px !important;
+    padding: 10px !important;
+}
+
+.blocklyFieldGrid[style*="--grid-columns: 1"] .blocklyFieldGridItem {
+    width: 80px !important; /* Make it wide and easy to click */
+    height: 24px !important;
+    font-size: 10px !important;
+    /* border-left: 5px solid #15D0AC !important; Shark Cyan accent */
+}
+
+/* Target only the 2-column Pin Grid container */
+.blocklyFieldGrid[style*="--grid-columns: 2"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    
+    /* This creates the space between the columns */
+    column-gap: 120px !important; 
+    
+    /* Adds some breathing room inside the dropdown */
+    padding: 5px !important;
+    
+    /* Optional: Center the grid in the dropdown div */
+    justify-items: center !important;
+
+}
+
+/* Optional: Make the buttons a bit wider to fill the space nicely */
+.blocklyFieldGrid[style*="--grid-columns: 2"] .blocklyFieldGridItem {
+    width: 24px !important;
+    border-radius: 12px !important;
+    height: 24px !important;
+    font-family: monospace !important;
+    font-size: 10px !important;
+    border-width: 1.5px;
+    border-color:#343433;
+}
+
+.blocklyFieldGrid[style*="--grid-columns: 2"]::after {
+    content: "ESP32-WROOM";
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 140px;               /* Fits inside your 50px gap */
+    height: 140px;               /* Stretches vertically across the rows */
+    background: #2c292986;       /* Dark Silicon Black */
+    border: 2px solid #333;    /* Subtle metallic border */
+    border-radius: 6px;        /* Slightly rounded corners */
+    display: flex;
+    align-items: center;
+    font-family: sans-serif;
+    justify-content: center;
+    /* writing-mode: vertical-lr;  */
+    text-orientation: upright;
+    font-size: 10px;
+    font-weight:lighter;
+    color: rgba(219, 219, 219, 0.442); /* Very faint Shark Cyan */
+    letter-spacing: 0px;
+    pointer-events: none;
+
+    /* PLACEMENT */
+    z-index: -1;               /* Sits BEHIND the buttons */
+    pointer-events: none;      /* Click 'through' it to select pins */
+
+}
+
+.popup-header {
+font-weight:bold;
+}
+
+
+/* 1. Target only the 30-pin ESP32 Grid (2 columns) */
+/* We look for any grid where the columns variable contains '2' */
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1),
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem,
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
+    pointer-events:none !important; /* Disables clicking */
+    /* background-color: #0d1117 !important;  */
+    color: #b6bec7 !important; /* Ghostly gray text */
+    opacity: 0.6;
+    cursor:not-allowed !important;    
+}
+
+/* 2. Reinforce the Safety Borders (Visual Cues) */
+/* Ground Row (Red) */
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem {
+    border-width: 1px;
+    border-color: #343433 !important;
+    background-color: #2e2b2b !important;
+}
+
+/* Power Row (Orange/Yellow) */
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
+    border-color: #a0a09d !important;   
+    color: #fffdfd !important;
+    background-color:#ea3c02 !important;    
+}
+
+/* Power Row (Orange/Yellow) */
+.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1) {
+    border-width: 1px !important;
+    border-color: #ff7300 !important;
+    color: #b6bec7 !important;
+    background-color:#286fb0 !important;    
+}
+
+/* 3. Keep your column gap active */
+.blocklyFieldGrid[style*="2"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    column-gap: 180px !important;
+    padding: 5px !important;
+}
+
+/* The Nuclear Option: Target by text content if all else fails */
+button.blocklyFieldGridItem[aria-label*="RST"],
+button.blocklyFieldGridItem[aria-label*="GND"],
+button.blocklyFieldGridItem[aria-label*="VIN"],
+button.blocklyFieldGridItem[aria-label*="3V3"] {
+    pointer-events: none !important;
+    opacity: 0.5;
+}
+
+
+/* --- ANALOG-SPECIFIC LOCK --- */
+/* If the block type is 'pin_analog_read', we lock everything EXCEPT the ADC1 pins */
+/* Safe Pins are Rows 2, 3, 4, 5, 6, 7 in Column 1 */
+[data-type="pin_analog_read"] .blocklyFieldGridRow:not(:nth-child(n+2):nth-child(-n+7)) .blocklyFieldGridItem:nth-child(1),
+[data-type="pin_analog_read"] .blocklyFieldGridItem:nth-child(2) {
+    pointer-events: none !important;
+    opacity: 0.2; /* Make non-analog pins very dim */
+    background: #000 !important;
+}
+
+/* The Floating Info Popup */
+#pin-hover-popup {
+    position: fixed;
+    display: none; /* Hidden by default */
+    background: #0d1117;
+    color: #15D0AC;
+    border: 1px solid #15D0AC;
+    padding: 10px 10px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-family: 'Inter', sans-serif;
+    pointer-events: none; /* Mouse ignores it so it doesn't flicker */
+    z-index: 10000; /* Stays above the Blockly dropdown */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+/* --- THE AUTOMATIC WRAP MAGIC --- */
+    max-width: 70px;       /* Forces wrapping after 200px */
+    width: auto;            /* Shrinks to fit short text */
+    height: auto;           /* Grows vertically as needed */
+    white-space: normal;    /* Allows text to wrap onto new lines */
+    overflow-wrap: break-word; /* Prevents long words from leaking out */
+    line-height: 1.4;       /* Improves readability when text stacks */
+}
+
+
+#pin-hover-popup {
+    /* ... existing styles ... */
+    transition: transform 0.1s ease-out, opacity 0.2s ease;
+    /* Optional: a subtle border glow to make it pop */
+    box-shadow: 0 0 15px rgba(21, 208, 172, 0.2);
+}
+
+
+

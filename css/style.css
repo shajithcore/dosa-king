@@ -1,3 +1,5 @@
+@import url("pins.css");
+
 /* 1. Layout & Containers */
     body { 
         font-family:'Courier New', Courier, monospace;
@@ -55,6 +57,11 @@
       background-color: #c82333;
     }
 
+    #fs-icon {
+        background-image: url("assets/icons/full-screenIcon.svg");
+        height: 24px;
+        width: 24px;
+    }
 
     #editorContainer { 
         width: 400px; /* Default width when open */
@@ -77,7 +84,6 @@
     }
 
     .main-layout {
-
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -187,6 +193,11 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 } 
+
+
+/******************************************************************************************/
+                              /* STYLING FOR TOOLBOX CATEGORY ICON */
+/******************************************************************************************/
 
 .customIconControls
     { 
@@ -322,6 +333,31 @@
       margin-left: 5px;
     }
 
+/* NeoPixel Style */
+.customIconNeoPixel {
+
+      background-image: url('/assets/icons/neopixel-icon.svg');  
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 24px;
+      height: 24px;
+      /* padding-left:5px; */
+      padding-right: 5px;
+      /* margin-left: 5px; */
+      margin-right: 3px;
+}
+
+/* OLED Style */
+.customIconOLED {
+      mask: url('assets/icons/oled.svg') no-repeat center;
+      -webkit-mask: url('assets/icons/oled.svg') no-repeat center;
+      background-color: #00acc1; /* Cyan theme */
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+}
+
+
     /* Typo Fixes & Global Class application */
 .customIconControls, .customIconHardware, .customIconLogic, .customIconLoops, .customIconMath, .customIconSensors, .customIconVariables, .customIconFunctions, .customIconText, .customIconLists, .customIconExtensions, .customIconAdvanced {
       display:inline-block;
@@ -330,10 +366,16 @@
       background-repeat: no-repeat;
     }
 
+
+/************************************ END OF TOOLBOX CATEGORY ICON STYLING   ************************/
+
+
 .ide-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
+      /* z-index: 100 ; */
       background-color: #c4d447; /* Matches your dark theme */
       background: linear-gradient(
         180deg, 
@@ -386,7 +428,6 @@
     color: white; 
     }
 
-
   .action-btn {
     border: none;
     padding: 8px 14px;
@@ -418,13 +459,13 @@
     background-color: rgba(0,0,0,0.1) !important;
     color: rgba(0,0,0,0.3) !important;
     cursor: not-allowed;
-}
-  
+}  
 
   #fullscreenBtn {
-    background: transparent;
-    border: 1px solid rgb(228, 128, 128);
-    color: rgb(228, 128, 128);
+    /* background: transparent; */
+    background-image: url("assets/icons/full-screenIcon.svg");
+    border: 2px solid rgb(24, 24, 23);
+    color: rgb(255, 255, 255);
     padding: 5px 12px;
     border-radius: 4px;
     cursor: pointer;
@@ -433,7 +474,7 @@
     }
 
   #fullscreenBtn:hover {
-    background: rgb(228, 128, 128);
+    background: rgb(84, 84, 78);
     color: #e9e7d9; /* Inverts colors on hover */
   }
 
@@ -1137,6 +1178,10 @@ input:checked + .slider:before {
     padding: 0 10px;
 }
 
+/*************************************************************/
+/* TOOL BOX LABEL STYLES */
+/************************************************************/
+
 .advanced-label {
 color: #ffffff;
 font-family:monospace;
@@ -1215,7 +1260,7 @@ font-weight: 500;
 font-size: 20px;
 }
 
-/* 1. Make all toolbox labels white by default for the dark theme */
+/* LABEL FOR NEO-PIXEL EXTENSION */
 .neopixel-label {
     color: #ff9800 !important;
     font-size: 20px;
@@ -1223,13 +1268,17 @@ font-size: 20px;
     font-weight: 500;
 }
 
-/* 1. Make all toolbox labels white by default for the dark theme */
+/* LABEL FOR SERVO EXTENSION */
 .servo-label {
     color: #73c535 !important;
     font-size: 20px;
     font-family:monospace !important;
     font-weight: 500;
 }
+
+/***********************************  END OF TOOLBOX LABEL  **************************************************/
+
+
 
 /* Make the highlighted block pop in Edusharks Green */
 .blocklyHighlighted > .blocklyPath {
@@ -1260,6 +1309,8 @@ font-size: 20px;
     border-radius: 20px;
     margin: 0 10px;
 }
+
+
 
 #edusharks-toast-container {
     position:fixed;
@@ -1381,6 +1432,8 @@ font-size: 20px;
     text-transform: uppercase;    
 }
 
+
+
 /* When the CATEGORY is hovered or selected */
 .blocklyToolboxCategory:hover [class^="customIcon"] ,
 .blocklyToolboxCategory.blocklyTreeSelected [class^="customIcon"]{
@@ -1403,36 +1456,10 @@ font-size: 20px;
     mask-position: center;
 
     /* 3. The 'Icon Color' is actually the background-color now */
-    background-color:var(--category-hover-color); 
-    
+    background-color:var(--category-hover-color);     
     display: inline-block;
     width: 24px;
     height: 24px;
-}
-
-
-/* NeoPixel Style */
-.customIconNeoPixel {
-
-      background-image: url('/assets/icons/neopixel-icon.svg');  
-      background-size: contain;
-      background-repeat: no-repeat;
-      width: 24px;
-      height: 24px;
-      /* padding-left:5px; */
-      padding-right: 5px;
-      /* margin-left: 5px; */
-      margin-right: 3px;
-}
-
-/* OLED Style */
-.customIconOLED {
-    mask: url('assets/icons/oled.svg') no-repeat center;
-    -webkit-mask: url('assets/icons/oled.svg') no-repeat center;
-    background-color: #00acc1; /* Cyan theme */
-    width: 24px;
-    height: 24px;
-    display: inline-block;
 }
 
 /* Ensure the layout matches your native categories */
@@ -1514,8 +1541,7 @@ font-size: 20px;
 
 /* Optional: Make the toolbox category font match */
 .blocklyTreeLabel {
-    font-family: 'JetBrains Mono', monospace !important;
-    
+    font-family: 'JetBrains Mono', monospace !important;    
 }
 
 .blocklyText {
@@ -1533,7 +1559,6 @@ font-size: 20px;
     padding-left: 8px !important; 
 }
 
-
 /* 1. Target the row container to give it more height */
  .blocklyToolboxCategoryContainer #toolbox-search-input.blocklyToolboxCategory {
     height: 50px !important; 
@@ -1550,7 +1575,6 @@ font-size: 20px;
     width: 100% !important;
     height: 100% !important;     
  }
-
 
 /* 3. Style the actual input for better height and line-height */
 input#toolbox-search-input {
@@ -1571,207 +1595,3 @@ input#toolbox-search-input {
     outline: none !important;
 }
 
-
-/* Styling the grid as a physical chip */
-/* .blocklyGridDropdownMenu {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    column-gap: 60px !important; 
-    background-color: #121212 !important; 
-    padding: 20px !important;
-    border: 3px solid #15D0AC !important;
-    border-radius: 12px !important;
-} */
-
-/* Styling the pins to look like silver headers */
-/* .blocklyGridDropdownMenuItem {
-    width: 110px !important;
-    height: 30px !important;
-    margin-bottom: 4px !important;
-    font-size: 8px !important;
-    background: #252b3d !important;
-    color: #ffffff !important;
-    border: 1px solid #444 !important;
-    text-align: center;
-} */
-
-/* Left side pins border */
-/* .blocklyFieldGrid[style*="--grid-columns: 2"].blocklyGridDropdownMenuItem:nth-child(odd) {
-    border-left: 5px solid #15D0AC !important;
-} */
-
-/* Right side pins border */
-/* .blocklyFieldGrid[style*="--grid-columns: 2"].blocklyGridDropdownMenuItem:nth-child(even) {
-    border-right: 5px solid #15D0AC !important;
-} */
-
-/* 1. Target RST (Row 1, Col 1) */
-.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1),
-
-/* 2. Target Ground Row (Row 14, Both Columns) */
-.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem,
-
-/* 3. Target Power Row (Row 15, Both Columns: VIN & 3V3) */
-.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
-    pointer-events: none !important;
-    background-color: #0d1117 !important;
-    color: #b1c0ce !important;
-    opacity: 0.5;
-    border: 1px solid #222 !important;
-    cursor: default;
-}
-
-.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1) { 
-    border: 2px solid #2a1f1f !important; /* Ground Alert */
-    background-color: #1a17b9;
-}
-
-/* Color codes for safety labels */
-.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem { 
-    border: 1px solid #cdc6c6 !important; /* Ground Alert */
-}
-.blocklyFieldGrid[style*="--grid-columns: 2"].blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem { 
-    border: 1px solid #cdc6c6 !important; /* Power Alert */
-    background-color: #ba3307 !important;
-}
-
-.blocklyDropDownDiv {
-    background-color: #1a1f2e !important; /* Dark blue/black */
-    border: 2px solid #15D0AC !important; /* Your Cyan signature */
-    border-radius: 12px !important;
-}
-
-.blocklyFieldGridItem {
-    /* border-radius: 4px !important; */
-    margin: 0px !important;
-    font-weight:lighter !important;
-    transition: all 0.2s;
-    height: 20px !important; 
-    padding: 0 4px !important;
-    line-height: 20px !important;
-}
-
-
-/* Style for the active/selectable pins */
-.blocklyFieldGridItem:not([style*="pointer-events: none"]) {
-    background-color: #252b3d !important;
-    color: #15D0AC !important;
-}
-
-.blocklyFieldGridItem:hover {
-    background-color: #15D0AC !important;
-    color: #000 !important;
-}
-
-/* Remove the height limit and scrollbar */
-.blocklyDropDownContent {
-    max-height: none !important; 
-    overflow-y: visible !important;
-}
-
-/* Ensure the grid doesn't have internal scrolling */
-.blocklyFieldGrid {
-    overflow: visible !important;
-    height: auto !important;
-}
-
-/* Optional: Tighten the row spacing to save vertical space */
-.blocklyFieldGridRow {
-    margin-bottom: 1px !important;
-}
-
-/* Styling for the 1-column 'State' grid */
-.blocklyFieldGrid[style*="--grid-columns: 1"] {
-    gap: 8px !important;
-    padding: 10px !important;
-}
-
-.blocklyFieldGrid[style*="--grid-columns: 1"] .blocklyFieldGridItem {
-    width: 80px !important; /* Make it wide and easy to click */
-    height: 24px !important;
-    font-size: 14px !important;
-    /* border-left: 5px solid #15D0AC !important; Shark Cyan accent */
-}
-
-/* Target only the 2-column Pin Grid container */
-.blocklyFieldGrid[style*="--grid-columns: 2"] {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    
-    /* This creates the space between the columns */
-    column-gap: 120px !important; 
-    
-    /* Adds some breathing room inside the dropdown */
-    padding: 15px !important;
-    
-    /* Optional: Center the grid in the dropdown div */
-    justify-items: center !important;
-
-}
-
-/* Optional: Make the buttons a bit wider to fill the space nicely */
-.blocklyFieldGrid[style*="--grid-columns: 2"] .blocklyFieldGridItem {
-    width: 30px !important;
-    border-radius: 24px !important;
-    height: 30px !important;
-    font-family: monospace !important;
-    font-size: small !important;
-}
-
-.blocklyFieldGrid[style*="--grid-columns: 2"]::after {
-    content: "ESP32";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    font-weight: bold;
-    color: rgba(21, 208, 172, 0.1); /* Very faint Shark Cyan */
-    letter-spacing: 5px;
-    pointer-events: none;
-}
-
-
-/* 1. Target only the 30-pin ESP32 Grid (2 columns) */
-/* We look for any grid where the columns variable contains '2' */
-.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(1) .blocklyFieldGridItem:nth-child(1),
-.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem,
-.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
-    pointer-events: none !important; /* Disables clicking */
-    /* background-color: #0d1117 !important;  */
-    color: #b6bec7 !important; /* Ghostly gray text */
-    opacity: 0.6;
-    border: 1px solid #222 !important;
-    cursor: default;
-}
-
-/* 2. Reinforce the Safety Borders (Visual Cues) */
-/* Ground Row (Red) */
-.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(14) .blocklyFieldGridItem {
-    /* border-top: 2px solid #ff4444 !important; */
-    background-color: #2e2b2b !important;
-}
-
-/* Power Row (Orange/Yellow) */
-.blocklyFieldGrid[style*="2"] .blocklyFieldGridRow:nth-child(15) .blocklyFieldGridItem {
-    /* border-top: 2px solid #ff9900 !important; */
-    color: #fffdfd !important;
-    background-color:#ea3c02 !important;
-}
-
-/* 3. Keep your column gap active */
-.blocklyFieldGrid[style*="2"] {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    column-gap: 100px !important;
-    padding: 5px !important;
-}
-
-/* The Nuclear Option: Target by text content if all else fails */
-button.blocklyFieldGridItem[aria-label*="RST"],
-button.blocklyFieldGridItem[aria-label*="GND"],
-button.blocklyFieldGridItem[aria-label*="VIN"],
-button.blocklyFieldGridItem[aria-label*="3V3"] {
-    pointer-events: none !important;
-    opacity: 0.5;
-}

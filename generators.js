@@ -10,7 +10,7 @@ Blockly.Python.forBlock['esp32_led'] = function(block) {
 };
 
 // 4. SENSOR BLOCKS (Returning Tuples for expressions)
-Blockly.Python['sensor_ultrasonic'] = function(block) {
+Blockly.Python.forBlock['sensor_ultrasonic'] = function(block) {
     Blockly.Python.definitions_['import_hcsr04'] = 'from hcsr04 import HCSR04';
     var trig = block.getFieldValue('TRIG');
     var echo = block.getFieldValue('ECHO');
@@ -18,7 +18,7 @@ Blockly.Python['sensor_ultrasonic'] = function(block) {
     return [code, Blockly.Python.ORDER_ATOMIC];
 };
 
-Blockly.Python['sensor_dht11'] = function(block) {
+Blockly.Python.forBlock['sensor_dht11'] = function(block) {
     Blockly.Python.definitions_['import_dht'] = 'import dht';
     Blockly.Python.definitions_['import_machine'] = 'import machine';
     var pin = block.getFieldValue('PIN');
@@ -29,7 +29,7 @@ Blockly.Python['sensor_dht11'] = function(block) {
     return [code, Blockly.Python.ORDER_ATOMIC];
 };
 
-Blockly.Python['sensor_ldr'] = function(block) {
+Blockly.Python.forBlock['sensor_ldr'] = function(block) {
     Blockly.Python.definitions_['import_machine'] = 'import machine';
     var pin = block.getFieldValue('PIN');
     var code = 'machine.ADC(machine.Pin(' + pin + ')).read()';
