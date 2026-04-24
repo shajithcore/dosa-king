@@ -231,7 +231,7 @@ button.blocklyFieldGridItem[aria-label*="3V3"] {
     z-index: 10000; /* Stays above the Blockly dropdown */
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 /* --- THE AUTOMATIC WRAP MAGIC --- */
-    max-width: 70px;       /* Forces wrapping after 200px */
+    max-width: 140px;       /* Forces wrapping after 200px */
     width: auto;            /* Shrinks to fit short text */
     height: auto;           /* Grows vertically as needed */
     white-space: normal;    /* Allows text to wrap onto new lines */

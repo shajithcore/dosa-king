@@ -20,7 +20,7 @@ const ESP32_PIN_DETAILS = {
     '32': 'ADC1_CH4. Capacitive Touch 9. Supports PWM.',
     '33': 'ADC1_CH5. Capacitive Touch 8. Supports PWM.',
     '25': 'DAC1. Digital-to-Analog Converter. Supports PWM.',
-    '1': 'TX0 (Transmit). Used for Serial Debugging. Using this may cause LED flickering during code upload.',
+    '0': 'TX0 (Transmit) RX0 (Receive). This pair of pins are used for Serial communication. They can also be used as GPIO pins RX0 is D1 and TX0 is D2. However, using this pair as GPIO pinsmay cause LED flickering during code upload.',
     '3': 'RX0 (Receive). Used for Programming. Connecting sensors here may block you from uploading new code!',
     '2':  'Built-in Blue LED. ADC2_CH2. Touch 2.',
     'GND': 'Ground. Connect to the negative side of your circuit.',
@@ -674,6 +674,7 @@ function toggleTerminal() {
 
 
 // Resizing Logic
+
 const resizer = document.getElementById('console-resizer');
 const consoleBox = document.getElementById('console-container');
 const terminal = document.getElementById('terminalOutput');
@@ -1630,21 +1631,12 @@ const createHoverPopup = () => {
 };
 
 
-// EVENT LISTNER - MOUSE MOVE TRACKING FOR POP UP INSIDE PIN SELECTOR DROPDPWN GRID
+// EVENT LISTNER - MOUSE MOVE TRACKING FOR POP UP INSIDE PIN SELECTOR DROPDOWN GRID
 
 let hoverTimeout; // Variable to hold our timer
 const HOVER_DELAY = 100; // 500ms (half a second) - Adjust this as you like!
 
 document.addEventListener('mousemove', (e) => {
-
-//     if (item.classList.contains('pin-in-use')) {
-//     popup.innerHTML = `
-//         <div class="popup-header" style="color: #ff4d4d;">⚠️ PIN IN USE</div>
-//         <div class="popup-body">This pin is already connected to another block. Please disconnect that block first.</div>
-//     `;
-//     return; // Stop here so it doesn't show the normal info
-// }
-
 
     const popup = document.getElementById('pin-hover-popup');
     const dropDownDiv = document.querySelector('.blocklyDropDownDiv');
@@ -1767,5 +1759,188 @@ document.addEventListener('mousedown', (e) => {
         clearTimeout(hoverTimeout);
     }
 });
+
+
+// /**********************************************************************************************************/
+// /*                                       SIMULATOR JS CODE                                                */
+// /**********************************************************************************************************/
+
+// const svg = document.getElementById('esp32-svg');
+// const wireHolder = document.getElementById('wire-holder');
+// let activeWire = null;
+// let startPin = null;
+
+// /**
+//  * THE TRANSLATOR 🦈
+//  * Converts mouse screen coordinates into the SVG's 0-350 coordinate system.
+//  */
+// function getSVGCoords(e) {
+//     const pt = svg.createSVGPoint();
+//     pt.x = e.clientX;
+//     pt.y = e.clientY;
+//     // This is the magic line that accounts for zooming/scaling
+//     return pt.matrixTransform(svg.getScreenCTM().inverse());
+// }
+
+// svg.addEventListener('mousedown', (e) => {
+//     const pin = e.target.closest('.pin-contact');
+//     if (!pin) return;
+
+//     // Start drawing
+//     startPin = pin;
+//     const coords = { x: pin.getAttribute('cx'), y: pin.getAttribute('cy') };
+
+//     activeWire = document.createElementNS("http://www.w3.org/2000/svg", "path");
+//     activeWire.setAttribute("class", "jumper-wire");
+//     activeWire.setAttribute("stroke", "#15D0AC"); // Shark Cyan
+//     activeWire.setAttribute("stroke-width", "3");
+//     activeWire.setAttribute("fill", "none");
+    
+//     // Initial path: Start and End at the same point
+//     const d = `M ${coords.x} ${coords.y} C ${coords.x} ${coords.y}, ${coords.x} ${coords.y}, ${coords.x} ${coords.y}`;
+//     activeWire.setAttribute("d", d);
+    
+//     wireHolder.appendChild(activeWire);
+// });
+
+// window.addEventListener('mousemove', (e) => {
+//     if (!activeWire) return;
+
+//     const mouse = getSVGCoords(e);
+//     const sX = parseFloat(startPin.getAttribute('cx'));
+//     const sY = parseFloat(startPin.getAttribute('cy'));
+
+//     // BÉZIER MATH: Offset control points horizontally for a "natural wire" look
+//     const curveIntensity = 40; 
+//     const cp1x = sX + (mouse.x > sX ? curveIntensity : -curveIntensity);
+//     const cp2x = mouse.x + (mouse.x > sX ? -curveIntensity : curveIntensity);
+
+//     const d = `M ${sX} ${sY} C ${cp1x} ${sY}, ${cp2x} ${mouse.y}, ${mouse.x} ${mouse.y}`;
+//     activeWire.setAttribute("d", d);
+// });
+
+
+// window.addEventListener('mouseup', (e) => {
+//     if (!activeWire) return;
+
+//     const endPin = e.target.closest('.pin-contact');
+    
+//     // Cancel if not dropped on a different pin
+//     if (!endPin || endPin === startPin) {
+//         activeWire.remove();
+//     } else {
+//         // SNAP: Lock the wire to the center of the target pin
+//         const sX = startPin.getAttribute('cx');
+//         const sY = startPin.getAttribute('cy');
+//         const eX = endPin.getAttribute('cx');
+//         const eY = endPin.getAttribute('cy');
+        
+//         const cp1x = parseFloat(sX) + (eX > sX ? 40 : -40);
+//         const cp2x = parseFloat(eX) + (eX > sX ? -40 : 40);
+        
+//         const d = `M ${sX} ${sY} C ${cp1x} ${sY}, ${cp2x} ${eY}, ${eX} ${eY}`;
+//         activeWire.setAttribute("d", d);
+
+//         // Add delete functionality
+//         activeWire.addEventListener('dblclick', function() { this.remove(); });
+        
+//         console.log(`Reserved: ${startPin.id} <-> ${endPin.id}`);
+//     }
+
+//     activeWire = null;
+//     startPin = null;
+// });
+
+
+// /*   +++++++++++++++++++++++++   FULL SCREEN SIMULATOR VIEW   ++++++++++++++++++++++++++++ */
+
+// const simCanvas = document.getElementById('sim-canvas');
+// const fsBtn = document.getElementById('fullscreen-btn');
+
+// fsBtn.addEventListener('click', () => {
+//     if (!document.fullscreenElement) {
+//         // Enter Full Screen
+//         if (simCanvas.requestFullscreen) {
+//             simCanvas.requestFullscreen();
+//         } else if (simCanvas.webkitRequestFullscreen) { /* Safari */
+//             simCanvas.webkitRequestFullscreen();
+//         }
+//         fsBtn.innerText = "✕ Exit Full Screen";
+//     } else {
+//         // Exit Full Screen
+//         if (document.exitFullscreen) {
+//             document.exitFullscreen();
+//         }
+//         fsBtn.innerText = "⛶ Full Screen";
+//     }
+// });
+
+// // Update the coordinate math if the window resizes
+// window.addEventListener('resize', () => {
+//     // This forces the SVG to recalculate its positions 
+//     // for the wire-drawing logic we wrote earlier.
+// });
+
+
+// /**************************************************************************************************** */
+// /*                                     SIMULATOR AREA VIEW AND PAN ENGINE                             */
+// /**************************************************************************************************** */
+
+// const viewport = document.getElementById('viewport');
+// let scale = 1;
+// let pointX = 0;
+// let pointY = 0;
+// let startPan = { x: 0, y: 0 };
+// let isPanning = false;
+
+// // 1. THE ZOOM (Mouse Wheel)
+// svg.addEventListener('wheel', (e) => {
+//     e.preventDefault();
+    
+//     const zoomSpeed = 0.001;
+//     const delta = -e.deltaY;
+//     const factor = Math.pow(1.1, delta / 100); // Smooth exponential zoom
+    
+//     const newScale = scale * factor;
+    
+//     // Optional: Limit zoom levels
+//     if (newScale > 0.3 && newScale < 5) {
+//         // Zoom towards mouse position
+//         const mouse = getSVGCoords(e.clientX, e.clientY);
+//         pointX -= (mouse.x - pointX) * (factor - 1);
+//         pointY -= (mouse.y - pointY) * (factor - 1);
+//         scale = newScale;
+//         updateViewport();
+//     }
+// }, { passive: false });
+
+// // 2. THE PAN (Click & Drag Background)
+// svg.addEventListener('mousedown', (e) => {
+//     // Only pan if clicking the SVG background, NOT a pin
+//     if (e.target.id === 'esp32-svg' || e.target.id === 'viewport') {
+//         isPanning = true;
+//         svg.style.cursor = 'grabbing';
+//         startPan = { x: e.clientX - pointX, y: e.clientY - pointY };
+//         e.stopImmediatePropagation(); // Prevent wire-drawing from starting
+//     }
+// }, true); // Capture phase is important!
+
+// window.addEventListener('mousemove', (e) => {
+//     if (!isPanning) return;
+    
+//     pointX = e.clientX - startPan.x;
+//     pointY = e.clientY - startPan.y;
+//     updateViewport();
+// });
+
+// window.addEventListener('mouseup', () => {
+//     isPanning = false;
+//     svg.style.cursor = 'grab';
+// });
+
+// // 3. APPLY TRANSFORM
+// function updateViewport() {
+//     viewport.setAttribute('transform', `translate(${pointX}, ${pointY}) scale(${scale})`);
+// }
 
 

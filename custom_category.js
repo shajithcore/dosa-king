@@ -109,4 +109,3 @@ Blockly.registry.register(
   'edusharks-header', // We give it a unique internal name
   EdusharksHeader
 );
-

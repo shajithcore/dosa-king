@@ -46,26 +46,6 @@ const ESP32_30PIN_MAP = [
 ];
 
 
-const ESP32_ANALOG_MAP = [
-  ['RST', 'EN'],          ['D23', '23'],      
-  ['VP', '36'],    ['D22', '22'],      
-  ['VN', '39'],    ['TX0', '1'],  
-  ['D34', '34'],    ['RX0', '3'],  
-  ['D35', '35'],    ['D21', '21'],      
-  ['D32', '32'],         ['D19', '19'],      
-  ['D33', '33'],         ['D18', '18'],      
-  ['D25', '25'],         ['D5', '5'],        
-  ['D26', '26'],         ['D17', '17'],      
-  ['D27', '27'],         ['D16', '16'],      
-  ['D14', '14'],         ['D4', '4'],        
-  ['D12', '12'],         ['D2', '2'],  
-  ['D13', '13'],         ['D15', '15'],      
-  ['GND', 'GND'],        ['GND', 'GND'],     
-  ['VIN', 'VIN'],        ['3V3', '3V3']      
-];
-
-
-
 const hardwarePinValidator = function(newValue) {
     // List of values that are physical-only
     const restricted = ['EN', 'GND', 'VIN', '3V3'];
@@ -81,10 +61,6 @@ const hardwarePinValidator = function(newValue) {
 Blockly.Extensions.register('set_default_pin', function() {
   // This code runs every time a new block is created
   this.getField('PIN').setValue('2');
-});
-
-Blockly.Extensions.register('set_default_analog_pin', function() {
-  this.getField('PIN').setValue('36');
 });
 
 
@@ -147,43 +123,34 @@ Blockly.defineBlocksWithJsonArray([
 ]);
 
 
-// ULTRASONIC SENSOR HCSR04
-Blockly.defineBlocksWithJsonArray([
-  {
-    "type": "sensor_ultrasonic",
-    "message0": "Ultrasonic Distance (cm) Trig: %1 Echo: %2",
-    "args0": [
-      { "type": "field_grid_dropdown", "name": "PIN", "columns": 2,"options": ESP32_30PIN_MAP, "value": 18 },
-      { "type": "field_grid_dropdown", "name": "PIN", "columns": 2,"options": ESP32_30PIN_MAP, "value": 23 },
-    ],
-    "output": null,
-    "colour": 75,
-    "tooltip": "Reads distance using an Ultrasonic sensor connected to the specified pins.",
-    "helpUrl": ""  
-  }
-]);
+  // 2. SENSOR BLOCK DEFINITIONS ---
 
+  // ULTRASONIC HC-SR04
+  Blockly.Blocks['sensor_ultrasonic'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField("Ultrasonic Distance (cm)")
+          .appendField("Trig:")
+          .appendField(new Blockly.FieldNumber(5), "TRIG")
+          .appendField("Echo:")
+          .appendField(new Blockly.FieldNumber(18), "ECHO");
+      this.setOutput(true, null);
+      this.setColour(75);
+    }
+  };
 
-// DHT11 TEMPERATURE/HUMIDITY
-Blockly.defineBlocksWithJsonArray([
-{
-  "type": "sensor_dht11",
-  "message0": "DHT11 %1 Pin: %2",
-  "args0": [
-    { "type": "field_dropdown", "name": "TYPE", "options": [ ["Temperature", "temp"], ["Humidity", "hum"]]},
-    { "type": "field_grid_dropdown", "name": "PIN", "columns": 2,"options": ESP32_30PIN_MAP, "value": 23 },
-  ],
-  "output": null,
-  "colour": 75,
-  "tooltip": "Reads temperature or humidity from a DHT11 sensor.",
-  "helpUrl": ""
-}
-]);
-
-
-
-  
-
+  // DHT11 TEMPERATURE/HUMIDITY
+  Blockly.Blocks['sensor_dht11'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField("DHT11")
+          .appendField(new Blockly.FieldDropdown([["Temperature", "temp"], ["Humidity", "hum"]]), "TYPE")
+          .appendField("Pin:")
+          .appendField(new Blockly.FieldNumber(4), "PIN");
+      this.setOutput(true, null);
+      this.setColour(75);
+    }
+  };
 
   // LDR (ANALOG LIGHT SENSOR)
   Blockly.Blocks['sensor_ldr'] = {
@@ -241,6 +208,7 @@ Blockly.defineBlocksWithJsonArray([
     "message0": "set digital pin %1 to %2",
     "args0": [
       { "type": "field_grid_dropdown", "name": "PIN", "columns": 2,"options": ESP32_30PIN_MAP, "value": 4 },
+      // { "type": "field_number", "name": "PIN", "value": 2 },
       { "type": "field_grid_dropdown", "name": "STATE", "columns": 1,"options": [["HIGH", "1"], ["LOW", "0"]] }
     ],
     "extensions": ["set_default_pin"],
@@ -263,9 +231,8 @@ Blockly.defineBlocksWithJsonArray([
   {
     "type": "pin_analog_read",
     "message0": "read analog pin %1",
-    "args0": [{ "type": "field_grid_dropdown", "name": "PIN", "columns": 2, "options": ESP32_ANALOG_MAP}],
+    "args0": [{ "type": "field_number", "name": "PIN", "value": 34 }],
     "output": "Number",
-    "extensions": ["set_default_analog_pin"],
     "colour": 120
   },
   // PWM Write
@@ -293,4 +260,3 @@ if (Blockly.Blocks['pin_digital_write']) {
     tempBlock.getField('PIN').setValue('2');
     tempBlock.dispose(); // Delete the dummy block
 }
-
